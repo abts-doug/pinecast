@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="login-container">
+  <form method="post" action="?">
+    <h2 class="form-signin-heading">PodMaster Hosting</h2>
+    {% if error %}
+      <div class="alert alert-error">
+        <strong>Login Error</strong> {{ error }}
+      </div>
+    {% endif %}
+
+    <label>
+      <span>Email</span>
+      <input type="email" placeholder="Email" name="email">
+    </label>
+    <label>
+      <span>Password</span>
+      <input type="password" name="password">
+    </label>
+    <button type="submit">Sign In</button>
+    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends "dashboard_base.html" %}
+{% block dashboard_body %}
+<h1>New Episode: {{ podcast.name }}</h1>
+
+<form action="?" method="post">
+  <label>
+    <span>Title</span>
+    <input type="text" name="title" placeholder="Episode 1 - Best one ever" required maxlength="1024">
+  </label>
+  <label>
+    <span>Subtitle</span>
+    <input type="text" name="subtitle" placeholder="You'll never believe it" maxlength="1024">
+  </label>
+  <label>
+    <span>Publish On</span>
+    <input type="datetime-local" name="publish" required>
+  </label>
+  <label>
+    <span>Episode Description</span>
+    <textarea name="description" id="description-field"></textarea>
+  </label>
+  <label>
+    <span>Image</span>
+    <input type="file" name="image_url" required>
+  </label>
+
+  <hr>
+
+  <label>
+    <span>Mp3 File</span>
+    <input type="file" id="upload-widget">
+  </label>
+  <label class="duration-control">
+    <span>Duration</span>
+    <input type="number" class="duration-hours">:<input type="number" class="duration-minutes">:<input type="number" class="duration-seconds">
+  </label>
+
+  <hr>
+
+  <label>
+    <span>Copyright</span>
+    <input type="text" name="copyright" maxlength="1024" value={{ podcast.copyright }} placeholder="Copyright 2015 Foo Bar Inc." required>
+  </label>
+  <label>
+    <span>License</span>
+    <input type="text" name="license" maxlength="1024" placeholder="Creative Commons 4.0" required>
+  </label>
+
+  <menu class="toolbar">
+    <li><button type="submit">Save New Episode</button></li>
+  </menu>
+
+</form>
+
+{% endblock %}
+
+{% block after_content %}
+<script>
+nicEditors.allTextAreas();
+</script>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+<header>
+     <h1>PodMaster Hosting</h1>
+     <div class="user-card">
+         <img src="{{ user_avatar }}" alt="">
+         <span>{{ user.username }}</span>
+     </div>
+</header>
+<div class="main-container">
+    <nav class="sidebar">
+        {% block sidebar %}
+        <ul>
+            <li><a href="/dashboard">Dashboard</a></li>
+            <li><a href="/logout">Sign Out</a></li>
+        </ul>
+        <strong>Podcasts</strong>
+        <ul>
+            {% for p in podcasts %}
+                <li>
+                    <a href="/dashboard/podcast/{{ p.slug }}">{{ p.name }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+        {% endblock %}
+    </nav>
+    <main>
+        {% block dashboard_body %}{% endblock %}
+    </main>
+</div>
+{% endblock %}

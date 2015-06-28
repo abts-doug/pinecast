@@ -55,19 +55,16 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = 'podmaster.urls'
 
 TEMPLATES = [
-    # {
-    #     'BACKEND': 'coffin.template.loaders.Loader',
-    #     'DIRS': [],
-    #     'APP_DIRS': True,
-    #     'OPTIONS': {
-    #         'context_processors': [
-    #             'django.template.context_processors.debug',
-    #             'django.template.context_processors.request',
-    #             'django.contrib.auth.context_processors.auth',
-    #             'django.contrib.messages.context_processors.messages',
-    #         ],
-    #     },
-    # },
+    {
+        'BACKEND': 'django.template.backends.jinja2.Jinja2',
+        'APP_DIRS': True,
+        'DIRS': [
+            os.path.join(BASE_DIR, 'templates', 'jinja2'),
+        ],
+        'OPTIONS': {
+            'environment': 'podmaster.jinja2_helper.environment',
+        },
+    },
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [],
@@ -82,10 +79,6 @@ TEMPLATES = [
         },
     },
 ]
-JINJA2_TEMPLATE_LOADERS = (
-    'django.template.loaders.app_directories.Loader',
-    'django.template.loaders.filesystem.Loader',
-)
 
 WSGI_APPLICATION = 'podmaster.wsgi.application'
 
@@ -126,3 +119,16 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
 STATIC_URL = '/static/'
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'static'),
+)
+
+GETCONNECT_IO_PID = os.environ.get('GETCONNECT_IO_PID')
+GETCONNECT_IO_QUERY_KEY = os.environ.get('GETCONNECT_IO_QUERY_KEY')
+GETCONNECT_IO_PUSH_KEY = os.environ.get('GETCONNECT_IO_PUSH_KEY')
+
+
+try:
+    from settings_local import *
+except ImportError:
+    pass

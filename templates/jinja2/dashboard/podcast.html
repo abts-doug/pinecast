@@ -1,0 +1,33 @@
+{% extends "dashboard_base.html" %}
+{% block dashboard_body %}
+<h1>{{ podcast.name }}</h1>
+<div class="chunky-row">
+  <div class="total-listens">
+    <strong>123</strong>
+    <span>Total Listens</span>
+  </div>
+  <div class="this-week">
+    <strong>123</strong>
+    <span>Listens This Week</span>
+  </div>
+  <div class="total-subscribers">
+    <strong>123</strong>
+    <span>Subscribers</span>
+  </div>
+</div>
+
+<menu class="toolbar">
+  <li><a class="btn" href="/dashboard/podcast/{{ podcast.slug }}/new_episode">New Episode</a></li>
+</menu>
+
+<ul class="chunky">
+  {% for ep in episodes %}
+    <li>
+      <strong><a href="/dashboard/podcast/{{ podcast.slug }}/episode/{{ ep.id }}">{{ ep.title }}</a></strong>
+      <p>{{ ep.subtitle }}</p>
+      <p>{{ ep.description }}</p>
+    </li>
+  {% endfor %}
+</ul>
+
+{% endblock %}

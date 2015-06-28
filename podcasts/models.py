@@ -1,3 +1,4 @@
+import datetime
 import uuid
 
 from django.contrib.auth.models import User
@@ -34,7 +35,7 @@ class PodcastEpisode(models.Model):
     subtitle = models.CharField(max_length=1024, default='')
     created = models.DateTimeField(auto_now=True)
     publish = models.DateTimeField()
-    description = models.TextField()
+    description = models.TextField(default='')
     duration = models.PositiveIntegerField(help_text='Audio duration in seconds')
 
     audio_url = models.URLField()
@@ -45,6 +46,9 @@ class PodcastEpisode(models.Model):
 
     copyright = models.CharField(max_length=1024)
     license = models.CharField(max_length=1024)
+
+    def is_published(self):
+        return self.publish <= datetime.now()
 
     def __unicode__(self):
         return '%s - %s' % (self.title, self.subtitle)
