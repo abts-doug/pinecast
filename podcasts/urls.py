@@ -9,6 +9,8 @@ urlpatterns = [
     url(r'^dashboard/podcast/(?P<podcast_slug>[\w-]+)$', views.podcast_dashboard, name='podcast_dashboard'),
     url(r'^dashboard/podcast/(?P<podcast_slug>[\w-]+)/new_episode$', views.podcast_new_ep, name='new_episode'),
 
+    url(r'^services/getUploadURL/(?P<podcast_slug>[\w-]+)/(?P<type>[\w]+)$', views.get_upload_url, name='get_upload_url'),
+
     url(r'^listen/(?P<episode_id>[\w]+)', views.listen, name='listen'),
     url(r'^feed/(?P<podcast_slug>[\w-]+)$', views.feed),
 ]

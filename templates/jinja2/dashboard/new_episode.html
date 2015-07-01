@@ -21,18 +21,18 @@
   </label>
   <label>
     <span>Image</span>
-    <input type="file" name="image_url" required>
+    <div class="upload-placeholder" data-accept="image/*" data-name="image-url" data-type="image" data-podcast="{{ podcast.slug }}"></div>
   </label>
 
   <hr>
 
   <label>
     <span>Mp3 File</span>
-    <input type="file" id="upload-widget">
+    <div class="upload-placeholder" data-accept="audio/*" data-name="audio-url" data-type="audio" data-podcast="{{ podcast.slug }}"></div>
   </label>
   <label class="duration-control">
     <span>Duration</span>
-    <input type="number" class="duration-hours">:<input type="number" class="duration-minutes">:<input type="number" class="duration-seconds">
+    <input type="number" class="duration-hours" value="0" name="duration-hours">:<input type="number" class="duration-minutes" name="duration-minutes">:<input type="number" class="duration-seconds" name="duration-seconds">
   </label>
 
   <hr>
@@ -55,6 +55,8 @@
 {% endblock %}
 
 {% block after_content %}
+<script src="/static/js/react-0.13.3.js"></script>
+<script src="/static/js/ui-uploader.js"></script>
 <script>
 nicEditors.allTextAreas();
 </script>

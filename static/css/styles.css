@@ -190,3 +190,33 @@ menu li {
 .duration-control input {
     width: 50px;
 }
+
+
+.progress {
+    background: #666;
+    border-radius: 4px;
+    display: block;
+    height: 5px;
+}
+.progress i {
+    background: #f39c12;
+    border-radius: 4px;
+    display: block;
+    height: 5px;
+}
+
+
+.uploaded-file-card {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    box-shadow: 0 3px 4px rgba(0, 0, 0, 0.1);
+    margin: 15px 0;
+    padding: 20px;
+}
+
+.uploaded-file-card dt {
+    clear: left;
+    display: inline-block;
+    float: left;
+}

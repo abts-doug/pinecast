@@ -1,9 +1,15 @@
+import base64
 import datetime
 import hashlib
+import hmac
+import json
 import time
+import urllib
+import uuid
 from email.Utils import formatdate
 from xml.sax.saxutils import escape, quoteattr
 
+from django.conf import settings
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -17,10 +23,11 @@ from .models import Podcast, PodcastEpisode
 
 def _pmrender(req, template, data=None):
     data = data or {}
-    data.setdefault('user', req.user)
-    data.setdefault('podcasts', req.user.podcast_set.all())
-    user_avatar = hashlib.md5(req.user.email).hexdigest()
-    data.setdefault('user_avatar', 'http://www.gravatar.com/avatar/%s?s=40' % user_avatar)
+    if not req.user.is_anonymous():
+        data.setdefault('user', req.user)
+        data.setdefault('podcasts', req.user.podcast_set.all())
+        user_avatar = hashlib.md5(req.user.email).hexdigest()
+        data.setdefault('user_avatar', 'http://www.gravatar.com/avatar/%s?s=40' % user_avatar)
     return render(req, template, data)
 
 
@@ -33,7 +40,7 @@ def home(req):
 
     try:
         user = User.objects.get(email=req.POST.get('email'))
-        password = req.POST.get('password')
+        password = req.POST.get('password') 
         if (user.is_active and
             user.check_password(password)):
             login(req, authenticate(username=user.username, password=password))
@@ -64,6 +71,57 @@ def podcast_new_ep(req, podcast_slug):
 
     if not req.POST:
         return _pmrender(req, 'dashboard/new_episode.html', {'podcast': pod})
+
+    ep = PodcastEpisode(
+        podcast=pod,
+        title=req.POST.get('title'),
+        subtitle=req.POST.get('subtitle'),
+        publish=datetime.datetime.strptime(req.POST.get('publish'), '%Y-%m-%dT%H:%M'), # 2015-07-09T12:00
+        description=req.POST.get('description'),
+        duration=int(req.POST.get('duration-hours')) * 3600 + int(req.POST.get('duration-minutes')) * 60 + int(req.POST.get('duration-seconds')),
+
+        audio_url=req.POST.get('audio-url'),
+        audio_size=int(req.POST.get('audio-url-size')),
+        audio_type=req.POST.get('audio-url-type'),
+
+        image_url=req.POST.get('iamge-url'),
+
+        copyright=req.POST.get('copyright'),
+        license=req.POST.get('license')
+    )
+    ep.save()
+    return redirect('/dashboard/podcast/%s' % pod.slug)
+
+
+@login_required
+def get_upload_url(req, podcast_slug, type):
+    if type not in ['audio', 'image']:
+        return Http404()
+
+    pod = get_object_or_404(Podcast, slug=podcast_slug, owner=req.user)
+    extension = 'mp3' if type == 'audio' else 'jpg'
+    basepath = 'podcasts/%s/%s/' % (pod.id, type)
+    path = '%s%s.%s' % (basepath, str(uuid.uuid4()), extension)
+
+    mime_type = req.GET.get('type')
+
+    expires = int(time.time() + 60 * 60 * 24)
+    amz_headers = 'x-amz-acl:public-read'
+
+    string_to_sign = "PUT\n\n%s\n%d\n%s\n/%s/%s" % (mime_type, expires, amz_headers, settings.S3_BUCKET, path)
+    signature = base64.encodestring(hmac.new(settings.S3_SECRET_KEY.encode(), string_to_sign.encode('utf8'), hashlib.sha1).digest())
+    signature = urllib.quote_plus(signature.strip())
+
+    destination_url = 'http://%s.s3.amazonaws.com/%s' % (settings.S3_BUCKET, path)
+    data = {
+        'url': '%s?AWSAccessKeyId=%s&Expires=%s&Signature=%s' % (destination_url, settings.S3_ACCESS_ID, expires, signature),
+        'headers': {
+            'x-amz-acl': 'public-read',
+        },
+        'destination_url': destination_url,
+    }
+
+    return HttpResponse(json.dumps(data), content_type='application/json')
 
 
 def listen(req, episode_id):

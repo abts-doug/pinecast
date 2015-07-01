@@ -127,6 +127,11 @@ GETCONNECT_IO_PID = os.environ.get('GETCONNECT_IO_PID')
 GETCONNECT_IO_QUERY_KEY = os.environ.get('GETCONNECT_IO_QUERY_KEY')
 GETCONNECT_IO_PUSH_KEY = os.environ.get('GETCONNECT_IO_PUSH_KEY')
 
+S3_BUCKET = os.environ.get('S3_BUCKET')
+S3_ACCESS_ID = os.environ.get('S3_ACCESS_ID')
+S3_SECRET_KEY = os.environ.get('S3_SECRET_KEY')
+
+MAX_FILE_SIZE = 1024 * 1024 * 256
 
 try:
     from settings_local import *
