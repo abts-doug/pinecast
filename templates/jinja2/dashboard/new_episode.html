@@ -50,6 +50,7 @@
     <li><button type="submit">Save New Episode</button></li>
   </menu>
 
+  <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
 </form>
 
 {% endblock %}
