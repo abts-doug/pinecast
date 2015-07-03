@@ -108,6 +108,7 @@ var Uploader = React.createClass({
                 accept: this.props.accept,
                 onChange: this.gotNewFile,
                 ref: 'filePicker',
+                required: 'required',
             }
         );
     },

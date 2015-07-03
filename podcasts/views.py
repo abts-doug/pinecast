@@ -1,4 +1,5 @@
 import base64
+import collections
 import datetime
 import hashlib
 import hmac
@@ -23,6 +24,8 @@ from .models import Podcast, PodcastEpisode
 
 def _pmrender(req, template, data=None):
     data = data or {}
+    data.setdefault('default', collections.defaultdict(lambda: ''))
+    print data
     if not req.user.is_anonymous():
         data.setdefault('user', req.user)
         data.setdefault('podcasts', req.user.podcast_set.all())
@@ -70,7 +73,7 @@ def podcast_dashboard(req, podcast_slug):
 @login_required
 def new_podcast(req):
     if not req.POST:
-        return _pmrender(req, 'dashboard/new_podcast.html', {'default': {}})
+        return _pmrender(req, 'dashboard/new_podcast.html')
 
     try:
         pod = Podcast(
@@ -87,8 +90,21 @@ def new_podcast(req):
             owner=req.user)
         pod.save()
     except:
-        return _pmrender(req, 'dashboard/new_podcast.html', {'default': req.POST})
+        return _pmrender(req, 'dashboard/new_podcast.html', {'default': req.POST, 'error': True})
     return redirect('/dashboard/podcast/%s' % pod.slug)
+
+
+@login_required
+def delete_podcast(req, podcast_slug):
+    pod = get_object_or_404(Podcast, slug=podcast_slug, owner=req.user)
+    if not req.POST:
+        return _pmrender(req, 'dashboard/delete_podcast.html', {'podcast': pod})
+
+    if req.POST.get('slug') != pod.slug:
+        return redirect('/dashboard')
+
+    pod.delete()
+    return redirect('/dashboard')
 
 
 @login_required
@@ -96,7 +112,7 @@ def podcast_new_ep(req, podcast_slug):
     pod = get_object_or_404(Podcast, slug=podcast_slug, owner=req.user)
 
     if not req.POST:
-        return _pmrender(req, 'dashboard/new_episode.html', {'podcast': pod, default: {}})
+        return _pmrender(req, 'dashboard/new_episode.html', {'podcast': pod})
 
     try:
         ep = PodcastEpisode(

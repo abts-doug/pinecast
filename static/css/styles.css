@@ -88,21 +88,31 @@ button, .btn {
     border: 0;
     border-bottom: 2px solid rgba(0, 0, 0, 0.2);
     border-radius: 3px;
-    box-shadow: 0 -4px 0 transparent;
-    color: #222;
+    box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+    color: #fff;
+    cursor: pointer;
     font-family: Lato, Helvetica, Arial, sans-serif;
     font-size: 14px;
-    font-weight: bold;
     padding: 7px 20px;
     transition: box-shadow 0.2s;
 }
 
 button:hover, .btn:hover {
     box-shadow: 0 3px 5px rgba(0, 0, 0, 0.4);
+    text-decoration: none;
 }
 
 button:active, .btn:active {
     box-shadow: 0 0 0 rgba(0, 0, 0, 0.4);
+}
+
+.btn-danger {
+    background: #e74c3c;
+}
+
+.btn-neutral {
+    background: #fafafa;
+    color: #222;
 }
 
 
@@ -195,7 +205,9 @@ menu {
     padding: 0 10px;
 }
 menu li {
+    display: inline-block;
     list-style: none;
+    margin-right: 15px;
 }
 
 
@@ -247,4 +259,14 @@ menu li {
     width: calc(30px + 100%);
     margin:-15px;
     margin-bottom: 15px;
+}
+
+
+.error {
+    background: #e74c3c;
+    border-radius: 4px;
+    color: #fff;
+    font-weight: bold;
+    margin: 10px;
+    padding: 20px;
 }

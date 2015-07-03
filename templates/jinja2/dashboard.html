@@ -12,7 +12,7 @@
     <li>
       <img src="{{ p.cover_image }}" alt="">
       <strong><a href="/dashboard/podcast/{{ p.slug }}">{{ p.name }}</a></strong>
-      <p>{{ p.description }}</p>
+      <p>{{ p.description|safe }}</p>
     </li>
   {% endfor %}
 </ul>

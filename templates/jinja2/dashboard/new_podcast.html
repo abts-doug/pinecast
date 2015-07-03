@@ -2,42 +2,70 @@
 {% block dashboard_body %}
 <h1>New Podcast</h1>
 
+{% if error %}
+<div class="error">
+  Please check that all fields are filled out correctly.
+</div>
+{% endif %}
+
 <form action="?" method="post">
   <label>
     <span>Name</span>
-    <input type="text" name="name" placeholder="My Great Podcast" required maxlength="256" class="width-full">
+    <input type="text"
+      name="name"
+      placeholder="My Great Podcast"
+      required
+      maxlength="256"
+      class="width-full"
+      value="{{ default.get('name') }}">
   </label>
   <label>
     <span>Slug</span>
-    <input type="text" name="slug" placeholder="my-great-podcast" required maxlength="64" pattern="[\w-]+" class="width-full">
+    <input type="text"
+      name="slug"
+      placeholder="my-great-podcast"
+      required
+      maxlength="64"
+      pattern="[\w-]+"
+      class="width-full"
+      value="{{ default.get('slug') }}">
   </label>
   <label>
     <span>Subtitle</span>
-    <input type="text" name="subtitle" placeholder="You'll never believe it" maxlength="512">
+    <input type="text"
+      name="subtitle"
+      placeholder="You'll never believe it"
+      maxlength="512"
+      value="{{ default.get('subtitle') }}">
   </label>
   <label>
     <span>Description</span>
-    <textarea name="description" id="description-field"></textarea>
+    <textarea name="description" id="description-field">{{ default.get('description') }}</textarea>
   </label>
   <label>
-    <input type="checkbox" name="is_explicit" value="true">
+    <input type="checkbox" name="is_explicit" value="true" {{ 'checked' if default.get('is_explicit') == 'true' }}>
     <span>Explicit?</span>
   </label>
   <label>
     <span>Homepage</span>
-    <input type="url" name="homepage" placeholder="https://my-great-podcast.biz" required>
+    <input type="url" name="homepage" placeholder="https://my-great-podcast.biz" required value="{{ default.get('homepage') }}">
   </label>
   <label>
     <span>Language</span>
-    <input type="text" name="language" placeholder="en-US" value="en-US" required maxlength="16">
+    <input type="text" name="language" placeholder="en-US" required maxlength="16" value="{{ default.get('language', 'en-US')}}">
   </label>
   <label>
     <span>Copyright</span>
-    <input type="text" name="copyright" maxlength="1024" placeholder="Copyright 2015 Foo Bar Inc." required>
+    <input type="text"
+      name="copyright"
+      maxlength="1024"
+      placeholder="Copyright 2015 Foo Bar Inc."
+      required
+      value="{{ default.get('copyright') }}">
   </label>
   <label>
     <span>Author</span>
-    <input type="text" name="author_name" maxlength="1024" placeholder="Jane Doe" required>
+    <input type="text" name="author_name" maxlength="1024" placeholder="Jane Doe" required value="{{ default.get('author_name') }}">
   </label>
   <div class="label">
     <span>Image</span>
