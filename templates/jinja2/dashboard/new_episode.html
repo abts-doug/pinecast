@@ -2,6 +2,12 @@
 {% block dashboard_body %}
 <h1>New Episode: {{ podcast.name }}</h1>
 
+{% if error %}
+<div class="error">
+  Please check that all fields are filled out correctly.
+</div>
+{% endif %}
+
 <form action="?" method="post">
   <label>
     <span>Title</span>

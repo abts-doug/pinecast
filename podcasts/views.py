@@ -24,8 +24,12 @@ from .models import Podcast, PodcastEpisode
 
 def _pmrender(req, template, data=None):
     data = data or {}
-    data.setdefault('default', collections.defaultdict(lambda: ''))
-    print data
+
+    class defd(collections.defaultdict):
+        def get(self, _, d=''):
+            return d
+
+    data.setdefault('default', defd(lambda: ''))
     if not req.user.is_anonymous():
         data.setdefault('user', req.user)
         data.setdefault('podcasts', req.user.podcast_set.all())
@@ -89,7 +93,7 @@ def new_podcast(req):
             author_name=req.POST.get('author_name'),
             owner=req.user)
         pod.save()
-    except:
+    except Exception:
         return _pmrender(req, 'dashboard/new_podcast.html', {'default': req.POST, 'error': True})
     return redirect('/dashboard/podcast/%s' % pod.slug)
 
@@ -127,13 +131,13 @@ def podcast_new_ep(req, podcast_slug):
             audio_size=int(req.POST.get('audio-url-size')),
             audio_type=req.POST.get('audio-url-type'),
 
-            image_url=req.POST.get('iamge-url'),
+            image_url=req.POST.get('image-url'),
 
             copyright=req.POST.get('copyright'),
             license=req.POST.get('license'))
         ep.save()
-    except Exception:
-        return  _pmrender(req, 'dashboard/new_episode.html', {'podcast': pod, 'default': req.POST})
+    except Exception as e:
+        return  _pmrender(req, 'dashboard/new_episode.html', {'podcast': pod, 'default': req.POST, 'error': True})
     return redirect('/dashboard/podcast/%s' % pod.slug)
 
 
