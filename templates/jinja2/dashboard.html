@@ -1,8 +1,16 @@
 {% extends "dashboard_base.html" %}
 {% block dashboard_body %}
+
+<menu class="toolbar">
+  <li>
+    <a class="btn" href="{{ url('new_podcast') }}">New Podcast</a>
+  </li>
+</menu>
+
 <ul class="chunky dashboard-podcasts">
   {% for p in podcasts %}
     <li>
+      <img src="{{ p.cover_image }}" alt="">
       <strong><a href="/dashboard/podcast/{{ p.slug }}">{{ p.name }}</a></strong>
       <p>{{ p.description }}</p>
     </li>

@@ -1,0 +1,67 @@
+{% extends "dashboard_base.html" %}
+{% block dashboard_body %}
+<h1>New Podcast</h1>
+
+<form action="?" method="post">
+  <label>
+    <span>Name</span>
+    <input type="text" name="name" placeholder="My Great Podcast" required maxlength="256" class="width-full">
+  </label>
+  <label>
+    <span>Slug</span>
+    <input type="text" name="slug" placeholder="my-great-podcast" required maxlength="64" pattern="[\w-]+" class="width-full">
+  </label>
+  <label>
+    <span>Subtitle</span>
+    <input type="text" name="subtitle" placeholder="You'll never believe it" maxlength="512">
+  </label>
+  <label>
+    <span>Description</span>
+    <textarea name="description" id="description-field"></textarea>
+  </label>
+  <label>
+    <input type="checkbox" name="is_explicit" value="true">
+    <span>Explicit?</span>
+  </label>
+  <label>
+    <span>Homepage</span>
+    <input type="url" name="homepage" placeholder="https://my-great-podcast.biz" required>
+  </label>
+  <label>
+    <span>Language</span>
+    <input type="text" name="language" placeholder="en-US" value="en-US" required maxlength="16">
+  </label>
+  <label>
+    <span>Copyright</span>
+    <input type="text" name="copyright" maxlength="1024" placeholder="Copyright 2015 Foo Bar Inc." required>
+  </label>
+  <label>
+    <span>Author</span>
+    <input type="text" name="author_name" maxlength="1024" placeholder="Jane Doe" required>
+  </label>
+  <div class="label">
+    <span>Image</span>
+    <div class="upload-placeholder"
+      data-accept="image/*"
+      data-name="image-url"
+      data-type="image"
+      data-podcast="$none"></div>
+  </div>
+
+  <menu class="toolbar">
+    <li><button type="submit">Save Podcast</button></li>
+  </menu>
+
+  <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+</form>
+
+{% endblock %}
+
+{% block after_content %}
+<script src="/static/js/react-0.13.3.js"></script>
+<script src="/static/js/nicEdit.js"></script>
+<script src="/static/js/ui-uploader.js"></script>
+<script>
+nicEditors.allTextAreas();
+</script>
+{% endblock %}

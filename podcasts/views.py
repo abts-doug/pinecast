@@ -40,13 +40,15 @@ def home(req):
 
     try:
         user = User.objects.get(email=req.POST.get('email'))
-        password = req.POST.get('password') 
-        if (user.is_active and
-            user.check_password(password)):
-            login(req, authenticate(username=user.username, password=password))
-            return redirect('dashboard')
+        password = req.POST.get('password')
     except User.DoesNotExist:
         pass
+
+    if (user and
+        user.is_active and
+        user.check_password(password)):
+        login(req, authenticate(username=user.username, password=password))
+        return redirect('dashboard')
     return _pmrender(req, 'login.html', {'error': 'Invalid credentials'})
 
 
@@ -66,41 +68,71 @@ def podcast_dashboard(req, podcast_slug):
 
 
 @login_required
+def new_podcast(req):
+    if not req.POST:
+        return _pmrender(req, 'dashboard/new_podcast.html', {'default': {}})
+
+    try:
+        pod = Podcast(
+            slug=req.POST.get('slug'),
+            name=req.POST.get('name'),
+            subtitle=req.POST.get('subtitle'),
+            cover_image=req.POST.get('image-url'),
+            description=req.POST.get('description'),
+            is_explicit=req.POST.get('is_explicit', 'false') == 'true',
+            homepage=req.POST.get('homepage'),
+            language=req.POST.get('language'),
+            copyright=req.POST.get('copyright'),
+            author_name=req.POST.get('author_name'),
+            owner=req.user)
+        pod.save()
+    except:
+        return _pmrender(req, 'dashboard/new_podcast.html', {'default': req.POST})
+    return redirect('/dashboard/podcast/%s' % pod.slug)
+
+
+@login_required
 def podcast_new_ep(req, podcast_slug):
     pod = get_object_or_404(Podcast, slug=podcast_slug, owner=req.user)
 
     if not req.POST:
-        return _pmrender(req, 'dashboard/new_episode.html', {'podcast': pod})
+        return _pmrender(req, 'dashboard/new_episode.html', {'podcast': pod, default: {}})
 
-    ep = PodcastEpisode(
-        podcast=pod,
-        title=req.POST.get('title'),
-        subtitle=req.POST.get('subtitle'),
-        publish=datetime.datetime.strptime(req.POST.get('publish'), '%Y-%m-%dT%H:%M'), # 2015-07-09T12:00
-        description=req.POST.get('description'),
-        duration=int(req.POST.get('duration-hours')) * 3600 + int(req.POST.get('duration-minutes')) * 60 + int(req.POST.get('duration-seconds')),
+    try:
+        ep = PodcastEpisode(
+            podcast=pod,
+            title=req.POST.get('title'),
+            subtitle=req.POST.get('subtitle'),
+            publish=datetime.datetime.strptime(req.POST.get('publish'), '%Y-%m-%dT%H:%M'), # 2015-07-09T12:00
+            description=req.POST.get('description'),
+            duration=int(req.POST.get('duration-hours')) * 3600 + int(req.POST.get('duration-minutes')) * 60 + int(req.POST.get('duration-seconds')),
 
-        audio_url=req.POST.get('audio-url'),
-        audio_size=int(req.POST.get('audio-url-size')),
-        audio_type=req.POST.get('audio-url-type'),
+            audio_url=req.POST.get('audio-url'),
+            audio_size=int(req.POST.get('audio-url-size')),
+            audio_type=req.POST.get('audio-url-type'),
 
-        image_url=req.POST.get('iamge-url'),
+            image_url=req.POST.get('iamge-url'),
 
-        copyright=req.POST.get('copyright'),
-        license=req.POST.get('license')
-    )
-    ep.save()
+            copyright=req.POST.get('copyright'),
+            license=req.POST.get('license'))
+        ep.save()
+    except Exception:
+        return  _pmrender(req, 'dashboard/new_episode.html', {'podcast': pod, 'default': req.POST})
     return redirect('/dashboard/podcast/%s' % pod.slug)
 
 
 @login_required
 def get_upload_url(req, podcast_slug, type):
     if type not in ['audio', 'image']:
-        return Http404()
+        return Http404('Type not recognized')
 
-    pod = get_object_or_404(Podcast, slug=podcast_slug, owner=req.user)
     extension = 'mp3' if type == 'audio' else 'jpg'
-    basepath = 'podcasts/%s/%s/' % (pod.id, type)
+
+    if podcast_slug != '$none':
+        pod = get_object_or_404(Podcast, slug=podcast_slug, owner=req.user)
+        basepath = 'podcasts/%s/%s/' % (pod.id, type)
+    else:
+        basepath = 'podcasts/covers/'
     path = '%s%s.%s' % (basepath, str(uuid.uuid4()), extension)
 
     mime_type = req.GET.get('type')

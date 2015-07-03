@@ -5,45 +5,79 @@
 <form action="?" method="post">
   <label>
     <span>Title</span>
-    <input type="text" name="title" placeholder="Episode 1 - Best one ever" required maxlength="1024">
+    <input type="text"
+      name="title"
+      placeholder="Episode 1 - Best one ever"
+      required
+      maxlength="1024"
+      value="{{ default.get('title') }}"
+      class="width-full">
   </label>
   <label>
     <span>Subtitle</span>
-    <input type="text" name="subtitle" placeholder="You'll never believe it" maxlength="1024">
+    <input type="text"
+      name="subtitle"
+      placeholder="You'll never believe it"
+      maxlength="1024"
+      value="{{ default.get('subtitle') }}"
+      class="width-full">
   </label>
   <label>
     <span>Publish On</span>
-    <input type="datetime-local" name="publish" required>
+    <input type="datetime-local"
+      name="publish"
+      required
+      value="{{ default.get('publish') }}">
   </label>
   <label>
     <span>Episode Description</span>
-    <textarea name="description" id="description-field"></textarea>
+    <textarea name="description" id="description-field">{{ default.get('description') }}</textarea>
   </label>
   <label>
     <span>Image</span>
-    <div class="upload-placeholder" data-accept="image/*" data-name="image-url" data-type="image" data-podcast="{{ podcast.slug }}"></div>
+    <div class="upload-placeholder"
+      data-accept="image/*"
+      data-name="image-url"
+      data-type="image"
+      data-podcast="{{ podcast.slug }}"></div>
   </label>
 
   <hr>
 
   <label>
     <span>Mp3 File</span>
-    <div class="upload-placeholder" data-accept="audio/*" data-name="audio-url" data-type="audio" data-podcast="{{ podcast.slug }}"></div>
+    <div class="upload-placeholder"
+      data-accept="audio/*"
+      data-name="audio-url"
+      data-type="audio"
+      data-podcast="{{ podcast.slug }}"></div>
   </label>
   <label class="duration-control">
     <span>Duration</span>
-    <input type="number" class="duration-hours" value="0" name="duration-hours">:<input type="number" class="duration-minutes" name="duration-minutes">:<input type="number" class="duration-seconds" name="duration-seconds">
+    <input type="number" class="duration-hours" name="duration-hours" value="{{ default.get('duration-hours', '0') }}">:
+    <input type="number" class="duration-minutes" name="duration-minutes" value="{{ default.get('duration-minutes') }}">:
+    <input type="number" class="duration-seconds" name="duration-seconds" value="{{ default.get('duration-seconds') }}">
   </label>
 
   <hr>
 
   <label>
     <span>Copyright</span>
-    <input type="text" name="copyright" maxlength="1024" value={{ podcast.copyright }} placeholder="Copyright 2015 Foo Bar Inc." required>
+    <input type="text"
+      name="copyright"
+      maxlength="1024"
+      value={{ default.get('copyright', podcast.copyright) }}
+      placeholder="Copyright 2015 Foo Bar Inc."
+      required>
   </label>
   <label>
     <span>License</span>
-    <input type="text" name="license" maxlength="1024" placeholder="Creative Commons 4.0" required>
+    <input type="text"
+      name="license"
+      maxlength="1024"
+      placeholder="Creative Commons 4.0"
+      required
+      value="{{ default.get('license') }}">
   </label>
 
   <menu class="toolbar">
@@ -57,6 +91,7 @@
 
 {% block after_content %}
 <script src="/static/js/react-0.13.3.js"></script>
+<script src="/static/js/nicEdit.js"></script>
 <script src="/static/js/ui-uploader.js"></script>
 <script>
 nicEditors.allTextAreas();
