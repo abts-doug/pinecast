@@ -1,1 +1,1 @@
-web: gunicorn licenseforge.wsgi
+web: gunicorn podmaster-host.wsgi
