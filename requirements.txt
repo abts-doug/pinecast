@@ -1,2 +1,4 @@
 -r ./requirements-dev.txt
+
+django-postgrespool==0.3.0
 psycopg2==2.5.1

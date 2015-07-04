@@ -2,8 +2,14 @@ Django==1.8.2
 Jinja2==2.7.3
 MarkupSafe==0.23
 PyYAML==3.11
-dj-database-url==0.3.0
 requests==2.7.0
 ua-parser==0.3.6
 user-agents==0.3.2
 wsgiref==0.1.2
+
+dj-database-url==0.3.0
+dj-static==0.0.6
+gunicorn==19.3.0
+pystache==0.5.4
+static==1.1.1
+static3==0.6.1
