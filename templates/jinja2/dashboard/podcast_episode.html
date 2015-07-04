@@ -11,6 +11,10 @@
     <strong>{{ analytics.total_listens }}</strong>
     <span>Total Listens</span>
   </div>
+  <div class="total-listens">
+    <strong><time datetime="{{ episode.publish }}" title="{{ episode.publish }}">{{ episode.publish.strftime('%Y-%m-%d') }}</time></strong>
+    <span>{{'Published' if is_published else 'Pending'}}</span>
+  </div>
 </div>
 
 <menu class="toolbar">
