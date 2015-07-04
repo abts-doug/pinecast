@@ -17,12 +17,12 @@
 </div>
 
 <menu class="toolbar">
-  <li><a class="btn" href="{{ url('new_episode', kwargs={'podcast_slug': podcast.slug})}}">New Episode</a></li>
-  <li><a class="btn" target="_blank" href="{{ url('feed', kwargs={'podcast_slug': podcast.slug})}}">RSS Feed</a></li>
-  <li><a class="btn btn-danger" href="/dashboard/podcast/{{ podcast.slug }}/delete">Delete Podcast</a></li>
+  <li><a class="btn" href="{{ url('new_episode', kwargs={'podcast_slug': podcast.slug}) }}">New Episode</a></li>
+  <li><a class="btn" target="_blank" href="{{ url('feed', kwargs={'podcast_slug': podcast.slug}) }}">RSS Feed</a></li>
+  <li><a class="btn btn-danger" href="{{ url('delete_podcast', kwargs={'podcast_slug': podcast.slug}) }}">Delete Podcast</a></li>
 </menu>
 
-<div class="feed-url-box">
+<div class="url-box">
   <input type="url"
     readonly
     value="http://host.podmaster.io{{ url('feed', kwargs={'podcast_slug': podcast.slug}) }}"

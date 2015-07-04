@@ -13,8 +13,13 @@ def query(collection, q):
     return req.json()
 
 
-def total_listens(podcast):
-    data = query('listen', {'select': {'episode': 'count'}})
+def total_listens(podcast, episode_id=None):
+    q = {'select': {'episode': 'count'}}
+    if episode_id:
+        q['filter'] = {
+            'episode': {'eq': episode_id},
+        }
+    data = query('listen', q)
     return data['results'][0]['episode']
 
 

@@ -11,15 +11,15 @@
     <nav class="sidebar">
         {% block sidebar %}
             <ul>
-                <li><a href="/dashboard">Dashboard</a></li>
-                <li><a href="/logout">Sign Out</a></li>
+                <li><a href="{{ url('dashboard') }}">Dashboard</a></li>
+                <li><a href="{{ url('logout') }}">Sign Out</a></li>
             </ul>
             {% if podcasts %}
                 <strong>Podcasts</strong>
                 <ul>
                     {% for p in podcasts %}
                         <li>
-                            <a href="/dashboard/podcast/{{ p.slug }}">{{ p.name }}</a>
+                            <a href="{{ url('podcast_dashboard', kwargs={'podcast_slug': p.slug}) }}">{{ p.name }}</a>
                         </li>
                     {% endfor %}
                 </ul>

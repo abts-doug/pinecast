@@ -148,6 +148,23 @@ def podcast_new_ep(req, podcast_slug):
 
 
 @login_required
+def podcast_episode(req, podcast_slug, episode_id):
+    pod = get_object_or_404(Podcast, slug=podcast_slug, owner=req.user)
+    ep = get_object_or_404(PodcastEpisode, id=episode_id, podcast=pod)
+
+    data = {
+        'podcast': pod,
+        'episode': ep,
+        'analytics': {
+            'total_listens': analytics_query.total_listens(pod, str(ep.id)),
+            # 'total_listens_this_week': analytics_query.total_listens_this_week(pod),
+            # 'subscribers': analytics_query.total_subscribers(pod),
+        },
+    }
+    return _pmrender(req, 'dashboard/podcast_episode.html', data)
+
+
+@login_required
 def slug_available(req):
     try:
         Podcast.objects.get(slug=req.GET.get('slug'))

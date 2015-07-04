@@ -1,0 +1,32 @@
+{% extends "dashboard_base.html" %}
+{% block dashboard_body %}
+<div class="breadcrumb">
+  <a href="{{ url('podcast_dashboard', kwargs={'podcast_slug': podcast.slug}) }}">&laquo; Back to {{ podcast.name }}</a>
+</div>
+<h1>{{ episode.title }}</h1>
+<h2>{{ episode.subtitle }}</h2>
+
+<div class="chunky-row">
+  <div class="total-listens">
+    <strong>{{ analytics.total_listens }}</strong>
+    <span>Total Listens</span>
+  </div>
+</div>
+
+<menu class="toolbar">
+  <li><a class="btn" href="">Edit Episode</a></li>
+  <li><a class="btn btn-danger" href="">Delete Episode</a></li>
+</menu>
+
+<div class="url-box">
+  <input type="url"
+    readonly
+    value="http://host.podmaster.io{{ url('listen', kwargs={'episode_id': str(episode.id)}) }}"
+    class="width-full">
+</div>
+
+<div class="chunky">
+  {{ episode.description|safe }}
+</div>
+
+{% endblock %}
