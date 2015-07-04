@@ -3,32 +3,56 @@
 <h1>{{ podcast.name }}</h1>
 <div class="chunky-row">
   <div class="total-listens">
-    <strong>123</strong>
+    <strong>{{ analytics.total_listens }}</strong>
     <span>Total Listens</span>
   </div>
   <div class="this-week">
-    <strong>123</strong>
+    <strong>{{ analytics.total_listens_this_week }}</strong>
     <span>Listens This Week</span>
   </div>
   <div class="total-subscribers">
-    <strong>123</strong>
+    <strong>{{ analytics.subscribers }}</strong>
     <span>Subscribers</span>
   </div>
 </div>
 
 <menu class="toolbar">
-  <li><a class="btn" href="/dashboard/podcast/{{ podcast.slug }}/new_episode">New Episode</a></li>
+  <li><a class="btn" href="{{ url('new_episode', kwargs={'podcast_slug': podcast.slug})}}">New Episode</a></li>
+  <li><a class="btn" target="_blank" href="{{ url('feed', kwargs={'podcast_slug': podcast.slug})}}">RSS Feed</a></li>
   <li><a class="btn btn-danger" href="/dashboard/podcast/{{ podcast.slug }}/delete">Delete Podcast</a></li>
 </menu>
 
-<ul class="chunky">
-  {% for ep in episodes %}
-    <li>
-      <strong><a href="/dashboard/podcast/{{ podcast.slug }}/episode/{{ ep.id }}">{{ ep.title }}</a></strong>
-      <p>{{ ep.subtitle }}</p>
-      <p>{{ ep.description }}</p>
-    </li>
-  {% endfor %}
-</ul>
+<div class="feed-url-box">
+  <input type="url"
+    readonly
+    value="http://host.podmaster.io{{ url('feed', kwargs={'podcast_slug': podcast.slug}) }}"
+    class="width-full">
+</div>
+
+{% if episodes %}
+  <table>
+    <thead>
+      <tr>
+        <th class="primary">Episode Name</th>
+        <th>Subtitle</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for ep in episodes %}
+        <tr>
+          <td class="primary">
+            <a href="/dashboard/podcast/{{ podcast.slug }}/episode/{{ ep.id }}">{{ ep.title }}</a>
+          </td>
+          <td>{{ ep.subtitle }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <div class="episode-empty-state empty-state">
+    You haven't uploaded any episodes yet.<br>
+    <a class="btn" href="{{ url('new_episode', kwargs={'podcast_slug': podcast.slug})}}">Upload One Now</a>
+  </div>
+{% endif %}
 
 {% endblock %}

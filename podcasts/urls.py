@@ -14,6 +14,6 @@ urlpatterns = [
     url(r'^services/slug_available$', views.slug_available, name='slug_available'),
     url(r'^services/getUploadURL/(?P<podcast_slug>([\w-]+|\$none))/(?P<type>[\w]+)$', views.get_upload_url, name='get_upload_url'),
 
-    url(r'^listen/(?P<episode_id>[\w]+)', views.listen, name='listen'),
-    url(r'^feed/(?P<podcast_slug>[\w-]+)$', views.feed),
+    url(r'^listen/(?P<episode_id>[\w-]+)', views.listen, name='listen'),
+    url(r'^feed/(?P<podcast_slug>[\w-]+)$', views.feed, name='feed'),
 ]

@@ -19,6 +19,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 
 import analytics.analyze as analyze
 import analytics.log as analytics_log
+import analytics.query as analytics_query
 from .models import Podcast, PodcastEpisode
 
 
@@ -70,6 +71,11 @@ def podcast_dashboard(req, podcast_slug):
     data = {
         'podcast': pod,
         'episodes': pod.podcastepisode_set.order_by('-publish'),
+        'analytics': {
+            'total_listens': analytics_query.total_listens(pod),
+            'total_listens_this_week': analytics_query.total_listens_this_week(pod),
+            'subscribers': analytics_query.total_subscribers(pod),
+        },
     }
     return _pmrender(req, 'dashboard/podcast.html', data)
 
@@ -189,10 +195,12 @@ def listen(req, episode_id):
     ep = get_object_or_404(PodcastEpisode, id=episode_id)
     if not analyze.is_bot(req):
         browser, device, os = analyze.get_device_type(req)
-        write('listen', {
-            'podcast': ep.podcast.id,
-            'episode': ep.id,
+        analytics_log.write('listen', {
+            'podcast': unicode(ep.podcast.id),
+            'episode': unicode(ep.id),
             'profile': {
+                'ip': analyze.get_request_ip(req),
+                'ua': req.META.get('HTTP_USER_AGENT'),
                 'browser': browser,
                 'device': device,
                 'os': os,
@@ -206,22 +214,22 @@ def feed(req, podcast_slug):
     pod = get_object_or_404(Podcast, slug=podcast_slug)
 
     items = []
-    for ep in pod.podcastepisode_set.filter(publish__lt=datetime.now()):
+    for ep in pod.podcastepisode_set.filter(publish__lt=datetime.datetime.now()):
         duration = datetime.timedelta(seconds=ep.duration)
         items.append('\n'.join([
             '<item>',
                 '<title>%s</title>' % escape(ep.title),
                 '<description><![CDATA[%s]]></description>' % ep.description,
-                '<link>/listen/%s</link>' % escape(ep.id),
+                '<link>/listen/%s</link>' % escape(str(ep.id)),
                 '<guid isPermaLink="false">http://almostbetter.net/guid/%s</guid>' % escape(str(ep.id)),
                 '<pubDate>%s</pubDate>' % formatdate(time.mktime(ep.publish.timetuple())),
                 '<itunes:author>%s</itunes:author>' % escape(pod.author_name),
                 '<itunes:subtitle>%s</itunes:subtitle>' % escape(ep.subtitle),
                 '<itunes:summary><![CDATA[%s]]></itunes:summary>' % ep.description,
-                '<itunes:image href="%s" />' % quoteattr(ep.image_url),
+                '<itunes:image href=%s />' % quoteattr(ep.image_url),
                 '<itunes:duration>%s</itunes:duration>' % escape(str(duration)),
-                '<enclosure url="/listen/%s" length="%s" type="%s" />' % (
-                    quoteattr(ep.id), quoteattr(ep.audio_size), quoteattr(ep.audio_type)),
+                '<enclosure url="/listen/%s" length=%s type=%s />' % (
+                    quoteattr(str(ep.id))[1:-1], quoteattr(str(ep.audio_size)), quoteattr(ep.audio_type)),
             '</item>',
         ]))
 
@@ -242,7 +250,7 @@ def feed(req, podcast_slug):
                 '<itunes:email>%s</itunes:email>' % escape(pod.owner.email),
             '</itunes:owner>',
             '<itunes:explicit>%s</itunes:explicit>' % ('yes' if pod.is_explicit else 'no'),
-            '<itunes:image href="%s" />' % quoteattr(pod.cover_image),
+            '<itunes:image href=%s />' % quoteattr(pod.cover_image),
             '\n'.join(items),
         '</channel>',
         '</rss>',
@@ -250,9 +258,12 @@ def feed(req, podcast_slug):
 
     if not analyze.is_bot(req):
         browser, device, os = analyze.get_device_type(req)
-        write('subscribe', {
-            'podcast': ep.podcast.id,
+        analytics_log.write('subscribe', {
+            'id': analyze.get_request_hash(req),
+            'podcast': unicode(pod.id),
             'profile': {
+                'ip': analyze.get_request_ip(req),
+                'ua': req.META.get('HTTP_USER_AGENT'),
                 'browser': browser,
                 'device': device,
                 'os': os,

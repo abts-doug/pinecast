@@ -1,14 +1,25 @@
+import json
+
 import requests
 from django.conf import settings
 
 
 def write(collection, blob):
+    if 'profile' in blob and 'ip' in blob['profile']:
+        blob['profile']['country'] = _get_country(blob['profile']['ip'])
     _post(collection, blob)
 
 
 def _post(collection, payload):
-    return requests.post(
+    posted = requests.post(
         'https://api.getconnect.io/events/%s' % collection,
-        data=payload,
+        data=json.dumps(payload),
         headers={'X-Project-Id': settings.GETCONNECT_IO_PID,
                  'X-Api-Key': settings.GETCONNECT_IO_PUSH_KEY})
+    return posted
+
+def _get_country(ip):
+    if ip == '127.0.0.1':
+        return 'US'
+    res = requests.get('http://www.telize.com/geoip/%s' % ip)
+    return res.json()['country_code']
