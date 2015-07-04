@@ -1,1 +1,1 @@
-web: gunicorn podmaster-host.wsgi --log-file -
+web: gunicorn podmaster.wsgi --log-file -
