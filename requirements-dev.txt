@@ -8,8 +8,5 @@ user-agents==0.3.2
 wsgiref==0.1.2
 
 dj-database-url==0.3.0
-dj-static==0.0.6
 gunicorn==19.3.0
-pystache==0.5.4
-static==1.1.1
-static3==0.6.1
+whitenoise==2.0.2

@@ -17,7 +17,11 @@
       <span>Password</span>
       <input type="password" name="password">
     </label>
-    <button type="submit">Sign In</button>
+    <menu class="toolbar">
+      <li>
+        <button type="submit">Sign In</button>
+      </li>
+    </menu>
     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
   </form>
 </div>
