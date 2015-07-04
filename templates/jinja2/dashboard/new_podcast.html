@@ -27,8 +27,9 @@
       required
       maxlength="64"
       pattern="[\w-]+"
-      class="width-full"
+      class="slug-field width-full"
       value="{{ default.get('slug') }}">
+    <div class="url-availability"></div>
   </label>
   <label>
     <span>Subtitle</span>
@@ -40,7 +41,7 @@
   </label>
   <label>
     <span>Description</span>
-    <textarea name="description" id="description-field">{{ default.get('description') }}</textarea>
+    <textarea name="description">{{ default.get('description') }}</textarea>
   </label>
   <label>
     <input type="checkbox" name="is_explicit" value="true" {{ 'checked' if default.get('is_explicit') == 'true' }}>
@@ -96,5 +97,44 @@
 <script src="/static/js/ui-uploader.js"></script>
 <script>
 nicEditors.allTextAreas();
+
+(function() {
+  var slugField = document.querySelector('.slug-field');
+  var urlAvail = document.querySelector('.url-availability');
+  
+  var slugDebounce;
+  var slugXHR;
+
+  slugField.addEventListener('input', function() {
+    if (slugDebounce) clearTimeout(slugDebounce);
+    if (slugXHR) slugXHR.abort();
+    if (!slugField.validity.valid) {
+      urlAvail.textContent = urlAvail.innerText = '';
+      urlAvail.className = 'url-availability';
+      return;
+    }
+    slugDebounce = setTimeout(validateSlug, 500);
+  });
+
+  function validateSlug() {
+    var xhr = new XMLHttpRequest();
+    xhr.onload = function() {
+      slugXHR = null;
+      var parsed = JSON.parse(xhr.responseText);
+      if (parsed.valid) {
+        urlAvail.textContent = urlAvail.innerText = '"' + slugField.value + '" is available!';
+        urlAvail.className = 'url-availability is-available';
+      } else {
+        urlAvail.textContent = urlAvail.innerText = '"' + slugField.value + '" is unavailable';
+        urlAvail.className = 'url-availability is-unavailable';
+      }
+    };
+    xhr.open('get', '/services/slug_available?slug=' + encodeURIComponent(slugField.value), true);
+    xhr.send();
+    slugXHR = xhr;
+  }
+
+}());
+
 </script>
 {% endblock %}

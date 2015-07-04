@@ -1,12 +1,6 @@
 {% extends "dashboard_base.html" %}
 {% block dashboard_body %}
 
-<menu class="toolbar">
-  <li>
-    <a class="btn" href="{{ url('new_podcast') }}">New Podcast</a>
-  </li>
-</menu>
-
 <ul class="chunky dashboard-podcasts">
   {% for p in podcasts %}
     <li>
@@ -15,5 +9,18 @@
       <p>{{ p.description|safe }}</p>
     </li>
   {% endfor %}
+  <li class="empty-state">
+    <a href="{{ url('new_podcast') }}">
+      <i>&plus;</i>
+      <span>
+        {% if podcasts %}
+          Create a new podcast
+        {% else %}
+          Create your first podcast
+        {% endif %}
+      </span>
+    </a>
+  </li>
 </ul>
+
 {% endblock %}

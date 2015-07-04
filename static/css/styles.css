@@ -184,6 +184,34 @@ ul.chunky li,
     padding: 15px;
 }
 
+ul.chunky .empty-state {
+    background: transparent;
+    line-height: 2em;
+    padding: 0;
+    text-align: center;
+}
+ul.chunky .empty-state a {
+    border: 2px dashed #999;
+    border-radius: 10px;
+    display: block;
+    padding: 70px 0;
+    transition: border-color 0.2s;
+}
+ul.chunky .empty-state a:hover {
+    border-color: #222;
+    text-decoration: none;
+}
+ul.chunky .empty-state a:hover span {
+    text-decoration: underline;
+}
+ul.chunky .empty-state i {
+    display: block;
+    font-size: 50px;
+    font-style: normal;
+    margin: 20px 0;
+}
+
+
 .chunky-row {
     display: flex;
 }
@@ -269,4 +297,27 @@ menu li {
     font-weight: bold;
     margin: 10px;
     padding: 20px;
+}
+
+.nicEdit-main {
+    background: #fff;
+}
+
+
+.url-availability {
+    transition: background-color 0.2s, border-color 0.2s;
+}
+.url-availability.is-available {
+    background: #2ecc71;
+    border: 1px solid #29b664;
+    border-radius: 3px;
+    color: #fff;
+    padding: 10px;
+}
+.url-availability.is-unavailable {
+    background: #e74c3c;
+    border: 1px solid #c0392b;
+    border-radius: 3px;
+    color: #fff;
+    padding: 10px;
 }

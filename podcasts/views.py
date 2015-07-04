@@ -142,6 +142,15 @@ def podcast_new_ep(req, podcast_slug):
 
 
 @login_required
+def slug_available(req):
+    try:
+        Podcast.objects.get(slug=req.GET.get('slug'))
+        return HttpResponse(json.dumps({'valid': False}), content_type='application/json')
+    except Podcast.DoesNotExist:
+        return HttpResponse(json.dumps({'valid': True}), content_type='application/json')
+
+
+@login_required
 def get_upload_url(req, podcast_slug, type):
     if type not in ['audio', 'image']:
         return Http404('Type not recognized')
