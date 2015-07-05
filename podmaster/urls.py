@@ -5,6 +5,7 @@ from django.shortcuts import redirect
 
 import analytics.urls
 import dashboard.urls
+from . import views
 from podcasts.urls import urlpatterns as podcast_urlpatterns
 
 
@@ -16,4 +17,6 @@ urlpatterns = podcast_urlpatterns + [
     url(r'^analytics/', include(analytics.urls)),
     url(r'^dashboard/', include(dashboard.urls)),
     url(r'^admin/', include(admin.site.urls)),
+
+    url(r'^services/deploy_complete$', views.deploy_complete),
 ]
