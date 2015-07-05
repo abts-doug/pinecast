@@ -19,4 +19,5 @@ urlpatterns = podcast_urlpatterns + [
     url(r'^admin/', include(admin.site.urls)),
 
     url(r'^services/deploy_complete$', views.deploy_complete),
+    url(r'^services/log$', views.log),
 ]

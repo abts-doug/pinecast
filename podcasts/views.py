@@ -41,7 +41,7 @@ def listen(req, episode_id):
         analytics_log.write('listen', {
             'podcast': unicode(ep.podcast.id),
             'episode': unicode(ep.id),
-            'source': 'rss' if req.GET.get('rss') else 'embed' if req.GET.get('embed') else 'direct',
+            'source': 'embed' if req.GET.get('embed') else 'direct',
             'profile': {
                 'ip': analyze.get_request_ip(req),
                 'ua': req.META.get('HTTP_USER_AGENT'),
@@ -60,7 +60,8 @@ def feed(req, podcast_slug):
     items = []
     for ep in pod.podcastepisode_set.filter(publish__lt=datetime.datetime.now()):
         duration = datetime.timedelta(seconds=ep.duration)
-        ep_url = 'http://host.podmaster.io/listen/%s?rss=true' % str(ep.id)
+        # ep_url = 'http://host.podmaster.io/listen/%s?rss=true' % str(ep.id)
+        ep_url = ep.audio_url + '?x-source=rss&x-episode=%s' % str(ep.id)
         items.append('\n'.join([
             '<item>',
                 '<title>%s</title>' % escape(ep.title),
