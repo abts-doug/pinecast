@@ -63,6 +63,12 @@ def podcast_dashboard(req, podcast_slug):
 
 
 @login_required
+def podcast_geochart(req, podcast_slug):
+    pod = get_object_or_404(Podcast, slug=podcast_slug, owner=req.user)
+    return _pmrender(req, 'dashboard/podcast_geochart.html', {'podcast': pod})
+
+
+@login_required
 def new_podcast(req):
     if not req.POST:
         return _pmrender(req, 'dashboard/new_podcast.html')

@@ -19,6 +19,46 @@ def json_response(*args, **jr_kwargs):
 
 
 @login_required
+@json_response(safe=False)
+def podcast_subscriber_locations(req):
+    pod = get_object_or_404(Podcast, slug=req.GET.get('podcast'), owner=req.user)
+
+    res = query.query(
+        'subscribe',
+        {'select': {'podcast': 'count'},
+         'timeframe': 'yesterday',
+         'groupBy': 'profile.country',
+         'filter': {'podcast': {'eq': unicode(pod.id)}}})
+
+    return [['Country', 'Subscribers']] + [
+        [p['profile.country'], p['podcast']] for
+        p in
+        res['results'] if
+        p['profile.country']
+    ]
+
+
+@login_required
+@json_response(safe=False)
+def podcast_listener_locations(req):
+    pod = get_object_or_404(Podcast, slug=req.GET.get('podcast'), owner=req.user)
+
+    res = query.query(
+        'listen',
+        {'select': {'podcast': 'count'},
+         'timeframe': 'this_month',
+         'groupBy': 'profile.country',
+         'filter': {'podcast': {'eq': unicode(pod.id)}}})
+
+    return [['Country', 'Subscribers']] + [
+        [p['profile.country'], p['podcast']] for
+        p in
+        res['results'] if
+        p['profile.country']
+    ]
+
+
+@login_required
 @json_response
 def podcast_subscriber_history(req):
     pod = get_object_or_404(Podcast, slug=req.GET.get('podcast'), owner=req.user)

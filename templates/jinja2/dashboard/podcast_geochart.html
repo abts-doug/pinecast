@@ -1,0 +1,25 @@
+{% extends 'dashboard_base.html' %}
+{% block dashboard_body %}
+<div class="breadcrumb">
+  <a href="{{ url('podcast_dashboard', kwargs={'podcast_slug': podcast.slug}) }}">&laquo; Back to {{ podcast.name }}</a>
+</div>
+
+<h1>Geo Data for {{ podcast.name }}</h1>
+
+<div class="chunky geo-chart-placeholder"
+  data-type="podcast-subscriber-locations"
+  data-podcast="{{ podcast.slug }}"
+  data-title="Subscriber locations this month"></div>
+
+<div class="chunky geo-chart-placeholder"
+  data-type="podcast-listener-locations"
+  data-podcast="{{ podcast.slug }}"
+  data-title="Listener locations this month"></div>
+
+{% endblock %}
+
+{% block after_content %}
+<script src="https://www.google.com/jsapi"></script>
+<script src="/static/js/react-0.13.3.js"></script>
+<script src="/static/js/ui-geo-chart.js"></script>
+{% endblock %}
