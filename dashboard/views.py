@@ -116,6 +116,30 @@ def new_podcast(req):
 
 
 @login_required
+def edit_podcast(req, podcast_slug):
+    pod = get_object_or_404(Podcast, slug=podcast_slug, owner=req.user)
+
+    if not req.POST:
+        return _pmrender(req, 'dashboard/edit_podcast.html', {'podcast': pod})
+
+    try:
+        pod.slug = req.POST.get('slug')
+        pod.name = req.POST.get('name')
+        pod.subtitle = req.POST.get('subtitle')
+        pod.description = req.POST.get('description')
+        pod.is_explicit = req.POST.get('is_explicit', 'false') == 'true'
+        pod.homepage = req.POST.get('homepage')
+        pod.language = req.POST.get('language')
+        pod.copyright = req.POST.get('copyright')
+        pod.author_name = req.POST.get('author_name')
+        pod.save()
+    except Exception as e:
+        print e
+        return _pmrender(req, 'dashboard/edit_podcast.html', {'podcast': pod, 'default': req.POST, 'error': True})
+    return redirect('podcast_dashboard', podcast_slug=pod.slug)
+
+
+@login_required
 def delete_podcast(req, podcast_slug):
     pod = get_object_or_404(Podcast, slug=podcast_slug, owner=req.user)
     if not req.POST:

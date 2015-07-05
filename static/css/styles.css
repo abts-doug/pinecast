@@ -311,6 +311,23 @@ menu li {
     margin: 10px;
     padding: 20px;
 }
+.warning {
+    background: #e67e22;
+    border-radius: 4px;
+    color: #fff;
+    font-weight: bold;
+    margin: 10px;
+    padding: 20px;
+}
+
+.slug-warning {
+    display: none;
+    margin: 10px 0;
+}
+.is-available + .slug-warning,
+.is-unavailable + .slug-warning {
+    display: block;
+}
 
 .nicEdit-main {
     background: #fff;

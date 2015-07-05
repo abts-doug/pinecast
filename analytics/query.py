@@ -15,25 +15,38 @@ def query(collection, q):
 
 
 def total_listens(podcast, episode_id=None):
-    q = {'select': {'episode': 'count'}}
+    q = {'select': {'episode': 'count'},
+         'filter': {'podcast': {'eq': unicode(podcast.id)}}}
     if episode_id:
-        q['filter'] = {'episode': {'eq': episode_id}}
+        q['filter']['episode'] = {'eq': episode_id}
     data = query('listen', q)
     return data['results'][0]['episode']
 
 
 def total_listens_this_week(podcast):
-    data = query('listen', {'select': {'episode': 'count'}, 'timeframe': 'this_week'})
+    data = query(
+        'listen',
+        {'select': {'episode': 'count'},
+         'timeframe': 'this_week',
+         'filter': {'podcast': {'eq': unicode(podcast.id)}}})
     return data['results'][0]['episode']
 
 
 def total_subscribers(podcast):
-    data = query('subscribe', {'select': {'podcast': 'count'}, 'timeframe': 'today'})
+    data = query(
+        'subscribe',
+        {'select': {'podcast': 'count'},
+         'timeframe': 'today',
+         'filter': {'podcast': {'eq': unicode(podcast.id)}}})
     return data['results'][0]['podcast']
 
 
 def get_top_episodes(podcast_id):
-    data = query('listen', {'select': {'podcast': 'count'}, 'groupBy': 'episode'})
+    data = query(
+        'listen',
+        {'select': {'podcast': 'count'},
+         'groupBy': 'episode',
+         'filter': {'podcast': {'eq': podcast_id}}})
     return data['results']
 
 

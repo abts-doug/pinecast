@@ -1,6 +1,6 @@
 {% extends 'dashboard_base.html' %}
 {% block dashboard_body %}
-<h1>New Podcast</h1>
+<h1>Edit {{ podcast.name }}</h1>
 
 {% if error %}
 <div class="error">
@@ -17,7 +17,7 @@
       required
       maxlength="256"
       class="width-full"
-      value="{{ default.get('name') }}">
+      value="{{ default.get('name', podcast.name) }}">
   </label>
   <label>
     <span>Slug</span>
@@ -28,8 +28,11 @@
       maxlength="64"
       pattern="[\w-]+"
       class="slug-field width-full"
-      value="{{ default.get('slug') }}">
+      value="{{ default.get('slug', podcast.slug) }}">
     <div class="url-availability"></div>
+    <div class="warning slug-warning">
+      WARNING! Changing your slug will change your RSS feed URL. You will lose all of your subscribers.
+    </div>
   </label>
   <label>
     <span>Subtitle</span>
@@ -37,23 +40,23 @@
       name="subtitle"
       placeholder="You'll never believe it"
       maxlength="512"
-      value="{{ default.get('subtitle') }}">
+      value="{{ default.get('subtitle', podcast.subtitle) }}">
   </label>
   <label>
     <span>Description</span>
-    <textarea name="description">{{ default.get('description')|safe }}</textarea>
+    <textarea name="description">{{ default.get('description', podcast.description)|safe }}</textarea>
   </label>
   <label>
-    <input type="checkbox" name="is_explicit" value="true" {{ 'checked' if default.get('is_explicit') == 'true' }}>
+    <input type="checkbox" name="is_explicit" value="true" {{ 'checked' if default.get('is_explicit', 'true' if podcast.is_explicit else 'false') == 'true' }}>
     <span>Explicit?</span>
   </label>
   <label>
     <span>Homepage</span>
-    <input type="url" name="homepage" placeholder="https://my-great-podcast.biz" required value="{{ default.get('homepage') }}">
+    <input type="url" name="homepage" placeholder="https://my-great-podcast.biz" required value="{{ default.get('homepage', podcast.homepage) }}">
   </label>
   <label>
     <span>Language</span>
-    <input type="text" name="language" placeholder="en-US" required maxlength="16" value="{{ default.get('language', 'en-US')}}">
+    <input type="text" name="language" placeholder="en-US" required maxlength="16" value="{{ default.get('language', podcast.language)}}">
   </label>
   <label>
     <span>Copyright</span>
@@ -62,7 +65,7 @@
       maxlength="1024"
       placeholder="Copyright 2015 Foo Bar Inc."
       required
-      value="{{ default.get('copyright') }}">
+      value="{{ default.get('copyright', podcast.copyright) }}">
   </label>
   <label>
     <span>Author</span>
@@ -71,19 +74,11 @@
       maxlength="1024"
       placeholder="Jane Doe"
       required
-      value="{{ default.get('author_name') }}">
+      value="{{ default.get('author_name', podcast.author_name) }}">
   </label>
-  <div class="label">
-    <span>Image</span>
-    <div class="upload-placeholder"
-      data-accept="image/*"
-      data-name="image-url"
-      data-type="image"
-      data-podcast="$none"></div>
-  </div>
 
   <menu class="toolbar">
-    <li><button type="submit">Save Podcast</button></li>
+    <li><button type="submit">Save</button></li>
   </menu>
 
   <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
@@ -92,9 +87,7 @@
 {% endblock %}
 
 {% block after_content %}
-<script src="/static/js/react-0.13.3.js"></script>
 <script src="/static/js/nicEdit.js"></script>
-<script src="/static/js/ui-uploader.js"></script>
 <script>
 nicEditors.allTextAreas();
 

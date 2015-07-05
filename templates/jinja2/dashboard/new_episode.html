@@ -37,7 +37,7 @@
   </label>
   <label>
     <span>Episode Description</span>
-    <textarea name="description" id="description-field">{{ default.get('description') }}</textarea>
+    <textarea name="description" id="description-field">{{ default.get('description')|safe }}</textarea>
   </label>
   <label>
     <span>Image</span>
