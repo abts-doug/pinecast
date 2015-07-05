@@ -279,6 +279,9 @@ menu li {
     padding: 20px;
 }
 
+.uploaded-file-card b {
+    display: block;
+}
 .uploaded-file-card dt {
     clear: left;
     display: inline-block;

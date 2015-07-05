@@ -20,13 +20,18 @@ function getFields(podcastSlug, type, fileType, fileName, cb) {
 var Uploader = React.createClass({
 
     getInitialState: function() {
+        var hasDef = !!this.props.defURL;
         return {
             uploading: false,
-            uploaded: false,
+            uploaded: hasDef,
             progress: 0,
-            fileObj: null,
+            fileObj: !hasDef ? null : {
+                name: this.props.defName,
+                size: this.props.defSize,
+                type: this.props.defType,
+            },
 
-            finalContentURL: null,
+            finalContentURL: hasDef ? this.props.defURL : null,
         };
     },
 
@@ -56,16 +61,17 @@ var Uploader = React.createClass({
                     className: 'uploaded-file-card'
                 },
                 React.createElement('b', null, 'File Uploaded'),
-                React.createElement(
-                    'dl',
-                    null,
-                    React.createElement('dt', null, 'Size:'),
-                    React.createElement('dd', null, this.state.fileObj.size),
-                    React.createElement('dt', null, 'Name:'),
-                    React.createElement('dd', null, this.state.fileObj.name),
-                    React.createElement('dt', null, 'Type:'),
-                    React.createElement('dd', null, this.state.fileObj.type)
-                ),
+                (this.state.fileObj.size || this.state.fileObj.name || this.state.fileObj.type ?
+                    React.createElement(
+                        'dl',
+                        null,
+                        React.createElement('dt', null, 'Size:'),
+                        React.createElement('dd', null, this.state.fileObj.size || 'Unknown'),
+                        React.createElement('dt', null, 'Name:'),
+                        React.createElement('dd', null, this.state.fileObj.name || 'Unknown'),
+                        React.createElement('dt', null, 'Type:'),
+                        React.createElement('dd', null, this.state.fileObj.type || 'Unknown')
+                    ) : null),
                 React.createElement(
                     'button',
                     {
@@ -86,8 +92,16 @@ var Uploader = React.createClass({
                     'input',
                     {
                         type: 'hidden',
+                        name: this.props.name + '-name',
+                        value: this.state.fileObj.name || '',
+                    }
+                ),
+                React.createElement(
+                    'input',
+                    {
+                        type: 'hidden',
                         name: this.props.name + '-size',
-                        value: this.state.fileObj.size,
+                        value: this.state.fileObj.size || '',
                     }
                 ),
                 React.createElement(
@@ -95,7 +109,7 @@ var Uploader = React.createClass({
                     {
                         type: 'hidden',
                         name: this.props.name + '-type',
-                        value: this.state.fileObj.type,
+                        value: this.state.fileObj.type || '',
                     }
                 )
             );
@@ -194,6 +208,11 @@ Array.prototype.slice.call(fields).forEach(function(field) {
             name: field.getAttribute('data-name'),
             podcast: field.getAttribute('data-podcast'),
             type: field.getAttribute('data-type'),
+
+            defURL: field.getAttribute('data-default-url'),
+            defName: field.getAttribute('data-default-name'),
+            defSize: field.getAttribute('data-default-size'),
+            defType: field.getAttribute('data-default-type'),
         }),
         field
     );

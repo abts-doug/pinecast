@@ -79,6 +79,18 @@
       required
       value="{{ default.get('author_name', podcast.author_name) }}">
   </label>
+  <div class="label">
+    <span>Image</span>
+    <div class="upload-placeholder"
+      data-default-url="{{ default.get('image-url', podcast.cover_image) }}"
+      data-default-size="{{ default.get('image-url-size') }}"
+      data-default-name="{{ default.get('image-url-name') }}"
+      data-default-type="{{ default.get('image-url-type') }}"
+      data-accept="image/*"
+      data-name="image-url"
+      data-type="image"
+      data-podcast="$none"></div>
+  </div>
 
   <menu class="toolbar">
     <li><button type="submit">Save</button></li>
@@ -90,7 +102,9 @@
 {% endblock %}
 
 {% block after_content %}
+<script src="https://fb.me/react-0.13.3.js"></script>
 <script src="/static/js/nicEdit.js"></script>
+<script src="/static/js/ui-uploader.js"></script>
 <script>
 nicEditors.allTextAreas();
 

@@ -132,6 +132,7 @@ def edit_podcast(req, podcast_slug):
         pod.language = req.POST.get('language')
         pod.copyright = req.POST.get('copyright')
         pod.author_name = req.POST.get('author_name')
+        pod.cover_image = req.POST.get('image-url')
         pod.save()
     except Exception as e:
         return _pmrender(req, 'dashboard/edit_podcast.html', {'podcast': pod, 'default': req.POST, 'error': True})
@@ -210,7 +211,7 @@ def edit_podcast_episode(req, podcast_slug, episode_id):
         # ep.audio_size = int(req.POST.get('audio-url-size'))
         # ep.audio_type = req.POST.get('audio-url-type')
 
-        # ep.image_url = req.POST.get('image-url')
+        ep.image_url = req.POST.get('image-url')
 
         ep.copyright = req.POST.get('copyright')
         ep.license = req.POST.get('license')
