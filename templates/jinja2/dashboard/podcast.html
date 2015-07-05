@@ -26,7 +26,8 @@
 
 <menu class="toolbar">
   <li><a class="btn" href="{{ url('new_episode', kwargs={'podcast_slug': podcast.slug}) }}">New Episode</a></li>
-  <li><a class="btn" href="{{ url('podcast_geo', kwargs={'podcast_slug': podcast.slug}) }}">Geo Data</a></li>
+  <li><a class="btn" href="{{ url('podcast_geo', kwargs={'podcast_slug': podcast.slug}) }}">Geo</a></li>
+  <li><a class="btn" href="{{ url('top_episodes', kwargs={'podcast_slug': podcast.slug}) }}">Top Episodes</a></li>
   <li><a class="btn" target="_blank" href="{{ url('feed', kwargs={'podcast_slug': podcast.slug}) }}">RSS Feed</a></li>
   <li><a class="btn btn-danger" href="{{ url('delete_podcast', kwargs={'podcast_slug': podcast.slug}) }}">Delete Podcast</a></li>
 </menu>

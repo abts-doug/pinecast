@@ -69,6 +69,29 @@ def podcast_geochart(req, podcast_slug):
 
 
 @login_required
+def podcast_top_episodes(req, podcast_slug):
+    pod = get_object_or_404(Podcast, slug=podcast_slug, owner=req.user)
+
+    top_ep_data = analytics_query.get_top_episodes(unicode(pod.id))
+    ep_ids = [x['episode'] for x in top_ep_data]
+    episodes = PodcastEpisode.objects.filter(id__in=ep_ids)
+    mapped = {unicode(ep.id): ep for ep in episodes}
+
+    # This step is necessary to filter out deleted episodes
+    top_ep_data = [x for x in top_ep_data if x['episode'] in mapped]
+
+    # Sort the top episode data descending
+    top_ep_data = reversed(sorted(top_ep_data, key=lambda x: x['podcast']))
+
+    data = {
+        'podcast': pod,
+        'episodes': mapped,
+        'top_ep_data': top_ep_data,
+    }
+    return _pmrender(req, 'dashboard/podcast_top_episodes.html', data)
+
+
+@login_required
 def new_podcast(req):
     if not req.POST:
         return _pmrender(req, 'dashboard/new_podcast.html')

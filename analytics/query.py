@@ -32,6 +32,11 @@ def total_subscribers(podcast):
     return data['results'][0]['podcast']
 
 
+def get_top_episodes(podcast_id):
+    data = query('listen', {'select': {'podcast': 'count'}, 'groupBy': 'episode'})
+    return data['results']
+
+
 
 class Interval(object):
     def __init__(self, data):

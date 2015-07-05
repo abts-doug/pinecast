@@ -1,0 +1,35 @@
+{% extends 'dashboard_base.html' %}
+{% block dashboard_body %}
+<div class="breadcrumb">
+  <a href="{{ url('podcast_dashboard', kwargs={'podcast_slug': podcast.slug}) }}">&laquo; Back to {{ podcast.name }}</a>
+</div>
+
+<h1>Top Episodes for {{ podcast.name }}</h1>
+
+{% if podcast.podcastepisode_set.count() %}
+  <table>
+    <thead>
+      <tr>
+        <th class="primary">Episode Name</th>
+        <th>Listens</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for ep in top_ep_data %}
+        <tr>
+          <td class="primary">
+            <a href="{{ url('podcast_episode', kwargs={'podcast_slug': podcast.slug, 'episode_id': ep.episode}) }}">{{ episodes[ep.episode].title }}</a>
+          </td>
+          <td>{{ ep.podcast }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+{% else %}
+  <div class="episode-empty-state empty-state">
+    You haven't uploaded any episodes yet.
+  </div>
+{% endif %}
+
+{% endblock %}
