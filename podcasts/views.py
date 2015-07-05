@@ -60,11 +60,12 @@ def feed(req, podcast_slug):
     items = []
     for ep in pod.podcastepisode_set.filter(publish__lt=datetime.datetime.now()):
         duration = datetime.timedelta(seconds=ep.duration)
+        ep_url = 'http://host.podmaster.io/listen/%s?rss=true' % str(ep.id)
         items.append('\n'.join([
             '<item>',
                 '<title>%s</title>' % escape(ep.title),
                 '<description><![CDATA[%s]]></description>' % ep.description,
-                '<link>/listen/%s?rss=true</link>' % escape(str(ep.id)),
+                '<link>%s</link>' % escape(ep_url),
                 '<guid isPermaLink="false">http://almostbetter.net/guid/%s</guid>' % escape(str(ep.id)),
                 '<pubDate>%s</pubDate>' % formatdate(time.mktime(ep.publish.timetuple())),
                 '<itunes:author>%s</itunes:author>' % escape(pod.author_name),
@@ -72,8 +73,8 @@ def feed(req, podcast_slug):
                 '<itunes:summary><![CDATA[%s]]></itunes:summary>' % ep.description,
                 '<itunes:image href=%s />' % quoteattr(ep.image_url),
                 '<itunes:duration>%s</itunes:duration>' % escape(str(duration)),
-                '<enclosure url="/listen/%s?rss=true" length=%s type=%s />' % (
-                    quoteattr(str(ep.id))[1:-1], quoteattr(str(ep.audio_size)), quoteattr(ep.audio_type)),
+                '<enclosure url=%s length=%s type=%s />' % (
+                    quoteattr(ep_url), quoteattr(str(ep.audio_size)), quoteattr(ep.audio_type)),
             '</item>',
         ]))
 
