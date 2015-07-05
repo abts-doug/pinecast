@@ -18,7 +18,7 @@
 </div>
 
 <menu class="toolbar">
-  <li><a class="btn" href="">Edit Episode</a></li>
+  <li><a class="btn" href="{{ url('edit_podcast_episode', kwargs={'podcast_slug': podcast.slug, 'episode_id': str(episode.id)}) }}">Edit Episode</a></li>
   <li><a class="btn btn-danger" href="{{ url('delete_podcast_episode', kwargs={'podcast_slug': podcast.slug, 'episode_id': str(episode.id)}) }}">Delete Episode</a></li>
 </menu>
 

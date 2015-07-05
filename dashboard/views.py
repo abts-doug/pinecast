@@ -134,7 +134,6 @@ def edit_podcast(req, podcast_slug):
         pod.author_name = req.POST.get('author_name')
         pod.save()
     except Exception as e:
-        print e
         return _pmrender(req, 'dashboard/edit_podcast.html', {'podcast': pod, 'default': req.POST, 'error': True})
     return redirect('podcast_dashboard', podcast_slug=pod.slug)
 
@@ -190,6 +189,35 @@ def podcast_new_ep(req, podcast_slug):
     except Exception as e:
         return  _pmrender(req, 'dashboard/new_episode.html', {'podcast': pod, 'default': req.POST, 'error': True})
     return redirect('podcast_dashboard', podcast_slug=pod.slug)
+
+
+@login_required
+def edit_podcast_episode(req, podcast_slug, episode_id):
+    pod = get_object_or_404(Podcast, slug=podcast_slug, owner=req.user)
+    ep = get_object_or_404(PodcastEpisode, id=episode_id, podcast=pod)
+
+    if not req.POST:
+        return _pmrender(req, 'dashboard/edit_episode.html', {'podcast': pod, 'episode': ep})
+
+    try:
+        ep.title = req.POST.get('title')
+        ep.subtitle = req.POST.get('subtitle')
+        ep.publish = datetime.datetime.strptime(req.POST.get('publish'), '%Y-%m-%dT%H:%M') # 2015-07-09T12:00
+        ep.description = req.POST.get('description')
+        ep.duration = int(req.POST.get('duration-hours')) * 3600 + int(req.POST.get('duration-minutes')) * 60 + int(req.POST.get('duration-seconds'))
+
+        # ep.audio_url = req.POST.get('audio-url')
+        # ep.audio_size = int(req.POST.get('audio-url-size'))
+        # ep.audio_type = req.POST.get('audio-url-type')
+
+        # ep.image_url = req.POST.get('image-url')
+
+        ep.copyright = req.POST.get('copyright')
+        ep.license = req.POST.get('license')
+        ep.save()
+    except Exception as e:
+        return  _pmrender(req, 'dashboard/new_episode.html', {'podcast': pod, 'episode': ep, 'default': req.POST, 'error': True})
+    return redirect('podcast_episode', podcast_slug=pod.slug, episode_id=str(ep.id))
 
 
 @login_required

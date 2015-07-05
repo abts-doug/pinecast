@@ -1,5 +1,8 @@
 {% extends 'dashboard_base.html' %}
 {% block dashboard_body %}
+<div class="breadcrumb">
+  <a href="{{ url('podcast_dashboard', kwargs={'podcast_slug': podcast.slug}) }}">&laquo; Back to {{ podcast.name }}</a>
+</div>
 <h1>Edit {{ podcast.name }}</h1>
 
 {% if error %}

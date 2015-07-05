@@ -1,9 +1,9 @@
 {% extends 'dashboard_base.html' %}
 {% block dashboard_body %}
 <div class="breadcrumb">
-  <a href="{{ url('podcast_dashboard', kwargs={'podcast_slug': podcast.slug}) }}">&laquo; Back to {{ podcast.name }}</a>
+  <a href="{{ url('podcast_episode', kwargs={'podcast_slug': podcast.slug, 'episode_id': str(episode.id)}) }}">&laquo; Back to {{ episode.title }}</a>
 </div>
-<h1>New Episode: {{ podcast.name }}</h1>
+<h1>Edit {{ episode.title }}</h1>
 
 {% if error %}
 <div class="error">
@@ -19,7 +19,7 @@
       placeholder="Episode 1 - Best one ever"
       required
       maxlength="1024"
-      value="{{ default.get('title') }}"
+      value="{{ default.get('title', episode.title) }}"
       class="width-full">
   </label>
   <label>
@@ -28,7 +28,7 @@
       name="subtitle"
       placeholder="You'll never believe it"
       maxlength="1024"
-      value="{{ default.get('subtitle') }}"
+      value="{{ default.get('subtitle', episode.subtitle) }}"
       class="width-full">
   </label>
   <label>
@@ -36,36 +36,20 @@
     <input type="datetime-local"
       name="publish"
       required
-      value="{{ default.get('publish') }}">
+      value="{{ default.get('publish', episode.publish.strftime('%Y-%m-%dT%H:%M')) }}">
   </label>
   <label>
     <span>Episode Description</span>
-    <textarea name="description" id="description-field">{{ default.get('description')|safe }}</textarea>
-  </label>
-  <label>
-    <span>Image</span>
-    <div class="upload-placeholder"
-      data-accept="image/*"
-      data-name="image-url"
-      data-type="image"
-      data-podcast="{{ podcast.slug }}"></div>
+    <textarea name="description" id="description-field">{{ default.get('description', episode.description)|safe }}</textarea>
   </label>
 
   <hr>
 
-  <label>
-    <span>Mp3 File</span>
-    <div class="upload-placeholder"
-      data-accept="audio/*"
-      data-name="audio-url"
-      data-type="audio"
-      data-podcast="{{ podcast.slug }}"></div>
-  </label>
   <label class="duration-control">
     <span>Duration</span>
-    <input type="number" class="duration-hours" name="duration-hours" value="{{ default.get('duration-hours', '0') }}">:
-    <input type="number" class="duration-minutes" name="duration-minutes" value="{{ default.get('duration-minutes') }}">:
-    <input type="number" class="duration-seconds" name="duration-seconds" value="{{ default.get('duration-seconds') }}">
+    <input type="number" class="duration-hours" name="duration-hours" value="{{ default.get('duration-hours', (episode.duration / 3600)|round(1, 'floor')|int) }}">:
+    <input type="number" class="duration-minutes" name="duration-minutes" value="{{ default.get('duration-minutes', (episode.duration % 3600 / 60)|round(1, 'floor')|int) }}">:
+    <input type="number" class="duration-seconds" name="duration-seconds" value="{{ default.get('duration-seconds', (episode.duration % 60)|round(1, 'floor')|int) }}">
   </label>
 
   <hr>
@@ -75,7 +59,7 @@
     <input type="text"
       name="copyright"
       maxlength="1024"
-      value={{ default.get('copyright', podcast.copyright) }}
+      value={{ default.get('copyright', episode.copyright) }}
       placeholder="Copyright 2015 Foo Bar Inc."
       required>
   </label>
@@ -86,11 +70,11 @@
       maxlength="1024"
       placeholder="Creative Commons 4.0"
       required
-      value="{{ default.get('license') }}">
+      value="{{ default.get('license', episode.license) }}">
   </label>
 
   <menu class="toolbar">
-    <li><button type="submit">Save New Episode</button></li>
+    <li><button type="submit">Save</button></li>
   </menu>
 
   <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
@@ -99,9 +83,7 @@
 {% endblock %}
 
 {% block after_content %}
-<script src="/static/js/react-0.13.3.js"></script>
 <script src="/static/js/nicEdit.js"></script>
-<script src="/static/js/ui-uploader.js"></script>
 <script>
 nicEditors.allTextAreas();
 </script>
