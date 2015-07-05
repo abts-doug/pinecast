@@ -237,6 +237,10 @@ div.chunky {
     font-size: 20px;
 }
 
+.chunky-row > .chunkier {
+    flex-grow: 2;
+}
+
 menu {
     margin: 10px 0;
     padding: 0 10px;
@@ -368,4 +372,34 @@ table .primary {
     line-height: 3em;
     padding: 70px 0;
     text-align: center;
+}
+
+
+dl {
+    line-height: 2em;
+    margin: 0;
+}
+dl dt {
+    display: inline-block;
+    font-weight: bold;
+    margin: 0;
+    width: 20%;
+}
+dl dd {
+    display: inline-block;
+    margin: 0;
+    width: 80%;
+}
+
+abbr {
+    border-bottom: 1px dotted #ccc;
+}
+
+
+span.chart-title {
+    display: block;
+    font-size: 13px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    text-align: left;
 }

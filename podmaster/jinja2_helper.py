@@ -10,5 +10,10 @@ def environment(**options):
         'static': staticfiles_storage.url,
         'str': str,
         'url': reverse,
+        'plural': plural,
     })
     return env
+
+
+def plural(sing, plur, n):
+    return plur if n != 1 else sing

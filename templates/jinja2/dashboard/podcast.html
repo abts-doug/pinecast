@@ -1,4 +1,4 @@
-{% extends "dashboard_base.html" %}
+{% extends 'dashboard_base.html' %}
 {% block dashboard_body %}
 <h1>{{ podcast.name }}</h1>
 <div class="chunky-row">
@@ -12,9 +12,17 @@
   </div>
   <div class="total-subscribers">
     <strong>{{ analytics.subscribers }}</strong>
-    <span>Subscribers</span>
+    <span>{{ plural('Subscriber', 'Subscribers', analytics.subscribers) }}</span>
   </div>
 </div>
+
+{% if episodes %}
+  <div class="chunky chart-placeholder"
+    data-type="podcast-subscriber-history"
+    data-podcast="{{ podcast.slug }}"
+    data-title="Subscriber history"
+    data-chart-type="line"></div>
+{% endif %}
 
 <menu class="toolbar">
   <li><a class="btn" href="{{ url('new_episode', kwargs={'podcast_slug': podcast.slug}) }}">New Episode</a></li>
@@ -48,6 +56,21 @@
       {% endfor %}
     </tbody>
   </table>
+
+  <div class="chunky-row">
+    <div class="chart-placeholder"
+      data-type="podcast-listen-breakdown"
+      data-podcast="{{ podcast.slug }}"
+      data-title="Breakdown of listens by source"
+      data-chart-type="pie"></div>
+
+    <div class="chunkier chart-placeholder"
+      data-type="podcast-listen-history"
+      data-podcast="{{ podcast.slug }}"
+      data-title="Listen history"
+      data-chart-type="line"></div>
+  </div>
+
 {% else %}
   <div class="episode-empty-state empty-state">
     You haven't uploaded any episodes yet.<br>
@@ -55,4 +78,10 @@
   </div>
 {% endif %}
 
+{% endblock %}
+
+{% block after_content %}
+<script src="/static/js/react-0.13.3.js"></script>
+<script src="/static/js/chartjs-1.0.2.min.js"></script>
+<script src="/static/js/ui-chart.js"></script>
 {% endblock %}

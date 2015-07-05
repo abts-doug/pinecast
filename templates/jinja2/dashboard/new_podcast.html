@@ -1,4 +1,4 @@
-{% extends "dashboard_base.html" %}
+{% extends 'dashboard_base.html' %}
 {% block dashboard_body %}
 <h1>New Podcast</h1>
 
@@ -129,7 +129,7 @@ nicEditors.allTextAreas();
         urlAvail.className = 'url-availability is-unavailable';
       }
     };
-    xhr.open('get', '/services/slug_available?slug=' + encodeURIComponent(slugField.value), true);
+    xhr.open('get', '/dashboard/services/slug_available?slug=' + encodeURIComponent(slugField.value), true);
     xhr.send();
     slugXHR = xhr;
   }

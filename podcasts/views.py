@@ -36,11 +36,12 @@ def home(req):
 
 def listen(req, episode_id):
     ep = get_object_or_404(PodcastEpisode, id=episode_id)
-    if not analyze.is_bot(req):
+    if not analyze.is_bot(req) and req.method == 'GET':
         browser, device, os = analyze.get_device_type(req)
         analytics_log.write('listen', {
             'podcast': unicode(ep.podcast.id),
             'episode': unicode(ep.id),
+            'source': 'rss' if req.GET.get('rss') else 'embed' if req.GET.get('embed') else 'direct',
             'profile': {
                 'ip': analyze.get_request_ip(req),
                 'ua': req.META.get('HTTP_USER_AGENT'),
@@ -63,7 +64,7 @@ def feed(req, podcast_slug):
             '<item>',
                 '<title>%s</title>' % escape(ep.title),
                 '<description><![CDATA[%s]]></description>' % ep.description,
-                '<link>/listen/%s</link>' % escape(str(ep.id)),
+                '<link>/listen/%s?rss=true</link>' % escape(str(ep.id)),
                 '<guid isPermaLink="false">http://almostbetter.net/guid/%s</guid>' % escape(str(ep.id)),
                 '<pubDate>%s</pubDate>' % formatdate(time.mktime(ep.publish.timetuple())),
                 '<itunes:author>%s</itunes:author>' % escape(pod.author_name),
@@ -71,7 +72,7 @@ def feed(req, podcast_slug):
                 '<itunes:summary><![CDATA[%s]]></itunes:summary>' % ep.description,
                 '<itunes:image href=%s />' % quoteattr(ep.image_url),
                 '<itunes:duration>%s</itunes:duration>' % escape(str(duration)),
-                '<enclosure url="/listen/%s" length=%s type=%s />' % (
+                '<enclosure url="/listen/%s?rss=true" length=%s type=%s />' % (
                     quoteattr(str(ep.id))[1:-1], quoteattr(str(ep.audio_size)), quoteattr(ep.audio_type)),
             '</item>',
         ]))

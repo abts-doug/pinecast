@@ -10,6 +10,7 @@ import uuid
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.http import Http404, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
 import analytics.query as analytics_query
@@ -19,17 +20,26 @@ from podcasts.models import Podcast, PodcastEpisode
 def _pmrender(req, template, data=None):
     data = data or {}
 
-    class defd(collections.defaultdict):
+    class DefaultEmptyDict(collections.defaultdict):
+        def __init__(self):
+            super(DefaultEmptyDict, self).__init__(lambda: '')
+
         def get(self, _, d=''):
             return d
 
-    data.setdefault('default', defd(lambda: ''))
+    data.setdefault('default', DefaultEmptyDict())
     if not req.user.is_anonymous():
         data.setdefault('user', req.user)
         data.setdefault('podcasts', req.user.podcast_set.all())
         user_avatar = hashlib.md5(req.user.email).hexdigest()
         data.setdefault('user_avatar', 'http://www.gravatar.com/avatar/%s?s=40' % user_avatar)
     return render(req, template, data)
+
+def json_response(view):
+    def func(*args, **kwargs):
+        resp = view(*args, **kwargs)
+        return JsonResponse(resp)
+    return func
 
 
 @login_required
@@ -88,6 +98,16 @@ def delete_podcast(req, podcast_slug):
     pod.delete()
     return redirect('dashboard')
 
+@login_required
+def delete_podcast_episode(req, podcast_slug, episode_id):
+    pod = get_object_or_404(Podcast, slug=podcast_slug, owner=req.user)
+    ep = get_object_or_404(PodcastEpisode, podcast=pod, id=episode_id)
+    if not req.POST:
+        return _pmrender(req, 'dashboard/delete_episode.html', {'podcast': pod, 'episode': ep})
+
+    ep.delete()
+    return redirect('podcast_dashboard', podcast_slug=pod.slug)
+
 
 @login_required
 def podcast_new_ep(req, podcast_slug):
@@ -132,33 +152,34 @@ def podcast_episode(req, podcast_slug, episode_id):
             # 'total_listens_this_week': analytics_query.total_listens_this_week(pod),
             # 'subscribers': analytics_query.total_subscribers(pod),
         },
-        'is_published': ep.publish <= datetime.datetime.now(),
     }
     return _pmrender(req, 'dashboard/podcast_episode.html', data)
 
 
 @login_required
+@json_response
 def slug_available(req):
     try:
         Podcast.objects.get(slug=req.GET.get('slug'))
-        return HttpResponse(json.dumps({'valid': False}), content_type='application/json')
+        return {'valid': False}
     except Podcast.DoesNotExist:
-        return HttpResponse(json.dumps({'valid': True}), content_type='application/json')
+        return {'valid': True}
 
 
 @login_required
+@json_response
 def get_upload_url(req, podcast_slug, type):
     if type not in ['audio', 'image']:
         return Http404('Type not recognized')
 
-    extension = 'mp3' if type == 'audio' else 'jpg'
+    # TODO: Add validation around the 'type' and 'name' GET params
 
     if podcast_slug != '$none':
         pod = get_object_or_404(Podcast, slug=podcast_slug, owner=req.user)
         basepath = 'podcasts/%s/%s/' % (pod.id, type)
     else:
         basepath = 'podcasts/covers/'
-    path = '%s%s.%s' % (basepath, str(uuid.uuid4()), extension)
+    path = '%s%s/%s' % (basepath, str(uuid.uuid4()), req.GET.get('name'))
 
     mime_type = req.GET.get('type')
 
@@ -170,12 +191,10 @@ def get_upload_url(req, podcast_slug, type):
     signature = urllib.quote_plus(signature.strip())
 
     destination_url = 'http://%s.s3.amazonaws.com/%s' % (settings.S3_BUCKET, path)
-    data = {
+    return {
         'url': '%s?AWSAccessKeyId=%s&Expires=%s&Signature=%s' % (destination_url, settings.S3_ACCESS_ID, expires, signature),
         'headers': {
             'x-amz-acl': 'public-read',
         },
         'destination_url': destination_url,
     }
-
-    return HttpResponse(json.dumps(data), content_type='application/json')

@@ -10,7 +10,7 @@ function getFields(podcastSlug, type, fileType, fileName, cb) {
     };
     xhr.open(
         'get',
-        '/services/getUploadURL/' + encodeURIComponent(podcastSlug) + '/' + encodeURIComponent(type) +
+        '/dashboard/services/getUploadURL/' + encodeURIComponent(podcastSlug) + '/' + encodeURIComponent(type) +
             '?type=' + encodeURIComponent(fileType) + '&name=' + encodeURIComponent(fileName),
         true
     );

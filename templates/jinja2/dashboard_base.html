@@ -1,7 +1,7 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 {% block content %}
 <header>
-     <h1>PodMaster Hosting</h1>
+     <h1>PodMaster Hosting{% block title %}{% endblock %}</h1>
      <div class="user-card">
          <img src="{{ user_avatar }}" alt="">
          <span>{{ user.username }}</span>

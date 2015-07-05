@@ -48,7 +48,7 @@ class PodcastEpisode(models.Model):
     license = models.CharField(max_length=1024)
 
     def is_published(self):
-        return self.publish <= datetime.now()
+        return self.publish <= datetime.datetime.now()
 
     def __unicode__(self):
         return '%s - %s' % (self.title, self.subtitle)
