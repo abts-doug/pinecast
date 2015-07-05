@@ -45,6 +45,18 @@
 
   <hr>
 
+  <div class="label">
+    <span>Mp3 File</span>
+    <div class="upload-placeholder"
+      data-default-url="{{ default.get('audio-url', episode.audio_url) }}"
+      data-default-size="{{ default.get('audio-url-size', episode.audio_size) }}"
+      data-default-name="{{ default.get('audio-url-name', 'Previously uploaded episode audio') }}"
+      data-default-type="{{ default.get('audio-url-type', episode.audio_type) }}"
+      data-accept="audio/*"
+      data-name="audio-url"
+      data-type="audio"
+      data-podcast="{{ podcast.slug }}"></div>
+  </div>
   <label class="duration-control">
     <span>Duration</span>
     <input type="number" class="duration-hours" name="duration-hours" value="{{ default.get('duration-hours', (episode.duration / 3600)|round(1, 'floor')|int) }}">:
@@ -95,7 +107,9 @@
 {% endblock %}
 
 {% block after_content %}
+<script src="https://fb.me/react-0.13.3.js"></script>
 <script src="/static/js/nicEdit.js"></script>
+<script src="/static/js/ui-uploader.js"></script>
 <script>
 nicEditors.allTextAreas();
 </script>

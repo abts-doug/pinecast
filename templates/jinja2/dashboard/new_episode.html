@@ -42,7 +42,7 @@
     <span>Episode Description</span>
     <textarea name="description" id="description-field">{{ default.get('description')|safe }}</textarea>
   </label>
-  <label>
+  <div class="label">
     <span>Image</span>
     <div class="upload-placeholder"
       data-default-url="{{ default.get('image-url', podcast.cover_image) }}"
@@ -53,18 +53,22 @@
       data-name="image-url"
       data-type="image"
       data-podcast="{{ podcast.slug }}"></div>
-  </label>
+  </div>
 
   <hr>
 
-  <label>
+  <div class="label">
     <span>Mp3 File</span>
     <div class="upload-placeholder"
+      data-default-url="{{ default.get('audio-url') }}"
+      data-default-size="{{ default.get('audio-url-size') }}"
+      data-default-name="{{ default.get('audio-url-name') }}"
+      data-default-type="{{ default.get('audio-url-type') }}"
       data-accept="audio/*"
       data-name="audio-url"
       data-type="audio"
       data-podcast="{{ podcast.slug }}"></div>
-  </label>
+  </div>
   <label class="duration-control">
     <span>Duration</span>
     <input type="number" class="duration-hours" name="duration-hours" value="{{ default.get('duration-hours', '0') }}">:

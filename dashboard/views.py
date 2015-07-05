@@ -207,9 +207,9 @@ def edit_podcast_episode(req, podcast_slug, episode_id):
         ep.description = req.POST.get('description')
         ep.duration = int(req.POST.get('duration-hours')) * 3600 + int(req.POST.get('duration-minutes')) * 60 + int(req.POST.get('duration-seconds'))
 
-        # ep.audio_url = req.POST.get('audio-url')
-        # ep.audio_size = int(req.POST.get('audio-url-size'))
-        # ep.audio_type = req.POST.get('audio-url-type')
+        ep.audio_url = req.POST.get('audio-url')
+        ep.audio_size = int(req.POST.get('audio-url-size'))
+        ep.audio_type = req.POST.get('audio-url-type')
 
         ep.image_url = req.POST.get('image-url')
 
@@ -231,8 +231,6 @@ def podcast_episode(req, podcast_slug, episode_id):
         'episode': ep,
         'analytics': {
             'total_listens': analytics_query.total_listens(pod, str(ep.id)),
-            # 'total_listens_this_week': analytics_query.total_listens_this_week(pod),
-            # 'subscribers': analytics_query.total_subscribers(pod),
         },
     }
     return _pmrender(req, 'dashboard/podcast_episode.html', data)
