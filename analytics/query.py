@@ -20,7 +20,7 @@ def total_listens(podcast, episode_id=None):
     if episode_id:
         q['filter']['episode'] = {'eq': episode_id}
     data = query('listen', q)
-    return data['results'][0]['episode']
+    return data['results'][0]['episode'] + podcast.stats_base_listens
 
 
 def total_listens_this_week(podcast):

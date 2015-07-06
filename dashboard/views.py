@@ -14,7 +14,7 @@ from django.http import Http404, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
 import analytics.query as analytics_query
-from podcasts.models import Podcast, PodcastEpisode
+from podcasts.models import CATEGORIES, Podcast, PodcastCategory, PodcastEpisode
 
 
 def _pmrender(req, template, data=None):
@@ -93,8 +93,10 @@ def podcast_top_episodes(req, podcast_slug):
 
 @login_required
 def new_podcast(req):
+    ctx = {'PODCAST_CATEGORIES': json.dumps(list(CATEGORIES))}
+
     if not req.POST:
-        return _pmrender(req, 'dashboard/new_podcast.html')
+        return _pmrender(req, 'dashboard/new_podcast.html', ctx)
 
     try:
         pod = Podcast(
@@ -110,8 +112,13 @@ def new_podcast(req):
             author_name=req.POST.get('author_name'),
             owner=req.user)
         pod.save()
-    except Exception:
-        return _pmrender(req, 'dashboard/new_podcast.html', {'default': req.POST, 'error': True})
+        # TODO: The following line can throw an exception and create a
+        # duplicate podcast if something has gone really wrong
+        pod.set_category_list(req.POST.get('categories'))
+    except Exception as e:
+        print e
+        ctx.update(default=req.POST, error=True)
+        return _pmrender(req, 'dashboard/new_podcast.html', ctx)
     return redirect('podcast_dashboard', podcast_slug=pod.slug)
 
 
@@ -119,8 +126,11 @@ def new_podcast(req):
 def edit_podcast(req, podcast_slug):
     pod = get_object_or_404(Podcast, slug=podcast_slug, owner=req.user)
 
+    ctx = {'podcast': pod,
+           'PODCAST_CATEGORIES': json.dumps(list(CATEGORIES))}
+
     if not req.POST:
-        return _pmrender(req, 'dashboard/edit_podcast.html', {'podcast': pod})
+        return _pmrender(req, 'dashboard/edit_podcast.html', ctx)
 
     try:
         pod.slug = req.POST.get('slug')
@@ -133,9 +143,11 @@ def edit_podcast(req, podcast_slug):
         pod.copyright = req.POST.get('copyright')
         pod.author_name = req.POST.get('author_name')
         pod.cover_image = req.POST.get('image-url')
+        pod.set_category_list(req.POST.get('categories'))
         pod.save()
     except Exception as e:
-        return _pmrender(req, 'dashboard/edit_podcast.html', {'podcast': pod, 'default': req.POST, 'error': True})
+        ctx.update(default=req.POST, error=True)
+        return _pmrender(req, 'dashboard/edit_podcast.html', ctx)
     return redirect('podcast_dashboard', podcast_slug=pod.slug)
 
 
@@ -259,14 +271,18 @@ def get_upload_url(req, podcast_slug, type):
         basepath = 'podcasts/%s/%s/' % (pod.id, type)
     else:
         basepath = 'podcasts/covers/'
-    path = '%s%s/%s' % (basepath, str(uuid.uuid4()), req.GET.get('name'))
+
+    uid = str(uuid.uuid4())
+    path = '%s%s/%s' % (basepath, uid, req.GET.get('name'))
+    encoded_path = '%s%s/%s' % (basepath, uid, urllib.pathname2url(req.GET.get('name')))
 
     mime_type = req.GET.get('type')
 
     expires = int(time.time() + 60 * 60 * 24)
     amz_headers = 'x-amz-acl:public-read'
 
-    string_to_sign = "PUT\n\n%s\n%d\n%s\n/%s/%s" % (mime_type, expires, amz_headers, settings.S3_BUCKET, path)
+    string_to_sign = "PUT\n\n%s\n%d\n%s\n/%s/%s" % (mime_type, expires, amz_headers, settings.S3_BUCKET, encoded_path)
+    print string_to_sign
     signature = base64.encodestring(hmac.new(settings.S3_SECRET_KEY.encode(), string_to_sign.encode('utf8'), hashlib.sha1).digest())
     signature = urllib.quote_plus(signature.strip())
 

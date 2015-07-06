@@ -57,6 +57,9 @@ def listen(req, episode_id):
 def feed(req, podcast_slug):
     pod = get_object_or_404(Podcast, slug=podcast_slug)
 
+    if pod.rss_redirect:
+        return redirect(pod.rss_redirect)
+
     items = []
     for ep in pod.podcastepisode_set.filter(publish__lt=datetime.datetime.now()):
         duration = datetime.timedelta(seconds=ep.duration)
@@ -78,6 +81,25 @@ def feed(req, podcast_slug):
             '</item>',
         ]))
 
+    categories = sorted([c.category for c in pod.podcastcategory_set.all()], key=lambda c: len(c))
+    category_map = {}
+    for cat in categories:
+        spl = cat.split('/')
+        cursor = category_map
+        for i in spl:
+            cursor.setdefault(i, {})
+            cursor = cursor[i]
+
+    def render_cat(c):
+        for k, v in c.items():
+            if not v:
+                yield '<itunes:category text=%s />' % quoteattr(k)
+            else:
+                yield '<itunes:category text=%s>%s</itunes:category>' % (
+                    quoteattr(k), '\n'.join(render_cat(v)))
+
+    category_output = '\n'.join(render_cat(category_map))
+
     content = [
         '<?xml version="1.0" encoding="UTF-8"?>',
         '<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" version="2.0">',
@@ -96,6 +118,7 @@ def feed(req, podcast_slug):
             '</itunes:owner>',
             '<itunes:explicit>%s</itunes:explicit>' % ('yes' if pod.is_explicit else 'no'),
             '<itunes:image href=%s />' % quoteattr(pod.cover_image),
+            category_output,
             '\n'.join(items),
         '</channel>',
         '</rss>',

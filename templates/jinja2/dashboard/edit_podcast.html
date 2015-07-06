@@ -91,6 +91,12 @@
       data-type="image"
       data-podcast="$none"></div>
   </div>
+  <div class="label">
+    <span>Categories</span>
+    <div class="category-placeholder"
+      data-name="categories"
+      data-default-cats="{{ default.get('categories', podcast.get_category_list()) }}"></div>
+  </div>
 
   <menu class="toolbar">
     <li><button type="submit">Save</button></li>
@@ -107,6 +113,8 @@
 <script src="/static/js/ui-uploader.js"></script>
 <script>
 nicEditors.allTextAreas();
+
+window.PODCAST_CATEGORIES = {{ PODCAST_CATEGORIES|safe }};
 
 (function() {
   var slugField = document.querySelector('.slug-field');
@@ -147,4 +155,6 @@ nicEditors.allTextAreas();
 }());
 
 </script>
+{# Must come after the PODCAST_CATEGORIES declaration above #}
+<script src="/static/js/ui-categories.js"></script>
 {% endblock %}
