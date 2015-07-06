@@ -58,7 +58,7 @@ def feed(req, podcast_slug):
     pod = get_object_or_404(Podcast, slug=podcast_slug)
 
     if pod.rss_redirect:
-        return redirect(pod.rss_redirect)
+        return redirect(pod.rss_redirect, permanent=True)
 
     items = []
     for ep in pod.podcastepisode_set.filter(publish__lt=datetime.datetime.now()):

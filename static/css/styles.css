@@ -109,6 +109,10 @@ button:active, .btn:active {
     box-shadow: 0 0 0 rgba(0, 0, 0, 0.4);
 }
 
+button:disabled, .btn:disabled {
+    opacity: 0.4;
+}
+
 .btn-danger {
     background: #e74c3c;
 }
