@@ -17,7 +17,7 @@ exports.handler = function(event, context) {
     var key = record.s3.object.key;
 
     if (key.substr(0, 5) !== 'logs/') {
-        context.succeed('Ignored non-log type');
+        context.succeed('Ignored non-log type: ' + key);
         return;
     }
 
@@ -34,25 +34,29 @@ exports.handler = function(event, context) {
         }
 
         var blobs = [];
-
-        console.log(key, typeof data.Body);
-
-        data.Body.toString().split('\n').forEach(function(line) {
+        
+        var contents = data.Body.toString();
+        console.log('Processing ' + contents.length + 'byte log file...');
+        contents.split(/\n/).forEach(function(line) {
+            if (!line) return;
             var matches = LOG_REGEX.exec(line);
             if (!matches) {
                 console.log('Unparsable line: ' + line);
                 return;
             }
+            // console.log(matches);
             if (matches[7] !== 'REST.GET.OBJECT') return;
-            if (matches[10] !== 200) return;
+            if (matches[10] !== '200') return;
             if (matches[9].indexOf('?x-source=') === -1) return;
-            if (matches[9].indexOf('?x-episode=') === -1) return;
+            if (matches[9].indexOf('&x-episode=') === -1) return;
 
+            console.log(JSON.stringify(matches));
             blobs.push({
                 userAgent: matches[17],
                 ip: matches[4],
                 source: /x-source=(\w+)/.exec(matches[9])[1],
                 episode: /x-episode=([\w-]+)/.exec(matches[9])[1],
+                ts: matches[3],
             });
         });
         data = null;
@@ -66,6 +70,7 @@ exports.handler = function(event, context) {
         var postData = 'payload=' + encodeURIComponent(JSON.stringify(blobs));
         blobs = null;
 
+        console.log('Submitting ' + postData.length + 'byte payload');
         var req = http.request(
             {
                 hostname: 'host.podmaster.io',

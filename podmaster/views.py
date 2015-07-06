@@ -1,3 +1,4 @@
+import datetime
 import json
 
 import requests
@@ -61,8 +62,16 @@ def log(req):
         except PodcastEpisode.DoesNotExist:
             continue
 
+        try:
+            ts = datetime.datetime.strptime(blob.get('ts'), '[%d/%b/%Y:%H:%M:%S %z]')
+        except ValueError:
+            # http://bugs.python.org/issue6641
+            ts = datetime.datetime.strptime(blob.get('ts'), '[%d/%b/%Y:%H:%M:%S +0000]')
+
         browser, device, os = analyze.get_device_type(fr)
-        print 'Logged record of listen for %s' % unicode(ep.id)
+        print 'Logging record of listen for %s' % unicode(ep.id)
+
+        # TODO: Convert this to use the event batch api
         analytics_log.write('listen', {
             'podcast': unicode(ep.podcast.id),
             'episode': unicode(ep.id),
@@ -74,6 +83,8 @@ def log(req):
                 'device': device,
                 'os': os,
             },
+
+            'timestamp': ts.isoformat(),
         })
 
     return HttpResponse(status=204)
