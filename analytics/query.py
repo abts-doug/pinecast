@@ -56,8 +56,7 @@ class Interval(object):
         self.start = self._parse_date(data['interval']['start'])
         self.end = self._parse_date(data['interval']['end'])
 
-        self.payload = data['results'][0]
-        # self._raw_data = data
+        self.payload = data['results'][0] if data['results'] else {}
 
     def _parse_date(self, date):
         # 2015-07-06T00:00:00+00:00
@@ -81,7 +80,7 @@ def process_intervals(intvs, interval_duration, label_maker, pick=None):
             cursor += interval_duration
 
     if pick:
-        values = [(x.payload[pick] if x else 0) for x in values]
+        values = [(x.payload.get(pick, 0) if x else 0) for x in values]
     
     return {'labels': labels, 'dataset': values}
 

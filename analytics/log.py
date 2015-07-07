@@ -16,7 +16,8 @@ def _post(collection, payload):
         data=json.dumps(payload),
         headers={'X-Project-Id': settings.GETCONNECT_IO_PID,
                  'X-Api-Key': settings.GETCONNECT_IO_PUSH_KEY})
-    if posted.status_code != 200:
+    if posted.status_code != 200 and posted.status_code != 409:
+        # 409 is a duplicate ID error, which is expected
         print posted.status_code, posted.text
     return posted
 

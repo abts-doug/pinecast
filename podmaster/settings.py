@@ -85,6 +85,10 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'podmaster.wsgi.application'
 
+ADMINS = [
+    ('basta', 'mattbasta@gmail.com'),
+]
+
 
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
