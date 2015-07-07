@@ -136,7 +136,14 @@ def episode_listen_history(req):
         pick='episode')
 
     return {'labels': out['labels'],
-            'datasets': [{'label': ep.title, 'data': out['dataset']}]}
+            'datasets': [
+                {'label': ep.title,
+                 'data': out['dataset'],
+                 'fillColor': 'transparent',
+                 'strokeColor': '#2980b9',
+                 'pointColor': '#3498db',
+                 'pointStrokeColor': '#fff'}
+            ]}
 
 
 SOURCE_MAP = {
