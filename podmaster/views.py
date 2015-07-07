@@ -52,6 +52,9 @@ def log(req):
     except Exception:
         return HttpResponse(status=400)
 
+
+    listens_to_log = []
+
     for blob in parsed: # TODO: this can throw an exception
         fr = FakeReq(blob)
         if analyze.is_bot(fr):
@@ -72,7 +75,7 @@ def log(req):
         print 'Logging record of listen for %s' % unicode(ep.id)
 
         # TODO: Convert this to use the event batch api
-        analytics_log.write('listen', {
+        listens_to_log.append({
             'podcast': unicode(ep.podcast.id),
             'episode': unicode(ep.id),
             'source': blob.get('source'),
@@ -86,5 +89,7 @@ def log(req):
 
             'timestamp': ts.isoformat(),
         })
+
+    analytics_log.write_many('listen', listens_to_log)
 
     return HttpResponse(status=204)

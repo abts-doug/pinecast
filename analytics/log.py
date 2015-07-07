@@ -7,13 +7,21 @@ from django.conf import settings
 def write(collection, blob):
     if 'profile' in blob and 'ip' in blob['profile']:
         blob['profile']['country'] = _get_country(blob['profile']['ip'])
-    _post(collection, blob)
+    _post('https://api.getconnect.io/events/%s' % collection, json.dumps(blob))
 
 
-def _post(collection, payload):
+def write_many(collection, blobs):
+    # TODO: Convert this to use requests.async
+    for blob in blobs: 
+        if 'profile' in blob and 'ip' in blob['profile']:
+            blob['profile']['country'] = _get_country(blob['profile']['ip'])
+    _post('https://api.getconnect.io/events', json.dumps({collection: blobs}))
+
+
+def _post(url, payload):
     posted = requests.post(
-        'https://api.getconnect.io/events/%s' % collection,
-        data=json.dumps(payload),
+        url,
+        data=payload,
         headers={'X-Project-Id': settings.GETCONNECT_IO_PID,
                  'X-Api-Key': settings.GETCONNECT_IO_PUSH_KEY})
     if posted.status_code != 200 and posted.status_code != 409:
