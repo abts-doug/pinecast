@@ -69,7 +69,7 @@ def feed(req, podcast_slug):
                 '<title>%s</title>' % escape(ep.title),
                 '<description><![CDATA[%s]]></description>' % ep.description,
                 '<link>%s</link>' % escape(ep_url),
-                '<guid isPermaLink="false">http://almostbetter.net/guid/%s</guid>' % escape(str(ep.id)),
+                '<guid isPermaLink="false">http://host.podmaster.io/guid/%s</guid>' % escape(str(ep.id)),
                 '<pubDate>%s</pubDate>' % formatdate(time.mktime(ep.publish.timetuple())),
                 '<itunes:author>%s</itunes:author>' % escape(pod.author_name),
                 '<itunes:subtitle>%s</itunes:subtitle>' % escape(ep.subtitle),
