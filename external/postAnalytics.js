@@ -8,13 +8,14 @@ var s3 = new aws.S3({ apiVersion: '2006-03-01' });
 var LOG_REGEX = /^(.*?)\s(.*?)\s(\[.*?\])\s(.*?)\s(.*?)\s(.*?)\s(.*?)\s(.*?)\s(\".*?\")\s(.*?)\s(.*?)\s(.*?)\s(.*?)\s(.*?)\s(.*?)\s(\".*?\")\s(\".*?\")\s(.*?)$/m;
 
 exports.handler = function(event, context) {
-    console.log('Received event:', JSON.stringify(event, null, 2));
 
     var record = event.Records[0];
 
     // Get the object from the event and show its content type
     var bucket = record.s3.bucket.name;
     var key = record.s3.object.key;
+
+    console.log('Received new log: ' + bucket + '::' + key);
 
     if (key.substr(0, 5) !== 'logs/') {
         context.succeed('Ignored non-log type: ' + key);
@@ -44,13 +45,24 @@ exports.handler = function(event, context) {
                 console.log('Unparsable line: ' + line);
                 return;
             }
-            // console.log(matches);
-            if (matches[7] !== 'REST.GET.OBJECT') return;
-            if (matches[10] !== '200') return;
-            if (matches[9].indexOf('?x-source=') === -1) return;
-            if (matches[9].indexOf('&x-episode=') === -1) return;
 
-            console.log(JSON.stringify(matches));
+            if (matches[7] !== 'REST.GET.OBJECT') {
+                console.warn('Rejected, not REST.GET.OBJECT');
+                return;
+            }
+            if (matches[10] !== '200' && matches[10] !== '206') {
+                console.warn('Rejected, not 200 response');
+                return;
+            }
+            if (matches[9].indexOf('?x-source=') === -1) {
+                console.warn('Rejected, no source parameter');
+                return;
+            }
+            if (matches[9].indexOf('&x-episode=') === -1) {
+                console.warn('Rejected, no episode parameter');
+                return;
+            }
+
             blobs.push({
                 userAgent: matches[17],
                 ip: matches[4],
@@ -71,6 +83,7 @@ exports.handler = function(event, context) {
         blobs = null;
 
         console.log('Submitting ' + postData.length + 'byte payload');
+        console.log(postData);
         var req = http.request(
             {
                 hostname: 'host.podmaster.io',
