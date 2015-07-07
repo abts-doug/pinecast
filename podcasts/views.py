@@ -139,3 +139,8 @@ def feed(req, podcast_slug):
         })
 
     return HttpResponse('\n'.join(content), content_type='application/rss+xml')
+
+
+def player(req, episode_id):
+    ep = get_object_or_404(PodcastEpisode, id=episode_id)
+    return render(req, 'player.html', {'episode': ep})

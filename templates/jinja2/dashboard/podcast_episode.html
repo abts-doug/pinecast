@@ -36,6 +36,8 @@
   data-title="Listen history over one month"
   data-chart-type="line"></div>
 
+<iframe src="/player/{{ str(episode.id) }}" seamless height="60" style="border:0" class="podmaster-embed"></iframe>
+
 <div class="chunky">
   {{ episode.description|safe }}
 </div>
@@ -77,6 +79,11 @@
     data-episode="{{ str(episode.id) }}"
     data-title="Breakdown of listens by source"
     data-chart-type="pie"></div>
+</div>
+
+<div class="chunky">
+  <b>Embed Code</b>
+  <textarea readonly class="embed-textarea"><iframe src="http://host.podmaster.io/player/{{ str(episode.id) }}" seamless height="60" style="border:0" class="podmaster-embed"></iframe></textarea>
 </div>
 
 {% endblock %}

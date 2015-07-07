@@ -1,6 +1,8 @@
+import json
+
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.core.urlresolvers import reverse
-from jinja2 import Environment
+from jinja2 import Environment, evalcontextfilter
 
 
 def environment(**options):
@@ -12,6 +14,7 @@ def environment(**options):
         'url': reverse,
         'plural': plural,
     })
+    env.filters['json'] = json.dumps
     return env
 
 

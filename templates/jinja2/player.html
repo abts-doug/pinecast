@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{{ episode.title }}</title>
+  <style type="text/css">
+  html, body {
+    background: #eee;
+    font-family: Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+  .info-card {
+    font-size: 15px;
+    line-height: 20px;
+    padding: 10px;
+  }
+  .info-card > * {
+    display: block;
+  }
+  .main-body {
+    padding-right: 70px;
+    position: relative;
+  }
+  .main-body > * {
+    z-index: 2;
+  }
+  .main-body .seek-bar {
+    background: rgba(0, 0, 0, 0.1);
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    top: 0;
+    transition: width 0.15s;
+    z-index: 1;
+  }
+  .play-button {
+    -moz-appearance: none;
+    -ms-appearance: none;
+    -webkit-appearance: none;
+    background: #2ecc71;
+    bottom: 0;
+    border: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 70px;
+  }
+  .play-button:hover {
+    background: #27ae60;
+  }
+  .play-button:active {
+    background: #16a085;
+  }
+  </style>
+</head>
+<body>
+<div class="main-body">
+  <div class="info-card">
+    <b>{{ episode.title }}</b>
+    <span>by {{ episode.podcast.author_name }}</span>
+  </div>
+  <button class="play-button">Play</button>
+  <i class="seek-bar"></i>
+</div>
+<script>
+(function() {
+  var button = document.querySelector('.play-button');
+  var bar = document.querySelector('.seek-bar');
+  var audio;
+  function setUpAudio() {
+    if (audio) return;
+    audio = new Audio('/listen/{{ str(episode.id) }}?embed=true');
+    audio.addEventListener('pause', function() {
+      button.className = 'play-button paused';
+      button.textContent = button.innerText = 'Play';
+    });
+    audio.addEventListener('playing', function() {
+      button.className = 'play-button playing';
+      button.textContent = button.innerText = 'Pause';
+    });
+    audio.addEventListener('timeupdate', function() {
+      bar.style.width = (audio.currentTime / audio.duration * 100) + '%';
+    });
+  }
+  button.addEventListener('click', function() {
+    setUpAudio();
+    if (audio.paused) {
+      audio.play();
+    } else {
+      audio.pause();
+    }
+  });
+}());
+</script>
+</body>
+</html>
