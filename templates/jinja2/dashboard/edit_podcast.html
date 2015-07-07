@@ -3,6 +3,11 @@
 <div class="breadcrumb">
   <a href="{{ url('podcast_dashboard', kwargs={'podcast_slug': podcast.slug}) }}">&laquo; Back to {{ podcast.name }}</a>
 </div>
+
+<menu class="toolbar toolbar-right">
+  <li><a class="btn btn-danger" href="{{ url('delete_podcast', kwargs={'podcast_slug': podcast.slug}) }}">Delete Podcast</a></li>
+</menu>
+
 <h1>Edit {{ podcast.name }}</h1>
 
 {% if error %}

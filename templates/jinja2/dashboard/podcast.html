@@ -1,5 +1,11 @@
 {% extends 'dashboard_base.html' %}
 {% block dashboard_body %}
+
+<menu class="toolbar toolbar-right">
+  <li><a class="btn" href="{{ url('new_episode', kwargs={'podcast_slug': podcast.slug}) }}">New Episode</a></li>
+  <li><a class="btn btn-neutral" href="{{ url('edit_podcast', kwargs={'podcast_slug': podcast.slug}) }}">Edit</a></li>
+</menu>
+
 <h1>{{ podcast.name }}</h1>
 <div class="chunky-row">
   <div class="total-listens">
@@ -17,20 +23,19 @@
 </div>
 
 {% if episodes %}
-  <div class="chunky chart-placeholder"
-    data-type="podcast-subscriber-history"
-    data-podcast="{{ podcast.slug }}"
-    data-title="Subscriber history"
-    data-chart-type="line"></div>
+  <div class="chunky">
+    <div class="chart-placeholder"
+      data-type="podcast-subscriber-history"
+      data-podcast="{{ podcast.slug }}"
+      data-title="Subscriber history"
+      data-chart-type="line"></div>
+    <menu class="toolbar">
+      <li><a class="btn" href="{{ url('podcast_geo', kwargs={'podcast_slug': podcast.slug}) }}">Geo</a></li>
+      <li><a class="btn" href="{{ url('top_episodes', kwargs={'podcast_slug': podcast.slug}) }}">Top Episodes</a></li>
+    </menu>
+  </div>
 {% endif %}
 
-<menu class="toolbar">
-  <li><a class="btn" href="{{ url('new_episode', kwargs={'podcast_slug': podcast.slug}) }}">New Episode</a></li>
-  <li><a class="btn" href="{{ url('edit_podcast', kwargs={'podcast_slug': podcast.slug}) }}">Edit</a></li>
-  <li><a class="btn" href="{{ url('podcast_geo', kwargs={'podcast_slug': podcast.slug}) }}">Geo</a></li>
-  <li><a class="btn" href="{{ url('top_episodes', kwargs={'podcast_slug': podcast.slug}) }}">Top Episodes</a></li>
-  <li><a class="btn btn-danger" href="{{ url('delete_podcast', kwargs={'podcast_slug': podcast.slug}) }}">Delete Podcast</a></li>
-</menu>
 
 <div class="url-box">
   <input type="url"

@@ -225,6 +225,7 @@ div.chunky {
 
 
 .chunky-row {
+    clear: right;
     display: flex;
 }
 .chunky-row > * {
@@ -253,6 +254,12 @@ menu li {
     display: inline-block;
     list-style: none;
     margin-right: 20px;
+}
+menu.toolbar-right {
+    float: right;
+}
+menu.toolbar-right li {
+    margin: 0 0 0 10px;
 }
 
 
