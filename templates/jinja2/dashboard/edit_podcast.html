@@ -127,7 +127,7 @@ window.PODCAST_CATEGORIES = {{ PODCAST_CATEGORIES|safe }};
   slugField.addEventListener('input', function() {
     if (slugDebounce) clearTimeout(slugDebounce);
     if (slugXHR) slugXHR.abort();
-    if (!slugField.validity.valid) {
+    if (!slugField.validity.valid || slugField.value === slugField.defaultValue) {
       urlAvail.textContent = urlAvail.innerText = '';
       urlAvail.className = 'url-availability';
       return;
