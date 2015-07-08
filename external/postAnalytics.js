@@ -22,6 +22,8 @@ exports.handler = function(event, context) {
         return;
     }
 
+    var wereInterestingLogs = false;
+
     var params = {
         Bucket: bucket,
         Key: key
@@ -46,6 +48,13 @@ exports.handler = function(event, context) {
                 return;
             }
 
+            var methodType = matches[7].split('.');
+            // REST.*.OBJECT is an interesting log
+            if (methodType[0] === 'REST' && methodType[2] === 'OBJECT') {
+                wereInterestingLogs = true;
+            }
+
+            // console.log(matches);
             if (matches[7] !== 'REST.GET.OBJECT') {
                 console.warn('Rejected, not REST.GET.OBJECT');
                 return;
@@ -63,6 +72,7 @@ exports.handler = function(event, context) {
                 return;
             }
 
+            // console.log(JSON.stringify(matches));
             blobs.push({
                 userAgent: matches[17],
                 ip: matches[4],
@@ -95,9 +105,7 @@ exports.handler = function(event, context) {
                     'Content-Length': postData.length,
                 },
             },
-            function() {
-                context.succeed();
-            }
+            cleanUp
         );
         req.on('error', function(e) {
             context.fail(e);
@@ -106,4 +114,19 @@ exports.handler = function(event, context) {
         req.end();
 
     });
+    
+    function cleanUp() {
+        if (wereInterestingLogs) {
+            console.log('Interesting logs were found, so no cleanup is needed.');
+            context.succeed('Processing completed.')
+        } else {
+            console.log('Interesting logs were not found, so removing the log file.');
+            s3.deleteObject(params, function(err) {
+                if (err) {
+                    console.error('Unexpected error cleaning up uninteresting log', err.toString());
+                }
+                context.succeed('Processing completed.');
+            });
+        }
+    }
 };
