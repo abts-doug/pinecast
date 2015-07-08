@@ -3,6 +3,11 @@
 <div class="breadcrumb">
   <a href="{{ url('podcast_dashboard', kwargs={'podcast_slug': podcast.slug}) }}">&laquo; Back to {{ podcast.name }}</a>
 </div>
+
+<menu class="toolbar toolbar-right">
+  <li><a class="btn" href="{{ url('edit_podcast_episode', kwargs={'podcast_slug': podcast.slug, 'episode_id': str(episode.id)}) }}">Edit Episode</a></li>
+</menu>
+
 <h1>{{ episode.title }}</h1>
 <h2>{{ episode.subtitle }}</h2>
 
@@ -16,11 +21,6 @@
     <span>{{'Published' if episode.is_published() else 'Pending'}}</span>
   </div>
 </div>
-
-<menu class="toolbar">
-  <li><a class="btn" href="{{ url('edit_podcast_episode', kwargs={'podcast_slug': podcast.slug, 'episode_id': str(episode.id)}) }}">Edit Episode</a></li>
-  <li><a class="btn btn-danger" href="{{ url('delete_podcast_episode', kwargs={'podcast_slug': podcast.slug, 'episode_id': str(episode.id)}) }}">Delete Episode</a></li>
-</menu>
 
 <div class="url-box">
   <input type="url"

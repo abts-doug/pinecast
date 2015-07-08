@@ -3,6 +3,10 @@
 <div class="breadcrumb">
   <a href="{{ url('podcast_episode', kwargs={'podcast_slug': podcast.slug, 'episode_id': str(episode.id)}) }}">&laquo; Back to {{ episode.title }}</a>
 </div>
+
+<menu class="toolbar toolbar-right">
+  <li><a class="btn btn-danger" href="{{ url('delete_podcast_episode', kwargs={'podcast_slug': podcast.slug, 'episode_id': str(episode.id)}) }}">Delete Episode</a></li>
+</menu>
 <h1>Edit {{ episode.title }}</h1>
 
 {% if error %}
