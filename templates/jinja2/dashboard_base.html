@@ -27,6 +27,11 @@
         {% endblock %}
     </nav>
     <main>
+        <noscript>
+            <div class="error">
+                It looks like JavaScript is turned off in your browser! Our dashboards will probably not work until it's turned back on.
+            </div>
+        </noscript>
         {% block dashboard_body %}{% endblock %}
     </main>
 </div>
