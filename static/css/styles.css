@@ -333,6 +333,10 @@ menu.toolbar-right li {
     margin: 10px;
     padding: 20px;
 }
+.uploaded-file-card .warning {
+    margin-left: 0;
+    margin-right: 0;
+}
 
 .slug-warning {
     display: none;

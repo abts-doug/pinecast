@@ -30,6 +30,7 @@ var Uploader = React.createClass({
                 size: this.props.defSize,
                 type: this.props.defType,
             },
+            error: null,
 
             finalContentURL: hasDef ? this.props.defURL : null,
         };
@@ -47,11 +48,14 @@ var Uploader = React.createClass({
 
     getBody: function() {
         if (this.state.uploading) {
-            return React.createElement(
-                'div',
-                {className: 'progress'},
-                React.createElement('i', {style: {width: this.state.progress + '%'}})
-            );
+            return [
+                React.createElement(
+                    'div',
+                    {className: 'progress'},
+                    React.createElement('i', {style: {width: this.state.progress + '%'}})
+                ),
+                this.getError(),
+            ];
         }
 
         if (this.state.uploaded) {
@@ -80,6 +84,7 @@ var Uploader = React.createClass({
                     },
                     'Clear File'
                 ),
+                this.getError(),
                 React.createElement(
                     'input',
                     {
@@ -134,6 +139,8 @@ var Uploader = React.createClass({
             uploading: true,
         });
 
+        this.detectSize(fileObj);
+
         getFields(
             this.props.podcast,
             this.props.type,
@@ -152,6 +159,35 @@ var Uploader = React.createClass({
                 this.startUploading(data);
             }.bind(this)
         );
+    },
+
+    detectSize: function(fileObj) {
+        if (!window.FileReader) return;
+        switch (fileObj.type) {
+            case 'image/jpeg':
+            case 'image/jpg':
+            case 'image/png':
+                break;
+            default:
+                return;
+        }
+
+        var fr = new FileReader();
+        fr.onload = function() {
+            if (this.state.fileObj !== fileObj) return;
+            var i = new Image();
+            i.src = fr.result;
+            if (i.width < 1440 || i.height < 1440) {
+                this.setState({
+                    error: 'min_size',
+                });
+            } else if (i.width !== i.height) {
+                this.setState({
+                    error: 'not_square',
+                });
+            }
+        }.bind(this);
+        fr.readAsDataURL(fileObj);
     },
 
     startUploading: function(fields) {
@@ -195,7 +231,26 @@ var Uploader = React.createClass({
             finalContentURL: '',
             uploaded: false,
         });
-    }
+    },
+
+    getError: function() {
+        if (!this.state.error) return;
+        switch (this.state.error) {
+            case 'min_size':
+                return React.createElement(
+                    'div',
+                    {className: 'warning'},
+                    'Warning! The image you have chosen does not meet the iTunes minimum size requirements of 1440px by 1440px.'
+                );
+            case 'not_square':
+                return React.createElement(
+                    'div',
+                    {className: 'warning'},
+                    'Warning! The image you have chosen is not square. This may cause it to be distorted on some devices.'
+                );
+        }
+        return null;
+    },
 
 });
 
