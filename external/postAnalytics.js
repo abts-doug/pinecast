@@ -59,8 +59,12 @@ exports.handler = function(event, context) {
                 console.warn('Rejected, not REST.GET.OBJECT');
                 return;
             }
-            if (matches[10] !== '200' && matches[10] !== '206') {
-                console.warn('Rejected, not 200 response');
+            if (matches[10] !== '200') {
+                if (matches[10] === '206') {
+                    console.warn('206 partial content request not counted');
+                } else {
+                    console.warn('Rejected, not 200 response');
+                }
                 return;
             }
             if (matches[9].indexOf('?x-source=') === -1) {
