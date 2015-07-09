@@ -27,6 +27,7 @@ var ChartComponent = React.createClass({
                     ref: 'surface',
                     width: this.props.origElement.clientWidth - 30,
                     height: 200,
+                    onClick: this.startLoadingData,
                 }
             )
         );
@@ -62,7 +63,8 @@ var ChartComponent = React.createClass({
             '/analytics/' + this.props.type +
                 '?podcast=' + encodeURIComponent(this.props.podcast) +
                 (this.props.episode ? '&episode=' + encodeURIComponent(this.props.episode) : '') +
-                '&timezone=' + encodeURIComponent(-new Date().getTimezoneOffset() / 60),
+                '&timezone=' + encodeURIComponent(-new Date().getTimezoneOffset() / 60) +
+                (this.props.extra ? '&' + this.props.extra : ''),
             true
         );
         req.send();
@@ -83,6 +85,7 @@ Array.prototype.slice.call(placeholders).forEach(function(placeholder) {
             podcast: placeholder.getAttribute('data-podcast'),
             episode: placeholder.getAttribute('data-episode'),
             type: placeholder.getAttribute('data-type'),
+            extra: placeholder.getAttribute('data-extra'),
             title: placeholder.getAttribute('data-title'),
 
             origElement: placeholder,

@@ -10,5 +10,6 @@ urlpatterns = [
     url(r'^podcast-listen-history$', views.podcast_listen_history),
     url(r'^episode-listen-history$', views.episode_listen_history),
     url(r'^podcast-listen-breakdown$', views.podcast_listen_breakdown),
+    url(r'^podcast-listen-platform-breakdown$', views.podcast_listen_platform_breakdown),
     url(r'^episode-listen-breakdown$', views.episode_listen_breakdown),
 ]

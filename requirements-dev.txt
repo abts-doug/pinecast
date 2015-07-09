@@ -1,4 +1,4 @@
-Django==1.8.2
+Django==1.8.3
 Jinja2==2.7.3
 MarkupSafe==0.23
 PyYAML==3.11

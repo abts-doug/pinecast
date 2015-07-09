@@ -1,3 +1,4 @@
+import collections
 import datetime
 import json
 import re
@@ -95,8 +96,10 @@ def process_intervals(intvs, interval_duration, label_maker, pick=None):
     return {'labels': labels, 'dataset': values}
 
 
-def process_groups(groups, label_mapping, label_key, pick=None):
+def process_groups(groups, label_mapping=None, label_key=None, pick=None):
     if not groups: return []
+
+    if not label_mapping: label_mapping = collections.defaultdict(collections.defaultdict)
 
     labels = [label_mapping.get(x[label_key], x[label_key]) for x in groups]
     values = groups if not pick else [x[pick] for x in groups]

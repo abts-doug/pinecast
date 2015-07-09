@@ -1,7 +1,7 @@
 import datetime
 
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
+from django.http import Http404, JsonResponse
 from django.shortcuts import get_object_or_404, render
 
 from . import query
@@ -185,6 +185,36 @@ def podcast_listen_breakdown(req):
         res['results'],
         SOURCE_MAP,
         'source',
+        pick='podcast')
+
+    out = [{'label': label, 'value': value} for
+            label, value in
+            zip(out['labels'], out['dataset'])]
+
+    return list(query.rotating_colors(out))
+
+@login_required
+@json_response(safe=False)
+def podcast_listen_platform_breakdown(req):
+    pod = get_object_or_404(Podcast, slug=req.GET.get('podcast'), owner=req.user)
+
+    breakdown_type = req.GET.get('breakdown_type', 'device')
+    if breakdown_type not in ['device', 'browser', 'os']: return Http404()
+
+    key = 'profile.%s' % breakdown_type
+
+    res = query.query(
+        'listen',
+        {'select': {'podcast': 'count'},
+         'groupBy': [key],
+         'timeframe': 'this_month',
+         'filter': {'podcast': {'eq': unicode(pod.id)}},
+         'timezone': int(req.GET.get('timezone', 0))})
+
+    out = query.process_groups(
+        res['results'],
+        None,
+        key,
         pick='podcast')
 
     out = [{'label': label, 'value': value} for

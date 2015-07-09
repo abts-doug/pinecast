@@ -80,6 +80,29 @@
       data-chart-type="line"></div>
   </div>
 
+  <div class="chunky-row">
+    <div class="chart-placeholder"
+      data-type="podcast-listen-platform-breakdown"
+      data-podcast="{{ podcast.slug }}"
+      data-extra="breakdown_type=device"
+      data-title="Breakdown of listens by device"
+      data-chart-type="pie"></div>
+
+    <div class="chart-placeholder"
+      data-type="podcast-listen-platform-breakdown"
+      data-podcast="{{ podcast.slug }}"
+      data-extra="breakdown_type=browser"
+      data-title="Breakdown of listens by browser"
+      data-chart-type="pie"></div>
+
+    <div class="chart-placeholder"
+      data-type="podcast-listen-platform-breakdown"
+      data-podcast="{{ podcast.slug }}"
+      data-extra="breakdown_type=os"
+      data-title="Breakdown of listens by os"
+      data-chart-type="pie"></div>
+  </div>
+
 {% else %}
   <div class="episode-empty-state empty-state">
     You haven't uploaded any episodes yet.<br>
