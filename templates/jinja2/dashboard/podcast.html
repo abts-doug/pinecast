@@ -25,10 +25,11 @@
 {% if episodes %}
   <div class="chunky">
     <div class="chart-placeholder"
-      data-type="podcast-subscriber-history"
+      data-type="podcast-listen-history"
       data-podcast="{{ podcast.slug }}"
-      data-title="Subscriber history"
+      data-title="Listen history"
       data-chart-type="line"></div>
+
     <menu class="toolbar">
       <li><a class="btn" href="{{ url('podcast_geo', kwargs={'podcast_slug': podcast.slug}) }}">Geo</a></li>
       <li><a class="btn" href="{{ url('top_episodes', kwargs={'podcast_slug': podcast.slug}) }}">Top Episodes</a></li>
@@ -73,9 +74,9 @@
       data-chart-type="pie"></div>
 
     <div class="chunkier chart-placeholder"
-      data-type="podcast-listen-history"
+      data-type="podcast-subscriber-history"
       data-podcast="{{ podcast.slug }}"
-      data-title="Listen history"
+      data-title="Subscriber history"
       data-chart-type="line"></div>
   </div>
 

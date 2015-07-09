@@ -29,12 +29,14 @@
     class="width-full">
 </div>
 
+{% if analytics.total_listens %}
 <div class="chunky chart-placeholder"
   data-type="episode-listen-history"
   data-podcast="{{ podcast.slug }}"
   data-episode="{{ str(episode.id) }}"
   data-title="Listen history over one month"
   data-chart-type="line"></div>
+{% endif %}
 
 <iframe src="/player/{{ str(episode.id) }}" seamless height="60" style="border:0" class="podmaster-embed"></iframe>
 
@@ -48,7 +50,7 @@
     <dd><abbr title="{{ episode.created }}">{{ episode.created.strftime('%Y-%m-%d') }}</abbr></dd>
     
     <dt>Publish Timestamp</dt> {#- -#}
-    <dd><abbr title="{{ episode.publish }}">{{ episode.publish.strftime('%Y-%m-%d') }}</abbr></dd>
+    <dd><abbr title="{{ episode.publish }} (UTC)">{{ episode.publish.strftime('%Y-%m-%d') }}</abbr></dd>
     
     <dt>Duration</dt> {#- -#}
     <dd>
@@ -72,6 +74,7 @@
   </dl>
 </div>
 
+{% if analytics.total_listens %}
 <div class="chunky-row">
   <div class="chart-placeholder"
     data-type="episode-listen-breakdown"
@@ -80,6 +83,7 @@
     data-title="Breakdown of listens by source"
     data-chart-type="pie"></div>
 </div>
+{% endif %}
 
 <div class="chunky">
   <b>Embed Code</b>

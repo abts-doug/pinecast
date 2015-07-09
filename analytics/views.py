@@ -48,7 +48,8 @@ def podcast_listener_locations(req):
         {'select': {'podcast': 'count'},
          'timeframe': 'this_month',
          'groupBy': 'profile.country',
-         'filter': {'podcast': {'eq': unicode(pod.id)}}})
+         'filter': {'podcast': {'eq': unicode(pod.id)}},
+         'timezone': int(req.GET.get('timezone', 0))})
 
     return [['Country', 'Subscribers']] + [
         [p['profile.country'], p['podcast']] for
@@ -68,7 +69,8 @@ def podcast_subscriber_history(req):
         {'select': {'podcast': 'count'},
          'timeframe': 'this_month',
          'interval': 'daily',
-         'filter': {'podcast': {'eq': unicode(pod.id)}}})
+         'filter': {'podcast': {'eq': unicode(pod.id)}},
+         'timezone': int(req.GET.get('timezone', 0))})
 
     out = query.process_intervals(
         res['results'],
@@ -97,7 +99,8 @@ def podcast_listen_history(req):
         {'select': {'podcast': 'count'},
          'timeframe': 'this_month',
          'interval': 'daily',
-         'filter': {'podcast': {'eq': unicode(pod.id)}}})
+         'filter': {'podcast': {'eq': unicode(pod.id)}},
+         'timezone': int(req.GET.get('timezone', 0))})
 
     out = query.process_intervals(
         res['results'],
@@ -127,13 +130,25 @@ def episode_listen_history(req):
         {'select': {'episode': 'count'},
          'timeframe': 'this_month',
          'interval': 'daily',
-         'filter': {'episode': {'eq': unicode(ep.id)}}})
+         'filter': {'episode': {'eq': unicode(ep.id)}},
+         'timezone': int(req.GET.get('timezone', 0))})
 
     out = query.process_intervals(
         res['results'],
         datetime.timedelta(days=1),
         lambda d: d.strftime('%x'),
         pick='episode')
+
+    if not out:
+        return {'labels': [],
+            'datasets': [
+                {'label': ep.title,
+                 'data': [],
+                 'fillColor': 'transparent',
+                 'strokeColor': '#2980b9',
+                 'pointColor': '#3498db',
+                 'pointStrokeColor': '#fff'}
+            ]}
 
     return {'labels': out['labels'],
             'datasets': [
@@ -163,7 +178,8 @@ def podcast_listen_breakdown(req):
         {'select': {'podcast': 'count'},
          'groupBy': 'source',
          'timeframe': 'this_month',
-         'filter': {'podcast': {'eq': unicode(pod.id)}}})
+         'filter': {'podcast': {'eq': unicode(pod.id)}},
+         'timezone': int(req.GET.get('timezone', 0))})
 
     out = query.process_groups(
         res['results'],
@@ -188,13 +204,17 @@ def episode_listen_breakdown(req):
         'listen',
         {'select': {'episode': 'count'},
          'groupBy': 'source',
-         'filter': {'episode': {'eq': unicode(ep.id)}}})
+         'filter': {'episode': {'eq': unicode(ep.id)}},
+         'timezone': int(req.GET.get('timezone', 0))})
 
     out = query.process_groups(
         res['results'],
         SOURCE_MAP,
         'source',
         pick='episode')
+
+    if not out:
+       out = {'labels': [], 'dataset': []}
 
     out = [{'label': label, 'value': value} for
             label, value in

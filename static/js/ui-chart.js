@@ -35,7 +35,7 @@ var ChartComponent = React.createClass({
     componentDidMount: function() {
         setTimeout(function() {
             this.startLoadingData();
-        }.bind(this), Math.random() * 3000);
+        }.bind(this), Math.random() * 1000);
     },
 
     componentDidUpdate: function() {
@@ -61,7 +61,8 @@ var ChartComponent = React.createClass({
             'get',
             '/analytics/' + this.props.type +
                 '?podcast=' + encodeURIComponent(this.props.podcast) +
-                (this.props.episode ? '&episode=' + encodeURIComponent(this.props.episode) : ''),
+                (this.props.episode ? '&episode=' + encodeURIComponent(this.props.episode) : '') +
+                '&timezone=' + encodeURIComponent(-new Date().getTimezoneOffset() / 60),
             true
         );
         req.send();

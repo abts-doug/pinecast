@@ -1,8 +1,12 @@
 import datetime
 import json
+import re
 
 import requests
 from django.conf import settings
+
+
+TIMZONE_KILLA = re.compile(r'(\d\d\d\d\-\d\d\-\d\dT\d\d:\d\d:\d\d)[+\-]\d\d:\d\d')
 
 
 def query(collection, q):
@@ -59,8 +63,14 @@ class Interval(object):
         self.payload = data['results'][0] if data['results'] else {}
 
     def _parse_date(self, date):
+        # We need to strip off the timezone because the times are always
+        # returned in the correct timezone for the user. Python has issues
+        # with parsing basically anything.
+
         # 2015-07-06T00:00:00+00:00
-        return datetime.datetime.strptime(date, '%Y-%m-%dT%H:%M:%S+00:00')
+        stripped = TIMZONE_KILLA.match(date).group(1)
+        # 2015-07-06T00:00:00
+        return datetime.datetime.strptime(stripped, '%Y-%m-%dT%H:%M:%S')
 
 def process_intervals(intvs, interval_duration, label_maker, pick=None):
     if not intvs: return []

@@ -105,6 +105,7 @@
     <li><button type="submit">Save</button></li>
   </menu>
 
+  <input type="hidden" name="timezone" value="">
   <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
 </form>
 
@@ -117,5 +118,15 @@
 <script src="/static/js/disable-forms.js"></script>
 <script>
 nicEditors.allTextAreas();
+
+(function() {
+  var timezone = -new Date().getTimezoneOffset() / 60;
+  document.querySelector('input[name="timezone"]').value = timezone;
+  var publish = document.querySelector('input[name="publish"]');
+  var publishDate = new Date(publish.value);
+  publishDate.setHours(publishDate.getHours() - timezone);
+  var isoDate = publishDate.toISOString();
+  publish.value = isoDate.substr(0, isoDate.length - 1);
+}());
 </script>
 {% endblock %}

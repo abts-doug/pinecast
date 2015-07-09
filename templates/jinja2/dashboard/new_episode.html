@@ -101,6 +101,7 @@
     <li><button type="submit">Save New Episode</button></li>
   </menu>
 
+  <input type="hidden" name="timezone" value="">
   <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
 </form>
 
@@ -113,5 +114,7 @@
 <script src="/static/js/disable-forms.js"></script>
 <script>
 nicEditors.allTextAreas();
+
+document.querySelector('input[name="timezone"]').value = -new Date().getTimezoneOffset() / 60;
 </script>
 {% endblock %}

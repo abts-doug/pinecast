@@ -182,11 +182,14 @@ def podcast_new_ep(req, podcast_slug):
         return _pmrender(req, 'dashboard/new_episode.html', {'podcast': pod})
 
     try:
+        naive_publish = datetime.datetime.strptime(req.POST.get('publish'), '%Y-%m-%dT%H:%M') # 2015-07-09T12:00
+        adjusted_publish = naive_publish + datetime.timedelta(hours=int(req.POST.get('timezone')))
+
         ep = PodcastEpisode(
             podcast=pod,
             title=req.POST.get('title'),
             subtitle=req.POST.get('subtitle'),
-            publish=datetime.datetime.strptime(req.POST.get('publish'), '%Y-%m-%dT%H:%M'), # 2015-07-09T12:00
+            publish=adjusted_publish,
             description=req.POST.get('description'),
             duration=int(req.POST.get('duration-hours')) * 3600 + int(req.POST.get('duration-minutes')) * 60 + int(req.POST.get('duration-seconds')),
 
@@ -213,9 +216,12 @@ def edit_podcast_episode(req, podcast_slug, episode_id):
         return _pmrender(req, 'dashboard/edit_episode.html', {'podcast': pod, 'episode': ep})
 
     try:
+        naive_publish = datetime.datetime.strptime(req.POST.get('publish'), '%Y-%m-%dT%H:%M:00.000') # 2015-07-09T12:00
+        adjusted_publish = naive_publish + datetime.timedelta(hours=int(req.POST.get('timezone')))
+
         ep.title = req.POST.get('title')
         ep.subtitle = req.POST.get('subtitle')
-        ep.publish = datetime.datetime.strptime(req.POST.get('publish'), '%Y-%m-%dT%H:%M') # 2015-07-09T12:00
+        ep.publish = adjusted_publish
         ep.description = req.POST.get('description')
         ep.duration = int(req.POST.get('duration-hours')) * 3600 + int(req.POST.get('duration-minutes')) * 60 + int(req.POST.get('duration-seconds'))
 
@@ -229,6 +235,7 @@ def edit_podcast_episode(req, podcast_slug, episode_id):
         ep.license = req.POST.get('license')
         ep.save()
     except Exception as e:
+        print e
         return  _pmrender(req, 'dashboard/new_episode.html', {'podcast': pod, 'episode': ep, 'default': req.POST, 'error': True})
     return redirect('podcast_episode', podcast_slug=pod.slug, episode_id=str(ep.id))
 
