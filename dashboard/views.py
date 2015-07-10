@@ -288,16 +288,33 @@ def get_upload_url(req, podcast_slug, type):
     expires = int(time.time() + 60 * 60 * 24)
     amz_headers = 'x-amz-acl:public-read'
 
-    string_to_sign = "PUT\n\n%s\n%d\n%s\n/%s/%s" % (mime_type, expires, amz_headers, settings.S3_BUCKET, encoded_path)
-    print string_to_sign
-    signature = base64.encodestring(hmac.new(settings.S3_SECRET_KEY.encode(), string_to_sign.encode('utf8'), hashlib.sha1).digest())
-    signature = urllib.quote_plus(signature.strip())
+    policy = {
+        # hours=6 so users around midnight don't get screwed.
+        'expiration': (datetime.datetime.now() + datetime.timedelta(days=1, hours=6)).strftime('%Y-%m-%dT00:00:00.000Z'),
+        'conditions': [
+            {'bucket': settings.S3_BUCKET}, 
+            ['starts-with', '$key', basepath],
+            {'acl': 'public-read'},
+            {'Content-Type': mime_type},
+            ['content-length-range', 0, settings.MAX_FILE_SIZE],
+        ],
+    }
+    encoded_policy = base64.b64encode(json.dumps(policy))
 
     destination_url = 'http://%s.s3.amazonaws.com/%s' % (settings.S3_BUCKET, path)
     return {
-        'url': '%s?AWSAccessKeyId=%s&Expires=%s&Signature=%s' % (destination_url, settings.S3_ACCESS_ID, expires, signature),
-        'headers': {
-            'x-amz-acl': 'public-read',
+        'url': 'http://%s.s3.amazonaws.com/' % settings.S3_BUCKET,
+        'method': 'post',
+        'headers': {},
+        'fields': {
+            'key': path,
+            'acl': 'public-read',
+            'Content-Type': mime_type,
+            'AWSAccessKeyId': settings.S3_ACCESS_ID,
+            'Policy': encoded_policy,
+            'Signature': base64.b64encode(hmac.new(settings.S3_SECRET_KEY.encode(),
+                                                   encoded_policy.encode('utf8'),
+                                                   hashlib.sha1).digest()),
         },
         'destination_url': destination_url,
     }

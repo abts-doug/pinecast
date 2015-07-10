@@ -216,12 +216,19 @@ var Uploader = React.createClass({
             });
         }.bind(this);
 
-        xhr.open('put', fields.url, true);
+        xhr.open(fields.method, fields.url, true);
         for (key in fields.headers) {
             if (!fields.headers.hasOwnProperty(key)) continue;
             xhr.setRequestHeader(key, fields.headers[key]);
         }
-        xhr.send(this.state.fileObj);
+
+        var data = new FormData();
+        for (key in fields.fields) {
+            if (!fields.fields.hasOwnProperty(key)) continue;
+            data.set(key, fields.fields[key]);
+        }
+        data.set('file', this.state.fileObj);
+        xhr.send(data);
     },
 
     clearFile: function(e) {

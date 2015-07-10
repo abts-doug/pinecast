@@ -6,7 +6,24 @@ from user_agents import parse
 
 def get_device_type(req):
     parsed = _parse_req(req)
-    return parsed.browser.family, parsed.device.family, parsed.os.family
+    settled = {
+        'browser': parsed.browser.family,
+        'device': parsed.device.family,
+        'os': parsed.os.family,
+    }
+    ua = req.META.get('HTTP_USER_AGENT')
+    if 'iTunes' in ua:
+        settled['browser'] = 'itunes'
+    elif 'Pocket Casts' in ua:
+        settled['browser'] = 'pocketcasts'
+    elif 'Miro' in ua:
+        settled['browser'] = 'miro'
+    elif 'BeyondPod' in ua:
+        settled['browser'] = 'beyondpod'
+    elif 'Overcast' in ua:
+        settled['browser'] = 'overcast'
+
+    return settled['browser'], settled['device'], settled['os']
 
 
 def is_bot(req):
