@@ -19,15 +19,20 @@ def write_many(collection, blobs):
 
 
 def _post(url, payload):
-    posted = requests.post(
-        url,
-        data=payload,
-        headers={'X-Project-Id': settings.GETCONNECT_IO_PID,
-                 'X-Api-Key': settings.GETCONNECT_IO_PUSH_KEY})
+    try:
+        posted = requests.post(
+            url,
+            timeout=0.5, # Half second between packets is more than reasonable
+            data=payload,
+            headers={'X-Project-Id': settings.GETCONNECT_IO_PID,
+                     'X-Api-Key': settings.GETCONNECT_IO_PUSH_KEY})
+    except Exception:
+        print 'Analytics POST timeout: %s' % url
+        return
+
     if posted.status_code != 200 and posted.status_code != 409:
         # 409 is a duplicate ID error, which is expected
         print posted.status_code, posted.text
-    return posted
 
 def _get_country(ip):
     if ip == '127.0.0.1':

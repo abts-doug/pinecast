@@ -11,6 +11,8 @@ TIMZONE_KILLA = re.compile(r'(\d\d\d\d\-\d\d\-\d\dT\d\d:\d\d:\d\d)[+\-]\d\d:\d\d
 
 
 def query(collection, q):
+    if 'timeframe' not in q and 'timezone' in q:
+        del q['timezone']
     req = requests.get(
         'https://api.getconnect.io/events/%s' % collection,
         params={'query': json.dumps(q)},

@@ -147,6 +147,12 @@ LAMBDA_ACCESS_SECRET = os.environ.get('LAMBDA_ACCESS_SECRET')
 
 DEPLOY_SLACKBOT_URL = os.environ.get('DEPLOY_SLACKBOT_URL')
 
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = os.environ.get('GMAIL_USER')
+EMAIL_HOST_PASSWORD = os.environ.get('GMAIL_PASS')
+EMAIL_PORT = 587
+
 MAX_FILE_SIZE = 1024 * 1024 * 256
 
 try:
