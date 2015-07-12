@@ -1,113 +1,137 @@
 {% extends 'dashboard_base.html' %}
 {% block dashboard_body %}
 
-<menu class="toolbar toolbar-right">
-  <li><a class="btn" href="{{ url('new_episode', kwargs={'podcast_slug': podcast.slug}) }}">New Episode</a></li>
-  <li><a class="btn btn-neutral" href="{{ url('edit_podcast', kwargs={'podcast_slug': podcast.slug}) }}">Edit</a></li>
-</menu>
+<header>
+  <menu class="toolbar toolbar-right">
+    <li><a class="btn" href="{{ url('new_episode', kwargs={'podcast_slug': podcast.slug}) }}">New Episode</a></li>
+    <li><a class="btn btn-neutral" href="{{ url('edit_podcast', kwargs={'podcast_slug': podcast.slug}) }}">Edit</a></li>
+  </menu>
 
-<h1>{{ podcast.name }}</h1>
-<div class="chunky-row">
-  <div class="total-listens">
-    <strong>{{ analytics.total_listens }}</strong>
-    <span>Total Listens</span>
+  <h1>{{ podcast.name }}</h1>
+</header>
+
+<div class="row">
+  <div class="card stat-card total-listens">
+    <strong>Total Listens</strong>
+    <span>{{ analytics.total_listens }}</span>
   </div>
-  <div class="this-week">
-    <strong>{{ analytics.total_listens_this_week }}</strong>
-    <span>Listens This Week</span>
+  <div class="card stat-card this-week">
+    <strong>Listens This Week</strong>
+    <span>{{ analytics.total_listens_this_week }}</span>
   </div>
-  <div class="total-subscribers">
-    <strong>{{ analytics.subscribers }}</strong>
-    <span>{{ plural('Subscriber', 'Subscribers', analytics.subscribers) }}</span>
+  <div class="card stat-card total-subscribers">
+    <strong>{{ plural('Subscriber', 'Subscribers', analytics.subscribers) }}</strong>
+    <span>{{ analytics.subscribers }}</span>
   </div>
 </div>
 
-{% if episodes %}
-  <div class="chunky">
-    <div class="chart-placeholder"
-      data-type="podcast-listen-history"
-      data-podcast="{{ podcast.slug }}"
-      data-title="Listen history"
-      data-chart-type="line"></div>
+<menu class="tabs">
+  <li class="selected"><a data-tab=".tab-overview" href="">Overview</a></li>
+  <li><a data-tab=".tab-episodes" href="">Episodes</a></li>
+  <li><a data-tab=".tab-analytics" href="">Analytics</a></li>
+</menu>
 
+<div class="tab-overview">
+  {% if episodes %}
+    <div class="card-block card">
+      <div class="chart-placeholder"
+        data-type="podcast-listen-history"
+        data-podcast="{{ podcast.slug }}"
+        data-title="Listen history"
+        data-chart-type="line"></div>
+    </div>
+  {% endif %}
+
+  <div class="card-block card">
+    <strong>RSS Feed</strong>
+    <input type="url"
+      title="RSS Feed"
+      readonly
+      value="http://host.podmaster.io{{ url('feed', kwargs={'podcast_slug': podcast.slug}) }}"
+      class="width-full">
+  </div>
+
+</div>
+<div class="tab-episodes" style="overflow: hidden; height: 0">
+  {% if not episodes %}
+    <div class="episode-empty-state empty-state">
+      You haven't uploaded any episodes yet.<br>
+      <a class="btn" href="{{ url('new_episode', kwargs={'podcast_slug': podcast.slug})}}">Upload One Now</a>
+    </div>
+  {% else %}
+    <table>
+      <thead>
+        <tr>
+          <th class="primary">Episode Name</th>
+          <th>Subtitle</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for ep in episodes %}
+          <tr>
+            <td class="primary">
+              <a href="/dashboard/podcast/{{ podcast.slug }}/episode/{{ ep.id }}">{{ ep.title }}</a>
+            </td>
+            <td>{{ ep.subtitle }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
+</div>
+<div class="tab-analytics" style="overflow: hidden; height: 0">
+  {% if not episodes %}
+    <div class="episode-empty-state empty-state">
+      Analytics will become available when you've uploaded your first episode
+    </div>
+  {% else %}
     <menu class="toolbar">
       <li><a class="btn" href="{{ url('podcast_geo', kwargs={'podcast_slug': podcast.slug}) }}">Geo</a></li>
       <li><a class="btn" href="{{ url('top_episodes', kwargs={'podcast_slug': podcast.slug}) }}">Top Episodes</a></li>
     </menu>
-  </div>
-{% endif %}
+    <div class="row">
+      <div class="card chart-placeholder"
+        data-type="podcast-listen-breakdown"
+        data-podcast="{{ podcast.slug }}"
+        data-title="Listens by Source"
+        data-chart-type="pie"></div>
 
+      <div class="card chunkier chart-placeholder"
+        data-type="podcast-subscriber-history"
+        data-podcast="{{ podcast.slug }}"
+        data-title="Subscriber History"
+        data-chart-type="line"></div>
+    </div>
 
-<div class="url-box">
-  <input type="url"
-    title="RSS Feed"
-    readonly
-    value="http://host.podmaster.io{{ url('feed', kwargs={'podcast_slug': podcast.slug}) }}"
-    class="width-full">
+    <div class="row">
+      <div class="card chart-placeholder"
+        data-type="podcast-listen-platform-breakdown"
+        data-podcast="{{ podcast.slug }}"
+        data-extra="breakdown_type=device"
+        data-title="Listens by Device"
+        data-chart-type="pie"></div>
+
+      <div class="card chart-placeholder"
+        data-type="podcast-listen-platform-breakdown"
+        data-podcast="{{ podcast.slug }}"
+        data-extra="breakdown_type=browser"
+        data-title="Listens by Browser"
+        data-chart-type="pie"></div>
+
+      <div class="card chart-placeholder"
+        data-type="podcast-listen-platform-breakdown"
+        data-podcast="{{ podcast.slug }}"
+        data-extra="breakdown_type=os"
+        data-title="Listens by OS"
+        data-chart-type="pie"></div>
+    </div>
+  {% endif %}
 </div>
 
 {% if episodes %}
-  <table>
-    <thead>
-      <tr>
-        <th class="primary">Episode Name</th>
-        <th>Subtitle</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for ep in episodes %}
-        <tr>
-          <td class="primary">
-            <a href="/dashboard/podcast/{{ podcast.slug }}/episode/{{ ep.id }}">{{ ep.title }}</a>
-          </td>
-          <td>{{ ep.subtitle }}</td>
-        </tr>
-      {% endfor %}
-    </tbody>
-  </table>
 
-  <div class="chunky-row">
-    <div class="chart-placeholder"
-      data-type="podcast-listen-breakdown"
-      data-podcast="{{ podcast.slug }}"
-      data-title="Breakdown of listens by source"
-      data-chart-type="pie"></div>
-
-    <div class="chunkier chart-placeholder"
-      data-type="podcast-subscriber-history"
-      data-podcast="{{ podcast.slug }}"
-      data-title="Subscriber history"
-      data-chart-type="line"></div>
-  </div>
-
-  <div class="chunky-row">
-    <div class="chart-placeholder"
-      data-type="podcast-listen-platform-breakdown"
-      data-podcast="{{ podcast.slug }}"
-      data-extra="breakdown_type=device"
-      data-title="Breakdown of listens by device"
-      data-chart-type="pie"></div>
-
-    <div class="chart-placeholder"
-      data-type="podcast-listen-platform-breakdown"
-      data-podcast="{{ podcast.slug }}"
-      data-extra="breakdown_type=browser"
-      data-title="Breakdown of listens by browser"
-      data-chart-type="pie"></div>
-
-    <div class="chart-placeholder"
-      data-type="podcast-listen-platform-breakdown"
-      data-podcast="{{ podcast.slug }}"
-      data-extra="breakdown_type=os"
-      data-title="Breakdown of listens by os"
-      data-chart-type="pie"></div>
-  </div>
 
 {% else %}
-  <div class="episode-empty-state empty-state">
-    You haven't uploaded any episodes yet.<br>
-    <a class="btn" href="{{ url('new_episode', kwargs={'podcast_slug': podcast.slug})}}">Upload One Now</a>
-  </div>
 {% endif %}
 
 {% endblock %}
@@ -116,4 +140,5 @@
 <script src="https://fb.me/react-0.13.3.js"></script>
 <script src="/static/js/chartjs-1.0.2.min.js"></script>
 <script src="/static/js/ui-chart.js"></script>
+<script src="/static/js/tabs.js"></script>
 {% endblock %}

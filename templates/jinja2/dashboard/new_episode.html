@@ -1,9 +1,12 @@
 {% extends 'dashboard_base.html' %}
 {% block dashboard_body %}
-<div class="breadcrumb">
-  <a href="{{ url('podcast_dashboard', kwargs={'podcast_slug': podcast.slug}) }}">&laquo; Back to {{ podcast.name }}</a>
-</div>
-<h1>New Episode: {{ podcast.name }}</h1>
+
+<header>
+  <div class="breadcrumb">
+    <a href="{{ url('podcast_dashboard', kwargs={'podcast_slug': podcast.slug}) }}">&laquo; Back to {{ podcast.name }}</a>
+  </div>
+  <h1>New Episode: {{ podcast.name }}</h1>
+</header>
 
 {% if error %}
 <div class="error">
@@ -12,38 +15,48 @@
 {% endif %}
 
 <form action="?" method="post">
-  <label>
-    <span>Title</span>
-    <input type="text"
-      name="title"
-      placeholder="Episode 1 - Best one ever"
-      required
-      maxlength="1024"
-      value="{{ default.get('title') }}"
-      class="width-full">
-  </label>
-  <label>
-    <span>Subtitle</span>
-    <input type="text"
-      name="subtitle"
-      placeholder="You'll never believe it"
-      maxlength="1024"
-      value="{{ default.get('subtitle') }}"
-      class="width-full">
-  </label>
-  <label>
-    <span>Publish On</span>
-    <input type="datetime-local"
-      name="publish"
-      required
-      value="{{ default.get('publish') }}">
-  </label>
-  <label>
-    <span>Episode Description</span>
-    <textarea name="description" id="description-field">{{ default.get('description')|safe }}</textarea>
-  </label>
-  <div class="label">
-    <span>Image</span>
+  <div class="card-block card">
+    <strong>Details</strong>
+
+    <label>
+      <span>Title</span>
+      <input type="text"
+        name="title"
+        placeholder="Episode 1 - Best one ever"
+        required
+        maxlength="1024"
+        value="{{ default.get('title') }}"
+        class="width-full">
+    </label>
+
+    <label>
+      <span>Subtitle</span>
+      <input type="text"
+        name="subtitle"
+        placeholder="You'll never believe it"
+        maxlength="1024"
+        value="{{ default.get('subtitle') }}"
+        class="width-full">
+    </label>
+
+    <label>
+      <span>Publish On</span>
+      <input type="datetime-local"
+        name="publish"
+        required
+        value="{{ default.get('publish') }}">
+    </label>
+
+    <label>
+      <span>Episode Description</span>
+      <textarea name="description" id="description-field">{{ default.get('description')|safe }}</textarea>
+    </label>
+
+  </div>
+
+  <div class="card-block card">
+    <strong>Image</strong>
+
     <div class="upload-placeholder"
       data-default-url="{{ default.get('image-url', podcast.cover_image) }}"
       data-default-size="{{ default.get('image-url-size') }}"
@@ -55,10 +68,9 @@
       data-podcast="{{ podcast.slug }}"></div>
   </div>
 
-  <hr>
+  <div class="card-block card">
+    <strong>Audio</strong>
 
-  <div class="label">
-    <span>Mp3 File</span>
     <div class="upload-placeholder"
       data-default-url="{{ default.get('audio-url') }}"
       data-default-size="{{ default.get('audio-url-size') }}"
@@ -68,34 +80,40 @@
       data-name="audio-url"
       data-type="audio"
       data-podcast="{{ podcast.slug }}"></div>
+
+    <label class="duration-control">
+      <span>Duration</span>
+      <input type="number" class="duration-hours" name="duration-hours" value="{{ default.get('duration-hours', '0') }}">:
+      <input type="number" class="duration-minutes" name="duration-minutes" value="{{ default.get('duration-minutes') }}">:
+      <input type="number" class="duration-seconds" name="duration-seconds" value="{{ default.get('duration-seconds') }}">
+    </label>
+
   </div>
-  <label class="duration-control">
-    <span>Duration</span>
-    <input type="number" class="duration-hours" name="duration-hours" value="{{ default.get('duration-hours', '0') }}">:
-    <input type="number" class="duration-minutes" name="duration-minutes" value="{{ default.get('duration-minutes') }}">:
-    <input type="number" class="duration-seconds" name="duration-seconds" value="{{ default.get('duration-seconds') }}">
-  </label>
 
-  <hr>
+  <div class="card-block card">
+    <strong>Meta</strong>
 
-  <label>
-    <span>Copyright</span>
-    <input type="text"
-      name="copyright"
-      maxlength="1024"
-      value={{ default.get('copyright', podcast.copyright) }}
-      placeholder="Copyright 2015 Foo Bar Inc."
-      required>
-  </label>
-  <label>
-    <span>License</span>
-    <input type="text"
-      name="license"
-      maxlength="1024"
-      placeholder="Creative Commons 4.0"
-      required
-      value="{{ default.get('license') }}">
-  </label>
+    <label>
+      <span>Copyright</span>
+      <input type="text"
+        name="copyright"
+        maxlength="1024"
+        value={{ default.get('copyright', podcast.copyright) }}
+        placeholder="Copyright 2015 Foo Bar Inc."
+        required>
+    </label>
+
+    <label>
+      <span>License</span>
+      <input type="text"
+        name="license"
+        maxlength="1024"
+        placeholder="Creative Commons 4.0"
+        required
+        value="{{ default.get('license') }}">
+    </label>
+
+  </div>
 
   <menu class="toolbar">
     <li><button type="submit">Save New Episode</button></li>

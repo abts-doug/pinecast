@@ -1,93 +1,116 @@
 {% extends 'dashboard_base.html' %}
 {% block dashboard_body %}
-<div class="breadcrumb">
-  <a href="{{ url('podcast_dashboard', kwargs={'podcast_slug': podcast.slug}) }}">&laquo; Back to {{ podcast.name }}</a>
+<header>
+  <div class="breadcrumb">
+    <a href="{{ url('podcast_dashboard', kwargs={'podcast_slug': podcast.slug}) }}">&laquo; Back to {{ podcast.name }}</a>
+  </div>
+
+  <menu class="toolbar toolbar-right">
+    <li><a class="btn" href="{{ url('edit_podcast_episode', kwargs={'podcast_slug': podcast.slug, 'episode_id': str(episode.id)}) }}">Edit Episode</a></li>
+  </menu>
+
+  <hgroup>
+    <h1>{{ episode.title }}</h1>
+    <h2>{{ episode.subtitle }}</h2>
+  </hgroup>
+  
+</header>
+
+<div class="row">
+  <div class="card stat-card">
+    <strong>Total Listens</strong>
+    <span>{{ analytics.total_listens }}</span>
+  </div>
+  <div class="card stat-card">
+    <strong>{{'Published' if episode.is_published() else 'Pending'}}</strong>
+    <span><time datetime="{{ episode.publish }}" title="{{ episode.publish }}">{{ episode.publish.strftime('%Y-%m-%d') }}</time></span>
+  </div>
 </div>
 
-<menu class="toolbar toolbar-right">
-  <li><a class="btn" href="{{ url('edit_podcast_episode', kwargs={'podcast_slug': podcast.slug, 'episode_id': str(episode.id)}) }}">Edit Episode</a></li>
+<menu class="tabs">
+  <li class="selected"><a data-tab=".tab-overview" href="">Overview</a></li>
+  <li><a data-tab=".tab-analytics" href="">Analytics</a></li>
+  <li><a data-tab=".tab-audio" href="">Audio</a></li>
 </menu>
 
-<h1>{{ episode.title }}</h1>
-<h2>{{ episode.subtitle }}</h2>
-
-<div class="chunky-row">
-  <div>
-    <strong>{{ analytics.total_listens }}</strong>
-    <span>Total Listens</span>
+<div class="tab-overview">
+  <div class="card-block card">
+    <strong>Description</strong>
+    {{ episode.description|safe }}
   </div>
-  <div>
-    <strong><time datetime="{{ episode.publish }}" title="{{ episode.publish }}">{{ episode.publish.strftime('%Y-%m-%d') }}</time></strong>
-    <span>{{'Published' if episode.is_published() else 'Pending'}}</span>
+  
+  <div class="card-block card">
+    <strong>Episode information</strong>
+    <dl>
+      <dt>Created</dt> {#- -#}
+      <dd><abbr title="{{ episode.created }}">{{ episode.created.strftime('%Y-%m-%d') }}</abbr></dd>
+      
+      <dt>{{ 'Published' if episode.is_published() else 'Publish On' }}</dt> {#- -#}
+      <dd><abbr title="{{ episode.publish }} (UTC)">{{ episode.publish.strftime('%Y-%m-%d') }}</abbr></dd>
+      
+      <dt>Duration</dt> {#- -#}
+      <dd>
+        {{ '%02d'|format((episode.duration / 3600)|round(1, 'floor')|int) }} :
+        {{ '%02d'|format((episode.duration % 3600 / 60)|round(1, 'floor')|int) }} :
+        {{ '%02d'|format((episode.duration % 60)|round(1, 'floor')|int) }}
+      </dd>
+      
+      <dt>File Size</dt> {#- -#}
+      <dd>{{ episode.audio_size|filesizeformat }}</dd>
+      
+      <dt>File Type</dt> {#- -#}
+      <dd>{{ episode.audio_type }}</dd>
+      
+      <dt>Copyright</dt> {#- -#}
+      <dd>{{ episode.copyright }}</dd>
+      
+      <dt>License</dt> {#- -#}
+      <dd>{{ episode.license }}</dd>
+
+    </dl>
   </div>
 </div>
 
-<div class="url-box">
-  <input type="url"
-    readonly
-    value="http://host.podmaster.io{{ url('listen', kwargs={'episode_id': str(episode.id)}) }}"
-    class="width-full">
+<div class="tab-analytics" style="overflow: hidden; height: 0">
+  {% if analytics.total_listens %}
+    <div class="card-block card chart-placeholder"
+      data-type="episode-listen-history"
+      data-podcast="{{ podcast.slug }}"
+      data-episode="{{ str(episode.id) }}"
+      data-title="Listen history over one month"
+      data-chart-type="line"></div>
+
+    <div class="chunky-row">
+      <div class="chart-placeholder"
+        data-type="episode-listen-breakdown"
+        data-podcast="{{ podcast.slug }}"
+        data-episode="{{ str(episode.id) }}"
+        data-title="Listens by Source"
+        data-chart-type="pie"></div>
+    </div>
+  {% else %}
+    <div class="episode-empty-state empty-state">
+      Analytics will become available when you've received your first listen
+    </div>
+  {% endif %}
 </div>
 
-{% if analytics.total_listens %}
-<div class="chunky chart-placeholder"
-  data-type="episode-listen-history"
-  data-podcast="{{ podcast.slug }}"
-  data-episode="{{ str(episode.id) }}"
-  data-title="Listen history over one month"
-  data-chart-type="line"></div>
-{% endif %}
+<div class="tab-audio" style="overflow: hidden; height: 0">
+  <iframe src="/player/{{ str(episode.id) }}" seamless height="60" style="border:0" class="podmaster-embed"></iframe>
 
-<iframe src="/player/{{ str(episode.id) }}" seamless height="60" style="border:0" class="podmaster-embed"></iframe>
+  <div class="card-block card">
+    <strong>Embed Code</strong>
+    <textarea readonly class="embed-textarea"><iframe src="http://host.podmaster.io/player/{{ str(episode.id) }}" seamless height="60" style="border:0" class="podmaster-embed"></iframe></textarea>
+  </div>
+  
+  <div class="card-block card">
+    <strong>Audio URL</strong>
+    <input type="url"
+      readonly
+      value="http://host.podmaster.io{{ url('listen', kwargs={'episode_id': str(episode.id)}) }}"
+      class="width-full">
+  </div>
 
-<div class="chunky">
-  {{ episode.description|safe }}
-</div>
-
-<div class="chunky">
-  <dl>
-    <dt>Created</dt> {#- -#}
-    <dd><abbr title="{{ episode.created }}">{{ episode.created.strftime('%Y-%m-%d') }}</abbr></dd>
-    
-    <dt>Publish Timestamp</dt> {#- -#}
-    <dd><abbr title="{{ episode.publish }} (UTC)">{{ episode.publish.strftime('%Y-%m-%d') }}</abbr></dd>
-    
-    <dt>Duration</dt> {#- -#}
-    <dd>
-      {{ '%02d'|format((episode.duration / 3600)|round(1, 'floor')|int) }} :
-      {{ '%02d'|format((episode.duration % 3600 / 60)|round(1, 'floor')|int) }} :
-      {{ '%02d'|format((episode.duration % 60)|round(1, 'floor')|int) }}
-    </dd>
-    
-    <dt>File Size</dt> {#- -#}
-    <dd>{{ episode.audio_size|filesizeformat }}</dd>
-    
-    <dt>File Type</dt> {#- -#}
-    <dd>{{ episode.audio_type }}</dd>
-    
-    <dt>Copyright</dt> {#- -#}
-    <dd>{{ episode.copyright }}</dd>
-    
-    <dt>License</dt> {#- -#}
-    <dd>{{ episode.license }}</dd>
-
-  </dl>
-</div>
-
-{% if analytics.total_listens %}
-<div class="chunky-row">
-  <div class="chart-placeholder"
-    data-type="episode-listen-breakdown"
-    data-podcast="{{ podcast.slug }}"
-    data-episode="{{ str(episode.id) }}"
-    data-title="Breakdown of listens by source"
-    data-chart-type="pie"></div>
-</div>
-{% endif %}
-
-<div class="chunky">
-  <b>Embed Code</b>
-  <textarea readonly class="embed-textarea"><iframe src="http://host.podmaster.io/player/{{ str(episode.id) }}" seamless height="60" style="border:0" class="podmaster-embed"></iframe></textarea>
 </div>
 
 {% endblock %}
@@ -96,4 +119,5 @@
 <script src="https://fb.me/react-0.13.3.js"></script>
 <script src="/static/js/chartjs-1.0.2.min.js"></script>
 <script src="/static/js/ui-chart.js"></script>
+<script src="/static/js/tabs.js"></script>
 {% endblock %}

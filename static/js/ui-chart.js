@@ -20,12 +20,12 @@ var ChartComponent = React.createClass({
         return React.createElement(
             'div',
             {},
-            (this.props.title ? React.createElement('span', {className: 'chart-title'}, this.props.title) : null),
+            (this.props.title ? React.createElement('strong', {className: 'chart-title', title: this.props.title}, this.props.title) : null),
             React.createElement(
                 'canvas',
                 {
                     ref: 'surface',
-                    width: this.props.origElement.clientWidth - 30,
+                    width: this.props.origElement.clientWidth - 10,
                     height: 200,
                     onClick: this.startLoadingData,
                 }

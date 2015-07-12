@@ -1,14 +1,17 @@
 {% extends 'dashboard_base.html' %}
 {% block dashboard_body %}
-<div class="breadcrumb">
-  <a href="{{ url('podcast_dashboard', kwargs={'podcast_slug': podcast.slug}) }}">&laquo; Back to {{ podcast.name }}</a>
-</div>
 
-<menu class="toolbar toolbar-right">
-  <li><a class="btn btn-danger" href="{{ url('delete_podcast', kwargs={'podcast_slug': podcast.slug}) }}">Delete Podcast</a></li>
-</menu>
+<header>
+  <div class="breadcrumb">
+    <a href="{{ url('podcast_dashboard', kwargs={'podcast_slug': podcast.slug}) }}">&laquo; Back to {{ podcast.name }}</a>
+  </div>
 
-<h1>Edit {{ podcast.name }}</h1>
+  <menu class="toolbar toolbar-right">
+    <li><a class="btn btn-danger" href="{{ url('delete_podcast', kwargs={'podcast_slug': podcast.slug}) }}">Delete Podcast</a></li>
+  </menu>
+
+  <h1>Edit {{ podcast.name }}</h1>
+</header>
 
 {% if error %}
 <div class="error">
@@ -17,87 +20,106 @@
 {% endif %}
 
 <form action="?" method="post">
-  <label>
-    <span>Name</span>
-    <input type="text"
-      name="name"
-      placeholder="My Great Podcast"
-      required
-      maxlength="256"
-      class="width-full"
-      value="{{ default.get('name', podcast.name) }}">
-  </label>
-  <label>
-    <span>Slug</span>
-    <input type="text"
-      name="slug"
-      placeholder="my-great-podcast"
-      required
-      maxlength="64"
-      pattern="[\w-]+"
-      class="slug-field width-full"
-      value="{{ default.get('slug', podcast.slug) }}">
-    <div class="url-availability"></div>
-    <div class="warning slug-warning">
-      WARNING! Changing your slug will change your RSS feed URL. You will lose all of your subscribers.
-    </div>
-  </label>
-  <label>
-    <span>Subtitle</span>
-    <input type="text"
-      name="subtitle"
-      placeholder="You'll never believe it"
-      maxlength="512"
-      value="{{ default.get('subtitle', podcast.subtitle) }}">
-  </label>
-  <label>
-    <span>Description</span>
-    <textarea name="description">{{ default.get('description', podcast.description)|safe }}</textarea>
-  </label>
-  <label>
-    <input type="checkbox" name="is_explicit" value="true" {{ 'checked' if default.get('is_explicit', 'true' if podcast.is_explicit else 'false') == 'true' }}>
-    <span>Explicit?</span>
-  </label>
-  <label>
-    <span>Homepage</span>
-    <input type="url" name="homepage" placeholder="https://my-great-podcast.biz" required value="{{ default.get('homepage', podcast.homepage) }}">
-  </label>
-  <label>
-    <span>Language</span>
-    <input type="text" name="language" placeholder="en-US" required maxlength="16" value="{{ default.get('language', podcast.language)}}">
-  </label>
-  <label>
-    <span>Copyright</span>
-    <input type="text"
-      name="copyright"
-      maxlength="1024"
-      placeholder="Copyright 2015 Foo Bar Inc."
-      required
-      value="{{ default.get('copyright', podcast.copyright) }}">
-  </label>
-  <label>
-    <span>Author</span>
-    <input type="text"
-      name="author_name"
-      maxlength="1024"
-      placeholder="Jane Doe"
-      required
-      value="{{ default.get('author_name', podcast.author_name) }}">
-  </label>
-  <div class="label">
-    <span>Image</span>
+  <div class="card-block card">
+    <strong>Details</strong>
+
+    <label>
+      <span>Name</span>
+      <input type="text"
+        name="name"
+        placeholder="My Great Podcast"
+        required
+        maxlength="256"
+        class="width-full"
+        value="{{ default.get('name', podcast.name) }}">
+    </label>
+
+    <label>
+      <span>Slug</span>
+      <input type="text"
+        name="slug"
+        placeholder="my-great-podcast"
+        required
+        maxlength="64"
+        pattern="[\w-]+"
+        class="slug-field width-full"
+        value="{{ default.get('slug', podcast.slug) }}">
+      <div class="url-availability"></div>
+      <div class="warning slug-warning">
+        WARNING! Changing your slug will change your RSS feed URL. You will lose all of your subscribers.
+      </div>
+    </label>
+
+    <label>
+      <span>Subtitle</span>
+      <input type="text"
+        name="subtitle"
+        placeholder="You'll never believe it"
+        maxlength="512"
+        value="{{ default.get('subtitle', podcast.subtitle) }}">
+    </label>
+
+    <label>
+      <input type="checkbox" name="is_explicit" value="true" {{ 'checked' if default.get('is_explicit', 'true' if podcast.is_explicit else 'false') == 'true' }}>
+      <span>Explicit?</span>
+    </label>
+
+    <label>
+      <span>Description</span>
+      <textarea name="description">{{ default.get('description', podcast.description)|safe }}</textarea>
+    </label>
+  </div>
+
+  <div class="card-block card">
+    <strong>Meta</strong>
+
+    <label>
+      <span>Homepage</span>
+      <input type="url" name="homepage" placeholder="https://my-great-podcast.biz" required value="{{ default.get('homepage', podcast.homepage) }}">
+    </label>
+
+    <label>
+      <span>Language</span>
+      <input type="text" name="language" placeholder="en-US" required maxlength="16" value="{{ default.get('language', podcast.language)}}">
+    </label>
+
+    <label>
+      <span>Copyright</span>
+      <input type="text"
+        name="copyright"
+        maxlength="1024"
+        placeholder="Copyright 2015 Foo Bar Inc."
+        required
+        value="{{ default.get('copyright', podcast.copyright) }}">
+    </label>
+
+    <label>
+      <span>Author</span>
+      <input type="text"
+        name="author_name"
+        maxlength="1024"
+        placeholder="Jane Doe"
+        required
+        value="{{ default.get('author_name', podcast.author_name) }}">
+    </label>
+
+  </div>
+
+  <div class="card-block card">
+    <strong>Cover Art</strong>
     <div class="upload-placeholder"
       data-default-url="{{ default.get('image-url', podcast.cover_image) }}"
       data-default-size="{{ default.get('image-url-size') }}"
       data-default-name="{{ default.get('image-url-name') }}"
-      data-default-type="{{ default.get('image-url-type') }}"
+      data-default-type="{{ default.get('image-url-type', 'image/jpeg') }}"
       data-accept="image/*"
       data-name="image-url"
       data-type="image"
       data-podcast="$none"></div>
   </div>
-  <div class="label">
-    <span>Categories</span>
+
+  <div class="card-block card">
+    <strong>Categories</strong>
     <div class="category-placeholder"
       data-name="categories"
       data-default-cats="{{ default.get('categories', podcast.get_category_list()) }}"></div>

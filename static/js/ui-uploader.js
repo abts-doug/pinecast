@@ -31,6 +31,7 @@ var Uploader = React.createClass({
                 type: this.props.defType,
             },
             error: null,
+            dragging: 0,
 
             finalContentURL: hasDef ? this.props.defURL : null,
         };
@@ -121,20 +122,51 @@ var Uploader = React.createClass({
         }
 
         return React.createElement(
-            'input',
+            'label',
             {
-                type: 'file',
-                accept: this.props.accept,
-                onChange: this.gotNewFile,
-                ref: 'filePicker',
-                required: 'required',
-            }
+                className: 'upload-dd-label' + (this.state.dragging ? ' is-dragging' : ''),
+                onDragEnter: function(e) {
+                    // e.preventDefault();
+                    this.setState({
+                        dragging: this.state.dragging + 1,
+                    });
+                }.bind(this),
+                onDragOver: function(e) {
+                    e.preventDefault();
+                }.bind(this),
+                onDragLeave: function() {
+                    this.setState({
+                        dragging: this.state.dragging - 1,
+                    });
+                }.bind(this),
+                onDrop: function(e) {
+                    e.preventDefault();
+                    this.setNewFile(e.dataTransfer.files[0]);
+                }.bind(this),
+            },
+            React.createElement('i', {
+                'data-text-choose': 'Choose a file to upload',
+                'data-text-drop': 'or Drop files to upload',
+            }),
+            React.createElement(
+                'input',
+                {
+                    type: 'file',
+                    accept: this.props.accept,
+                    onChange: function(e) {
+                        var fileObj = this.refs.filePicker.getDOMNode().files[0];
+                        this.setNewFile(fileObj);
+                    }.bind(this),
+                    ref: 'filePicker',
+                    required: 'required',
+                }
+            )
         );
     },
 
-    gotNewFile: function(event) {
-        var fileObj = this.refs.filePicker.getDOMNode().files[0];
+    setNewFile: function(fileObj) {
         this.setState({
+            dragging: 0,
             fileObj: fileObj,
             uploading: true,
         });
@@ -247,13 +279,13 @@ var Uploader = React.createClass({
                 return React.createElement(
                     'div',
                     {className: 'warning'},
-                    'Warning! The image you have chosen does not meet the iTunes minimum size requirements of 1440px by 1440px.'
+                    'Warning! The image does not meet the iTunes minimum size of 1440x1440px.'
                 );
             case 'not_square':
                 return React.createElement(
                     'div',
                     {className: 'warning'},
-                    'Warning! The image you have chosen is not square. This may cause it to be distorted on some devices.'
+                    'Warning! The image is not square. This may cause distortion on some devices.'
                 );
         }
         return null;

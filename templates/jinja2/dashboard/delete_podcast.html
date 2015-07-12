@@ -1,22 +1,31 @@
 {% extends 'dashboard_base.html' %}
 {% block dashboard_body %}
-<h1>Delete {{ podcast.name }}?</h1>
-<p>Are you absolutely sure you wish to delete "{{ podcast.name }}"? This is permanent.</p>
+
+<header>
+  <h1>Delete {{ podcast.name }}?</h1>
+</header>
 <form action="?" method="post">
 
-  <label>
-    <span>Type the podcast's slug if you're really really sure</span>
-    <input type="text"
-      name="slug"
-      placeholder="{{ podcast.slug }}"
-      pattern="{{ podcast.slug }}"
-      title="Type '{{ podcast.slug }}' here in order to confirm deletion">
-  </label>
+  <div class="card-block card">
+    <strong>Confirm Delete</strong>
+    <p>Are you absolutely sure you wish to delete "{{ podcast.name }}"? This is permanent.</p>
+    <p>Type your podcast's slug in the box below to confirm this operation.</p>
 
-  <menu class="toolbar">
-    <li><button type="submit" class="btn-danger">I'm dead sure</button></li>
-    <li><a class="btn btn-neutral" href="{{ url('podcast_dashboard', kwargs={'podcast_slug': podcast.slug})}}">Never mind</a></li>
-  </menu>
+
+    <label>
+      <span>Podcast Slug</span>
+      <input type="text"
+        name="slug"
+        placeholder="{{ podcast.slug }}"
+        pattern="{{ podcast.slug }}"
+        title="Type '{{ podcast.slug }}' here in order to confirm deletion">
+    </label>
+    
+    <menu class="toolbar">
+      <li><button type="submit" class="btn-danger">I'm dead sure</button></li>
+      <li><a class="btn btn-neutral" href="{{ url('podcast_dashboard', kwargs={'podcast_slug': podcast.slug})}}">Never mind</a></li>
+    </menu>
+  </div>
 
   <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
 </form>

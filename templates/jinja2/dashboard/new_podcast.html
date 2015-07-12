@@ -1,6 +1,9 @@
 {% extends 'dashboard_base.html' %}
 {% block dashboard_body %}
-<h1>New Podcast</h1>
+
+<header>
+  <h1>New Podcast</h1>
+</header>
 
 {% if error %}
 <div class="error">
@@ -9,72 +12,91 @@
 {% endif %}
 
 <form action="?" method="post">
-  <label>
-    <span>Name</span>
-    <input type="text"
-      name="name"
-      placeholder="My Great Podcast"
-      required
-      maxlength="256"
-      class="width-full"
-      value="{{ default.get('name') }}">
-  </label>
-  <label>
-    <span>Slug</span>
-    <input type="text"
-      name="slug"
-      placeholder="my-great-podcast"
-      required
-      maxlength="64"
-      pattern="[\w-]+"
-      class="slug-field width-full"
-      value="{{ default.get('slug') }}">
-    <div class="url-availability"></div>
-  </label>
-  <label>
-    <span>Subtitle</span>
-    <input type="text"
-      name="subtitle"
-      placeholder="You'll never believe it"
-      maxlength="512"
-      value="{{ default.get('subtitle') }}">
-  </label>
-  <label>
-    <span>Description</span>
-    <textarea name="description">{{ default.get('description')|safe }}</textarea>
-  </label>
-  <label>
-    <input type="checkbox" name="is_explicit" value="true" {{ 'checked' if default.get('is_explicit') == 'true' }}>
-    <span>Explicit?</span>
-  </label>
-  <label>
-    <span>Homepage</span>
-    <input type="url" name="homepage" placeholder="https://my-great-podcast.biz" required value="{{ default.get('homepage') }}">
-  </label>
-  <label>
-    <span>Language</span>
-    <input type="text" name="language" placeholder="en-US" required maxlength="16" value="{{ default.get('language', 'en-US')}}">
-  </label>
-  <label>
-    <span>Copyright</span>
-    <input type="text"
-      name="copyright"
-      maxlength="1024"
-      placeholder="Copyright 2015 Foo Bar Inc."
-      required
-      value="{{ default.get('copyright') }}">
-  </label>
-  <label>
-    <span>Author</span>
-    <input type="text"
-      name="author_name"
-      maxlength="1024"
-      placeholder="Jane Doe"
-      required
-      value="{{ default.get('author_name') }}">
-  </label>
-  <div class="label">
-    <span>Image</span>
+  <div class="card-block card">
+    <strong>Details</strong>
+
+    <label>
+      <span>Name</span>
+      <input type="text"
+        name="name"
+        placeholder="My Great Podcast"
+        required
+        maxlength="256"
+        class="width-full"
+        value="{{ default.get('name') }}">
+    </label>
+
+    <label>
+      <span>Slug</span>
+      <input type="text"
+        name="slug"
+        placeholder="my-great-podcast"
+        required
+        maxlength="64"
+        pattern="[\w-]+"
+        class="slug-field width-full"
+        value="{{ default.get('slug') }}">
+      <div class="url-availability"></div>
+    </label>
+
+    <label>
+      <span>Subtitle</span>
+      <input type="text"
+        name="subtitle"
+        placeholder="You'll never believe it"
+        maxlength="512"
+        value="{{ default.get('subtitle') }}">
+    </label>
+
+    <label>
+      <input type="checkbox" name="is_explicit" value="true" {{ 'checked' if default.get('is_explicit') == 'true' }}>
+      <span>Explicit?</span>
+    </label>
+
+    <label>
+      <span>Description</span>
+      <textarea name="description">{{ default.get('description')|safe }}</textarea>
+    </label>
+
+  </div>
+
+  <div class="card-block card">
+    <strong>Meta</strong>
+
+    <label>
+      <span>Homepage</span>
+      <input type="url" name="homepage" placeholder="https://my-great-podcast.biz" required value="{{ default.get('homepage') }}">
+    </label>
+
+    <label>
+      <span>Language</span>
+      <input type="text" name="language" placeholder="en-US" required maxlength="16" value="{{ default.get('language', 'en-US')}}">
+    </label>
+
+    <label>
+      <span>Copyright</span>
+      <input type="text"
+        name="copyright"
+        maxlength="1024"
+        placeholder="Copyright 2015 Foo Bar Inc."
+        required
+        value="{{ default.get('copyright') }}">
+    </label>
+
+    <label>
+      <span>Author</span>
+      <input type="text"
+        name="author_name"
+        maxlength="1024"
+        placeholder="Jane Doe"
+        required
+        value="{{ default.get('author_name') }}">
+    </label>
+
+  </div>
+
+  <div class="card-block card">
+    <strong>Cover Art</strong>
     <div class="upload-placeholder"
       data-default-url="{{ default.get('image-url') }}"
       data-default-name="{{ default.get('image-url-name') }}"
@@ -85,8 +107,9 @@
       data-type="image"
       data-podcast="$none"></div>
   </div>
-  <div class="label">
-    <span>Categories</span>
+
+  <div class="card-block card">
+    <strong>Categories</strong>
     <div class="category-placeholder"
       data-name="categories"
       data-default-cats="{{ default.get('categories') }}"></div>
