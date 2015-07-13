@@ -51,6 +51,12 @@
       class="width-full">
   </div>
 
+  <div class="card-block card">
+    <strong>Milestones</strong>
+    <p>Your next milestone is {{ next_milestone }} listens!</p>
+    <div class="progress"><i data-tooltip="{{ (analytics.total_listens / next_milestone * 100)|int }}%" style="width: {{ analytics.total_listens / next_milestone * 100 }}%"></i></div>
+  </div>
+
 </div>
 <div class="tab-episodes" style="overflow: hidden; height: 0">
   {% if not episodes %}

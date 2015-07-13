@@ -47,17 +47,25 @@ def dashboard(req):
     return _pmrender(req, 'dashboard.html')
 
 
+MILESTONES = [1, 100, 250, 500, 1000, 2000, 5000, 7500, 10000, 15000, 20000,
+              50000, 100000, 150000, 250000, 500000, 1000000, 2000000, 5000000,
+              10000000, float('inf')]
+
+
 @login_required
 def podcast_dashboard(req, podcast_slug):
     pod = get_object_or_404(Podcast, slug=podcast_slug, owner=req.user)
+
+    total_listens = analytics_query.total_listens(pod)
     data = {
         'podcast': pod,
         'episodes': pod.podcastepisode_set.order_by('-publish'),
         'analytics': {
-            'total_listens': analytics_query.total_listens(pod),
+            'total_listens': total_listens,
             'total_listens_this_week': analytics_query.total_listens_this_week(pod),
             'subscribers': analytics_query.total_subscribers(pod),
         },
+        'next_milestone': next(x for x in MILESTONES if x > total_listens)
     }
     return _pmrender(req, 'dashboard/podcast.html', data)
 
