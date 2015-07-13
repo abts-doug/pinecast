@@ -11,7 +11,7 @@ def get_device_type(req):
         'device': parsed.device.family,
         'os': parsed.os.family,
     }
-    ua = req.META.get('HTTP_USER_AGENT')
+    ua = req.META.get('HTTP_USER_AGENT', 'Unknown')
     if 'iTunes' in ua:
         settled['browser'] = 'itunes'
     elif 'Pocket Casts' in ua:
@@ -32,7 +32,7 @@ def is_bot(req):
 
 def _parse_req(req):
     if not hasattr(req, '__parsed_ua'):
-        setattr(req, '__parsed_ua', parse(req.META['HTTP_USER_AGENT']))
+        setattr(req, '__parsed_ua', parse(req.META.get('HTTP_USER_AGENT', 'Unknown')))
     return getattr(req, '__parsed_ua')
 
 
@@ -45,7 +45,7 @@ def get_request_ip(req):
 
 
 def get_request_hash(req):
-    ua = req.META.get('HTTP_USER_AGENT')
+    ua = req.META.get('HTTP_USER_AGENT', 'Unknown')
     ip = get_request_ip(req)
     today = datetime.date.today().isoformat()
     return base64.b64encode('%s:%s:%s' % (today, ip, ua))
