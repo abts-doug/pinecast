@@ -495,9 +495,7 @@ menu.tabs a.selected {
     position: relative;
 }
 .dashboard-podcasts > li > img {
-    width: calc(30px + 100%);
-    margin: -15px;
-    margin-top: 15px;
+    width: 100%;
 }
 
 

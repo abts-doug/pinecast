@@ -70,6 +70,7 @@
         <tr>
           <th class="primary">Episode Name</th>
           <th>Subtitle</th>
+          <th>Published</th>
         </tr>
       </thead>
       <tbody>
@@ -79,6 +80,7 @@
               <a href="/dashboard/podcast/{{ podcast.slug }}/episode/{{ ep.id }}">{{ ep.title }}</a>
             </td>
             <td>{{ ep.subtitle }}</td>
+            <td>{{ ep.publish|pretty_date }}</td>
           </tr>
         {% endfor %}
       </tbody>

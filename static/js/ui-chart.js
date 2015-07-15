@@ -25,7 +25,7 @@ var ChartComponent = React.createClass({
                 'canvas',
                 {
                     ref: 'surface',
-                    width: this.props.origElement.clientWidth - 10,
+                    width: this.props.origElement.clientWidth - 20,
                     height: 200,
                     onClick: this.startLoadingData,
                 }
