@@ -58,7 +58,7 @@
   <div class="card-block card">
     <strong>Audio</strong>
     <div class="upload-placeholder"
-      data-default-url="{{ default.get('audio-url', episode.audio_url) }}"
+      data-default-url="{{ sign(default.get('audio-url', episode.audio_url)) }}"
       data-default-size="{{ default.get('audio-url-size', episode.audio_size) }}"
       data-default-name="{{ default.get('audio-url-name', 'Previously uploaded episode audio') }}"
       data-default-type="{{ default.get('audio-url-type', episode.audio_type) }}"
@@ -81,7 +81,7 @@
     <strong>Episode Image</strong>
 
     <div class="upload-placeholder"
-      data-default-url="{{ default.get('image-url', episode.image_url) }}"
+      data-default-url="{{ sign(default.get('image-url', episode.image_url)) }}"
       data-default-size="{{ default.get('image-url-size') }}"
       data-default-name="{{ default.get('image-url-name') }}"
       data-default-type="{{ default.get('image-url-type') }}"

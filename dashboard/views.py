@@ -8,6 +8,7 @@ import time
 import urllib
 import uuid
 
+import itsdangerous
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.http import Http404, JsonResponse
@@ -15,6 +16,9 @@ from django.shortcuts import get_object_or_404, redirect, render
 
 import analytics.query as analytics_query
 from podcasts.models import CATEGORIES, Podcast, PodcastCategory, PodcastEpisode
+
+
+signer = itsdangerous.Signer(settings.SECRET_KEY)
 
 
 def _pmrender(req, template, data=None):
@@ -28,6 +32,7 @@ def _pmrender(req, template, data=None):
             return d
 
     data.setdefault('default', DefaultEmptyDict())
+    data['sign'] = signer.sign
     if not req.user.is_anonymous():
         data.setdefault('user', req.user)
         data.setdefault('podcasts', req.user.podcast_set.all())
@@ -111,7 +116,7 @@ def new_podcast(req):
             slug=req.POST.get('slug'),
             name=req.POST.get('name'),
             subtitle=req.POST.get('subtitle'),
-            cover_image=req.POST.get('image-url'),
+            cover_image=signer.unsign(req.POST.get('image-url')),
             description=req.POST.get('description'),
             is_explicit=req.POST.get('is_explicit', 'false') == 'true',
             homepage=req.POST.get('homepage'),
@@ -150,7 +155,7 @@ def edit_podcast(req, podcast_slug):
         pod.language = req.POST.get('language')
         pod.copyright = req.POST.get('copyright')
         pod.author_name = req.POST.get('author_name')
-        pod.cover_image = req.POST.get('image-url')
+        pod.cover_image = signer.unsign(req.POST.get('image-url'))
         pod.set_category_list(req.POST.get('categories'))
         pod.save()
     except Exception as e:
@@ -201,11 +206,11 @@ def podcast_new_ep(req, podcast_slug):
             description=req.POST.get('description'),
             duration=int(req.POST.get('duration-hours')) * 3600 + int(req.POST.get('duration-minutes')) * 60 + int(req.POST.get('duration-seconds')),
 
-            audio_url=req.POST.get('audio-url'),
+            audio_url=signer.unsign(req.POST.get('audio-url')),
             audio_size=int(req.POST.get('audio-url-size')),
             audio_type=req.POST.get('audio-url-type'),
 
-            image_url=req.POST.get('image-url'),
+            image_url=signer.unsign(req.POST.get('image-url')),
 
             copyright=req.POST.get('copyright'),
             license=req.POST.get('license'))
@@ -233,18 +238,18 @@ def edit_podcast_episode(req, podcast_slug, episode_id):
         ep.description = req.POST.get('description')
         ep.duration = int(req.POST.get('duration-hours')) * 3600 + int(req.POST.get('duration-minutes')) * 60 + int(req.POST.get('duration-seconds'))
 
-        ep.audio_url = req.POST.get('audio-url')
+        ep.audio_url = signer.unsign(req.POST.get('audio-url'))
         ep.audio_size = int(req.POST.get('audio-url-size'))
         ep.audio_type = req.POST.get('audio-url-type')
 
-        ep.image_url = req.POST.get('image-url')
+        ep.image_url = signer.unsign(req.POST.get('image-url'))
 
         ep.copyright = req.POST.get('copyright')
         ep.license = req.POST.get('license')
         ep.save()
     except Exception as e:
         print e
-        return  _pmrender(req, 'dashboard/new_episode.html', {'podcast': pod, 'episode': ep, 'default': req.POST, 'error': True})
+        return  _pmrender(req, 'dashboard/edit_episode.html', {'podcast': pod, 'episode': ep, 'default': req.POST, 'error': True})
     return redirect('podcast_episode', podcast_slug=pod.slug, episode_id=str(ep.id))
 
 
@@ -310,6 +315,7 @@ def get_upload_url(req, podcast_slug, type):
     encoded_policy = base64.b64encode(json.dumps(policy))
 
     destination_url = 'http://%s.s3.amazonaws.com/%s' % (settings.S3_BUCKET, path)
+    signed_dest_url = signer.sign(destination_url)
     return {
         'url': 'http://%s.s3.amazonaws.com/' % settings.S3_BUCKET,
         'method': 'post',
@@ -324,5 +330,5 @@ def get_upload_url(req, podcast_slug, type):
                                                    encoded_policy.encode('utf8'),
                                                    hashlib.sha1).digest()),
         },
-        'destination_url': destination_url,
+        'destination_url': signed_dest_url,
     }

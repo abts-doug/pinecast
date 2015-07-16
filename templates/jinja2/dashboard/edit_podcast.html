@@ -108,7 +108,7 @@
   <div class="card-block card">
     <strong>Cover Art</strong>
     <div class="upload-placeholder"
-      data-default-url="{{ default.get('image-url', podcast.cover_image) }}"
+      data-default-url="{{ sign(default.get('image-url', podcast.cover_image)) }}"
       data-default-size="{{ default.get('image-url-size') }}"
       data-default-name="{{ default.get('image-url-name') }}"
       data-default-type="{{ default.get('image-url-type', 'image/jpeg') }}"
