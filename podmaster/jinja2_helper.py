@@ -54,11 +54,11 @@ def pretty_date(time=False):
         if second_diff < 7200:
             return "an hour ago"
         if second_diff < 86400:
-            return plural('{n} hour ago', '{n} hour ago', second_diff / 3600)
+            return plural('{n} hour ago', '{n} hours ago', second_diff / 3600)
     if day_diff == 1:
         return "Yesterday"
     if day_diff < 7:
-        return plural('{n} hour ago', '{n} hour ago', second_diff / 3600)
+        return plural('{n} day ago', '{n} days ago', day_diff)
     if day_diff < 31:
         return plural('{n} week ago', '{n} weeks ago', day_diff / 7)
     if day_diff < 365:
