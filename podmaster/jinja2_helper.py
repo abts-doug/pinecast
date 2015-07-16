@@ -21,7 +21,7 @@ def environment(**options):
 
 
 def plural(sing, plur, n, **kwargs):
-    return (plur if n != 1 else sing).format(**kwargs)
+    return (plur if n != 1 else sing).format(n=str(n), **kwargs)
 
 def pretty_date(time=False):
     """
@@ -46,22 +46,21 @@ def pretty_date(time=False):
         if second_diff < 10:
             return "just now"
         if second_diff < 60:
-            return plural('{n} second ago', '{n} seconds ago', second_diff, n=str(second_diff))
+            return plural('{n} second ago', '{n} seconds ago', second_diff)
         if second_diff < 120:
             return  "a minute ago"
         if second_diff < 3600:
-            return plural('{n} minute ago', '{n} minutes ago', second_diff / 60, n=str(second_diff / 60))
+            return plural('{n} minute ago', '{n} minutes ago', second_diff / 60)
         if second_diff < 7200:
             return "an hour ago"
         if second_diff < 86400:
-            return plural('{n} hour ago', '{n} hour ago', second_diff / 3600, n=str(second_diff / 3600))
+            return plural('{n} hour ago', '{n} hour ago', second_diff / 3600)
     if day_diff == 1:
         return "Yesterday"
     if day_diff < 7:
-        return plural('{n} hour ago', '{n} hour ago', second_diff / 3600, n=str(second_diff / 3600))
-        return str(day_diff) + " day(s) ago"
+        return plural('{n} hour ago', '{n} hour ago', second_diff / 3600)
     if day_diff < 31:
-        return str(day_diff / 7) + " week(s) ago"
+        return plural('{n} week ago', '{n} weeks ago', day_diff / 7)
     if day_diff < 365:
-        return str(day_diff / 30) + " month(s) ago"
-    return str(day_diff / 365) + " year(s) ago"
+        return plural('{n} month ago', '{n} months ago', day_diff / 30)
+    return plural('{n} year ago', '{n} years ago', day_diff / 365)
