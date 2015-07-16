@@ -257,9 +257,9 @@ var Uploader = React.createClass({
         var data = new FormData();
         for (key in fields.fields) {
             if (!fields.fields.hasOwnProperty(key)) continue;
-            data.set(key, fields.fields[key]);
+            data.append(key, fields.fields[key]);
         }
-        data.set('file', this.state.fileObj);
+        data.append('file', this.state.fileObj);
         xhr.send(data);
     },
 
