@@ -7,6 +7,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.views.decorators.clickjacking import xframe_options_exempt
 
 import analytics.analyze as analyze
 import analytics.log as analytics_log
@@ -141,6 +142,7 @@ def feed(req, podcast_slug):
     return HttpResponse('\n'.join(content), content_type='application/rss+xml')
 
 
+@xframe_options_exempt
 def player(req, episode_id):
     ep = get_object_or_404(PodcastEpisode, id=episode_id)
     return render(req, 'player.html', {'episode': ep})
