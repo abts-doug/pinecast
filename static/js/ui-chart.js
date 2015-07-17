@@ -5,6 +5,10 @@ var chartTypes = {
     pie: 'Doughnut',
 };
 
+Chart.defaults.global.responsive = true;
+Chart.defaults.global.maintainAspectRatio = false;
+
+
 var ChartComponent = React.createClass({
 
     getInitialState: function() {
@@ -19,14 +23,18 @@ var ChartComponent = React.createClass({
     render: function() {
         return React.createElement(
             'div',
-            {},
+            {
+                style: {
+                    'box-sizing': 'content-box',
+                },
+            },
             (this.props.title ? React.createElement('strong', {className: 'chart-title', title: this.props.title}, this.props.title) : null),
             React.createElement(
                 'canvas',
                 {
                     ref: 'surface',
-                    width: this.props.origElement.clientWidth - 20,
                     height: 200,
+                    'data-fixed-height': 200,
                     onClick: this.startLoadingData,
                 }
             )
