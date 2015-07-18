@@ -117,7 +117,8 @@ button, .btn {
     transition: box-shadow 0.2s;
 }
 
-button:hover, .btn:hover {
+button:hover, .btn:hover,
+button:focus, .btn:focus {
     box-shadow: 0 3px 5px rgba(0, 0, 0, 0.4);
     text-decoration: none;
 }

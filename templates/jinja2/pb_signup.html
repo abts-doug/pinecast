@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% block css %}
+  <link type="text/css" rel="stylesheet" href="/static/css/signup.css">
+{% endblock %}
+{% block content %}
+<nav>
+  <a href="/login">Login</a>
+</nav>
+<form action="/beta_signup" method="post">
+  <hgroup class="hero">
+    <img src="/static/img/herologo.png" alt="">
+    <h1>PodMaster.io</h1>
+    <h2>Premium podcast hosting</h2>
+  </hgroup>
+  <section class="features">
+    <div>
+      <div class="feature-analytics">
+        <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+            width="32px" height="32px" viewBox="0 0 32 32" enable-background="new 0 0 32 32" xml:space="preserve">
+          <g>
+            <path fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-miterlimit="10" d="M19,7c0-0.552-0.447-1-1-1
+              h-4c-0.552,0-1,0.448-1,1v23c0,0.553,0.448,1,1,1h4c0.553,0,1-0.447,1-1V7z" />
+            <path fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-miterlimit="10" d="M7,14c0-0.552-0.448-1-1-1
+              H2c-0.552,0-1,0.448-1,1v16c0,0.553,0.448,1,1,1h4c0.552,0,1-0.447,1-1V14z" />
+            <path fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-miterlimit="10" d="M31,2c0-0.552-0.447-1-1-1
+              h-4c-0.553,0-1,0.448-1,1v28c0,0.553,0.447,1,1,1h4c0.553,0,1-0.447,1-1V2z" />
+          </g>
+        </svg>
+        <strong>Analytics</strong>
+        <p>Comprehensive analytics are available at all pricing tiers.</p>
+      </div>
+      <div class="feature-unlimited">
+        <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+           width="32px" height="32.041px" viewBox="0 0 32 32.041" xml:space="preserve">
+          <g>
+            <path fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
+              M22,27h8c0.553,0,1-0.447,1-1V2c0-0.553-0.447-1-1-1H2C1.447,1,1,1.447,1,2v24c0,0.553,0.447,1,1,1h8" />
+              <line fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-miterlimit="10" x1="16.035" y1="31.041" x2="16.035" y2="12.959" />
+              <line fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="16.023" y1="12.959" x2="21.546" y2="18.492" />
+              <line fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="16.012" y1="12.959" x2="10.454" y2="18.492" />
+          </g>
+        </svg>
+        <strong>Unlimited</strong>
+        <p>No bandwidth or storage restrictions. Host as many podcasts as you like.</p>
+      </div>
+      <div class="feature-social">
+        <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+           width="31px" height="33px" viewBox="0 0 31 33" xml:space="preserve">
+          <g>
+            <path fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
+              M30,3L2,7C1.447,7,1,7.448,1,8v11c0,0.553,0.447,1,1,1l28,4V3z" />
+              <line fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="25" y1="4" x2="25" y2="23" />
+              <polyline fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="
+              10,22 10,32 5,30 5,21" />
+              <line fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="30" y1="1" x2="30" y2="26" />
+          </g>
+        </svg>
+        <strong>Social</strong>
+        <p>Manage communication with your audience in one place.</p>
+      </div>
+    </div>
+  </section>
+  <main>
+    <h3>Sign up for an invitation</h3>
+    <p>Request an invitation to reserve your spot in line to try PodMaster Hosting.</p>
+
+    <label>
+      <span>Email</span>
+      <input type="email" placeholder="me@podmaster.io" name="email" required>
+      <small>No junk, only your invitation.</small>
+    </label>
+
+    <label>
+      <span>What kind of podcaster are you?</span>
+      <select name="type">
+        {% for type, name in types %}
+          <option value="{{ type }}">{{ name }}</option>
+        {% endfor %}
+      </select>
+    </label>
+
+    <menu class="buttons">
+      <button>Request Invitation</button>
+    </menu>
+  </main>
+  <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+</form>
+{% endblock %}

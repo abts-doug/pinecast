@@ -3,8 +3,6 @@ import time
 from email.Utils import formatdate
 from xml.sax.saxutils import escape, quoteattr
 
-from django.contrib.auth import authenticate, login
-from django.contrib.auth.models import User
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.clickjacking import xframe_options_exempt
@@ -12,27 +10,6 @@ from django.views.decorators.clickjacking import xframe_options_exempt
 import analytics.analyze as analyze
 import analytics.log as analytics_log
 from .models import Podcast, PodcastEpisode
-
-
-def home(req):
-    if not req.user.is_anonymous():
-        return redirect('dashboard')
-
-    if not req.POST:
-        return render(req, 'login.html')
-
-    try:
-        user = User.objects.get(email=req.POST.get('email'))
-        password = req.POST.get('password')
-    except User.DoesNotExist:
-        pass
-
-    if (user and
-        user.is_active and
-        user.check_password(password)):
-        login(req, authenticate(username=user.username, password=password))
-        return redirect('dashboard')
-    return render(req, 'login.html', {'error': 'Invalid credentials'})
 
 
 def listen(req, episode_id):

@@ -4,6 +4,8 @@ import uuid
 from django.contrib.auth.models import User
 from django.db import models
 
+from accounts.models import Network
+
 
 class Podcast(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -26,6 +28,8 @@ class Podcast(models.Model):
 
     rss_redirect = models.URLField(null=True)
     stats_base_listens = models.PositiveIntegerField(default=0)
+
+    networks = models.ManyToManyField(Network)
 
 
     def get_category_list(self):
@@ -67,14 +71,24 @@ class PodcastEpisode(models.Model):
     image_url = models.URLField()
 
     copyright = models.CharField(max_length=1024)
-    license = models.CharField(max_length=1024)
+    license = models.CharField(max_length=1024, blank=True)
+
+    awaiting_import = models.BooleanField(default=False)
 
 
     def is_published(self):
-        return self.publish <= datetime.datetime.now()
+        return not self.awaiting_import and self.publish <= datetime.datetime.now()
 
     def __unicode__(self):
         return '%s - %s' % (self.title, self.subtitle)
+
+
+class EpisodeImportRequest(models.Model):
+    episode = models.ForeignKey(PodcastEpisode)
+    expiration = models.DateTimeField()
+    audio_source_url = models.URLField()
+    image_source_url = models.URLField(blank=True)
+    access_token = models.CharField(max_length=128)
 
 
 CATEGORIES = set([

@@ -1,0 +1,85 @@
+0 info it worked if it ends with ok
+1 verbose cli [ 'C:\\Program Files\\iojs\\node.exe',
+1 verbose cli   'C:\\Program Files\\iojs\\node_modules\\npm\\bin\\npm-cli.js',
+1 verbose cli   'install',
+1 verbose cli   'node-canvas' ]
+2 info using npm@2.12.1
+3 info using node@v2.3.4
+4 verbose install initial load of Q:\opt\podmaster-host\package.json
+5 verbose readDependencies loading dependencies from Q:\opt\podmaster-host\package.json
+6 silly cache add args [ 'node-canvas', null ]
+7 verbose cache add spec node-canvas
+8 silly cache add parsed spec { raw: 'node-canvas',
+8 silly cache add   scope: null,
+8 silly cache add   name: 'node-canvas',
+8 silly cache add   rawSpec: '',
+8 silly cache add   spec: '*',
+8 silly cache add   type: 'range' }
+9 silly addNamed node-canvas@*
+10 verbose addNamed "*" is a valid semver range for node-canvas
+11 silly addNameRange { name: 'node-canvas', range: '*', hasData: false }
+12 silly mapToRegistry name node-canvas
+13 silly mapToRegistry using default registry
+14 silly mapToRegistry registry https://registry.npmjs.org/
+15 silly mapToRegistry uri https://registry.npmjs.org/node-canvas
+16 verbose addNameRange registry:https://registry.npmjs.org/node-canvas not in flight; fetching
+17 verbose request uri https://registry.npmjs.org/node-canvas
+18 verbose request no auth needed
+19 info attempt registry request try #1 at 09:53:00
+20 verbose request id 26aeb654b3935540
+21 http request GET https://registry.npmjs.org/node-canvas
+22 http 404 https://registry.npmjs.org/node-canvas
+23 verbose headers { server: 'CouchDB/1.5.0 (Erlang OTP/R16B03)',
+23 verbose headers   'content-type': 'application/json',
+23 verbose headers   'cache-control': 'max-age=0',
+23 verbose headers   'content-length': '51',
+23 verbose headers   'accept-ranges': 'bytes',
+23 verbose headers   date: 'Sat, 18 Jul 2015 16:53:16 GMT',
+23 verbose headers   via: '1.1 varnish',
+23 verbose headers   age: '0',
+23 verbose headers   connection: 'keep-alive',
+23 verbose headers   'x-served-by': 'cache-sjc3124-SJC',
+23 verbose headers   'x-cache': 'MISS',
+23 verbose headers   'x-cache-hits': '0',
+23 verbose headers   'x-timer': 'S1437238396.318450,VS0,VE87' }
+24 silly get cb [ 404,
+24 silly get   { server: 'CouchDB/1.5.0 (Erlang OTP/R16B03)',
+24 silly get     'content-type': 'application/json',
+24 silly get     'cache-control': 'max-age=0',
+24 silly get     'content-length': '51',
+24 silly get     'accept-ranges': 'bytes',
+24 silly get     date: 'Sat, 18 Jul 2015 16:53:16 GMT',
+24 silly get     via: '1.1 varnish',
+24 silly get     age: '0',
+24 silly get     connection: 'keep-alive',
+24 silly get     'x-served-by': 'cache-sjc3124-SJC',
+24 silly get     'x-cache': 'MISS',
+24 silly get     'x-cache-hits': '0',
+24 silly get     'x-timer': 'S1437238396.318450,VS0,VE87' } ]
+25 verbose stack Error: 404 Not Found: node-canvas
+25 verbose stack     at CachingRegistryClient.<anonymous> (C:\Program Files\iojs\node_modules\npm\node_modules\npm-registry-client\lib\request.js:245:14)
+25 verbose stack     at Request._callback (C:\Program Files\iojs\node_modules\npm\node_modules\npm-registry-client\lib\request.js:170:14)
+25 verbose stack     at Request.self.callback (C:\Program Files\iojs\node_modules\npm\node_modules\request\request.js:197:22)
+25 verbose stack     at emitTwo (events.js:87:13)
+25 verbose stack     at Request.emit (events.js:172:7)
+25 verbose stack     at Request.<anonymous> (C:\Program Files\iojs\node_modules\npm\node_modules\request\request.js:1050:14)
+25 verbose stack     at emitOne (events.js:82:20)
+25 verbose stack     at Request.emit (events.js:169:7)
+25 verbose stack     at IncomingMessage.<anonymous> (C:\Program Files\iojs\node_modules\npm\node_modules\request\request.js:996:12)
+25 verbose stack     at emitNone (events.js:72:20)
+26 verbose statusCode 404
+27 verbose pkgid node-canvas
+28 verbose cwd Q:\opt\podmaster-host
+29 error Windows_NT 6.1.7601
+30 error argv "C:\\Program Files\\iojs\\node.exe" "C:\\Program Files\\iojs\\node_modules\\npm\\bin\\npm-cli.js" "install" "node-canvas"
+31 error node v2.3.4
+32 error npm  v2.12.1
+33 error code E404
+34 error 404 Not Found: node-canvas
+34 error 404
+34 error 404 'node-canvas' is not in the npm registry.
+34 error 404 You should bug the author to publish it (or use the name yourself!)
+34 error 404
+34 error 404 Note that you can also install from a
+34 error 404 tarball, folder, http url, or git url.
+35 verbose exit [ 1, true ]
