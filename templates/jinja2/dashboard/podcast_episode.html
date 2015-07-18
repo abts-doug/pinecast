@@ -36,7 +36,9 @@
 <div class="tab-overview">
   <div class="card-block card">
     <strong>Description</strong>
-    {{ episode.description|markdown|safe }}
+    <div class="markdown-editor-preview">
+      {{ episode.description|markdown|safe }}
+    </div>
   </div>
   
   <div class="card-block card">

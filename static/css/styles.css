@@ -568,7 +568,7 @@ menu.tabs a.selected {
     opacity: 1;
     transform: translate(0, 2px);
 }
-.markdown-editor-preview {
+.markdown-editor > .markdown-editor-preview {
     bottom: 0;
     left: 0;
     padding: 20px;
