@@ -3,6 +3,7 @@ import time
 from email.Utils import formatdate
 from xml.sax.saxutils import escape, quoteattr
 
+import gfm
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.clickjacking import xframe_options_exempt
@@ -42,16 +43,17 @@ def feed(req, podcast_slug):
     for ep in pod.podcastepisode_set.filter(publish__lt=datetime.datetime.now()):
         duration = datetime.timedelta(seconds=ep.duration)
         ep_url = ep.audio_url + '?x-source=rss&x-episode=%s' % str(ep.id)
+        md_desc = gfm.markdown(ep.description)
         items.append('\n'.join([
             '<item>',
                 '<title>%s</title>' % escape(ep.title),
-                '<description><![CDATA[%s]]></description>' % ep.description,
+                '<description><![CDATA[%s]]></description>' % md_desc,
                 '<link>%s</link>' % escape(ep_url),
                 '<guid isPermaLink="false">http://host.podmaster.io/guid/%s</guid>' % escape(str(ep.id)),
                 '<pubDate>%s</pubDate>' % formatdate(time.mktime(ep.publish.timetuple())),
                 '<itunes:author>%s</itunes:author>' % escape(pod.author_name),
                 '<itunes:subtitle>%s</itunes:subtitle>' % escape(ep.subtitle),
-                '<itunes:summary><![CDATA[%s]]></itunes:summary>' % ep.description,
+                '<itunes:summary><![CDATA[%s]]></itunes:summary>' % md_desc,
                 '<itunes:image href=%s />' % quoteattr(ep.image_url),
                 '<itunes:duration>%s</itunes:duration>' % escape(str(duration)),
                 '<enclosure url=%s length=%s type=%s />' % (
@@ -78,6 +80,7 @@ def feed(req, podcast_slug):
 
     category_output = '\n'.join(render_cat(category_map))
 
+    md_pod_desc = gfm.markdown(pod.description)
     content = [
         '<?xml version="1.0" encoding="UTF-8"?>',
         '<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" version="2.0">',
@@ -88,8 +91,8 @@ def feed(req, podcast_slug):
             '<copyright>%s</copyright>' % escape(pod.copyright),
             '<itunes:subtitle>%s</itunes:subtitle>' % escape(pod.subtitle),
             '<itunes:author>%s</itunes:author>' % escape(pod.author_name),
-            '<itunes:summary><![CDATA[%s]]></itunes:summary>' % pod.description,
-            '<description><![CDATA[%s]]></description>' % pod.description,
+            '<itunes:summary><![CDATA[%s]]></itunes:summary>' % md_pod_desc,
+            '<description><![CDATA[%s]]></description>' % md_pod_desc,
             '<itunes:owner>',
                 '<itunes:name>%s</itunes:name>' % escape(pod.author_name),
                 '<itunes:email>%s</itunes:email>' % escape(pod.owner.email),

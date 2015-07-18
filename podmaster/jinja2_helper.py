@@ -1,6 +1,7 @@
 import datetime
 import json
 
+import gfm
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.core.urlresolvers import reverse
 from jinja2 import Environment, evalcontextfilter
@@ -16,6 +17,7 @@ def environment(**options):
         'plural': plural,
     })
     env.filters['json'] = json.dumps
+    env.filters['markdown'] = gfm.markdown
     env.filters['pretty_date'] = pretty_date
     return env
 
