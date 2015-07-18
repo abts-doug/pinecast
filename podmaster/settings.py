@@ -31,6 +31,9 @@ else:
     ALLOWED_HOSTS = ['host.podmaster.io']
 
 
+import mimetypes
+mimetypes.add_type("image/svg+xml", ".svg", True)
+
 # Application definition
 
 INSTALLED_APPS = (

@@ -49,7 +49,7 @@
 
     <label>
       <span>Episode Description</span>
-      <textarea name="description" id="description-field">{{ default.get('description')|safe }}</textarea>
+      <textarea name="description" id="description-field">{{ default.get('description', '# Episode Notes\n\nNotes go here')|safe }}</textarea>
     </label>
 
   </div>
@@ -126,12 +126,13 @@
 {% endblock %}
 
 {% block after_content %}
+<link href="/static/css/markdown-editor.css" rel="stylesheet">
 <script src="https://fb.me/react-0.13.3.js"></script>
-<script src="/static/js/nicEdit.js"></script>
+<script src="/static/js/markdown-editor.js"></script>
 <script src="/static/js/ui-uploader.js"></script>
 <script src="/static/js/disable-forms.js"></script>
 <script>
-nicEditors.allTextAreas();
+markdown(document.querySelector('textarea'));
 
 document.querySelector('input[name="timezone"]').value = -new Date().getTimezoneOffset() / 60;
 </script>

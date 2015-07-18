@@ -530,8 +530,70 @@ menu.tabs a.selected {
     display: block;
 }
 
-.nicEdit-main {
+.markdown-editor div.CodeMirror-scroll {
+    padding: 10px;
+}
+.markdown-editor > div.CodeMirror,
+.markdown-editor > div.markdown-editor-preview {
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    top: 0;
+}
+.markdown-editor > .cm-s-base16-light.CodeMirror {
     background: #fff;
+}
+.markdown-editor > a.markdown-editor-preview-toggle {
+    background-image: url(/static/img/preview.svg);
+    background-repeat: no-repeat;
+    background-size: 30px 30px;
+    color: transparent;
+    font-size: 0;
+    height: 30px;
+    opacity: 0.2;
+    padding: 5px 8px;
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    transform: translate(0, 0);
+    transition: transform 0.15s, opacity 0.15s;
+    width: 30px;
+    z-index: 200;
+}
+.markdown-editor > a.markdown-editor-preview-toggle:hover,
+.markdown-editor > a.markdown-editor-preview-toggle:focus {
+    opacity: 0.75;
+    transform: translate(0, -2px);
+}
+.markdown-editor > a.markdown-editor-preview-toggle:active {
+    opacity: 1;
+    transform: translate(0, 2px);
+}
+.markdown-editor-preview {
+    bottom: 0;
+    left: 0;
+    padding: 20px;
+    position: absolute;
+    right: 0;
+    top: 30px;
+}
+.markdown-editor-preview h1,
+.markdown-editor-preview h2,
+.markdown-editor-preview h3 {
+    margin-bottom: 15px;
+    padding: 0;
+}
+.markdown-editor-preview h1 {
+    font-size: 2em;
+}
+.markdown-editor-preview h2 {
+    border: 0;
+    font-size: 1.75em;
+}
+.markdown-editor-preview h3 {
+    font-size: 1.5em;
+}
+.markdown-editor .markdown-editor-preview p {
+    margin-top: 0;
 }
 
 

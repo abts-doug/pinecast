@@ -127,12 +127,13 @@
 {% endblock %}
 
 {% block after_content %}
+<link href="/static/css/markdown-editor.css" rel="stylesheet">
 <script src="https://fb.me/react-0.13.3.js"></script>
-<script src="/static/js/nicEdit.js"></script>
+<script src="/static/js/markdown-editor.js"></script>
 <script src="/static/js/ui-uploader.js"></script>
 <script src="/static/js/disable-forms.js"></script>
 <script>
-nicEditors.allTextAreas();
+markdown(document.querySelector('textarea'));
 
 (function() {
   var timezone = -new Date().getTimezoneOffset() / 60;
