@@ -9,12 +9,15 @@ import urllib
 import uuid
 
 import itsdangerous
+import requests
+from defusedxml.minidom import parseString as parseXMLString
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.http import Http404, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
 import analytics.query as analytics_query
+from . import importer as importer_lib
 from podcasts.models import CATEGORIES, Podcast, PodcastCategory, PodcastEpisode
 
 
@@ -332,3 +335,44 @@ def get_upload_url(req, podcast_slug, type):
         },
         'destination_url': signed_dest_url,
     }
+
+
+@login_required
+def importer(req):
+    if not req.POST:
+        return _pmrender(req, 'dashboard/importer.html')
+    return _pmrender(req, 'dashboard/importer.html')
+
+
+@login_required
+@json_response
+@importer_lib.handle_format_exceptions
+def importer_lookup(req):
+    url = req.GET.get('url')
+    if not url:
+        return {'error': 'no url'}
+
+    if url.startswith('feed://'):
+        url = 'http://' + url[7:]
+    if not url.startswith('http://') and not url.startswith('https://'):
+        return {'error': 'protocol'}
+
+    try:
+        data = requests.get(url, timeout=5)
+    except Exception as e:
+        print e
+        return {'error': 'connection'}
+    
+    try:
+        encoded = data.text.encode(data.encoding or 'utf-8')
+    except Exception as e:
+        print e
+        return {'error': 'invalid encoding'}
+    
+    try:
+        parsed = parseXMLString(encoded)
+    except Exception as e:
+        print e
+        return {'error': 'invalid xml'}
+
+    return importer_lib.get_details(req, parsed)

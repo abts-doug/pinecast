@@ -1,0 +1,15 @@
+{% extends 'dashboard_base.html' %}
+{% block dashboard_body %}
+
+<header>
+  <h1>Podcast Importer</h1>
+</header>
+
+<div class="importer-placeholder"></div>
+
+{% endblock %}
+
+{% block after_content %}
+<script src="https://fb.me/react-0.13.3.js"></script>
+<script src="/static/js/ui-podcast-import.js"></script>
+{% endblock %}

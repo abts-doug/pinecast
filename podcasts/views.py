@@ -44,6 +44,7 @@ def feed(req, podcast_slug):
         duration = datetime.timedelta(seconds=ep.duration)
         ep_url = ep.audio_url + '?x-source=rss&x-episode=%s' % str(ep.id)
         md_desc = gfm.markdown(ep.description)
+        ep_copy = ep.copyright or pod.copyright
         items.append('\n'.join([
             '<item>',
                 '<title>%s</title>' % escape(ep.title),
@@ -58,6 +59,8 @@ def feed(req, podcast_slug):
                 '<itunes:duration>%s</itunes:duration>' % escape(str(duration)),
                 '<enclosure url=%s length=%s type=%s />' % (
                     quoteattr(ep_url), quoteattr(str(ep.audio_size)), quoteattr(ep.audio_type)),
+                ('<dc:copyright>%s</dc:copyright>' % escape(ep_copy)) if ep_copy else None,
+                ('<dc:rights>%s</dc:rights>' % escape(ep.license)) if ep.license else None,
             '</item>',
         ]))
 
@@ -83,13 +86,16 @@ def feed(req, podcast_slug):
     md_pod_desc = gfm.markdown(pod.description)
     content = [
         '<?xml version="1.0" encoding="UTF-8"?>',
-        '<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" version="2.0">',
+        '<rss xmlns:atom="http://www.w3.org/2005/Atom"',
+        '     xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd"',
+        '     xmlns:dc="http://purl.org/dc/elements/1.1/"',
+        '     version="2.0">',
         '<channel>',
             '<title>%s</title>' % escape(pod.name),
             '<link>%s</link>' % escape(pod.homepage),
             '<language>%s</language>' % escape(pod.language),
             '<copyright>%s</copyright>' % escape(pod.copyright),
-            '<itunes:subtitle>%s</itunes:subtitle>' % escape(pod.subtitle),
+            ('<itunes:subtitle>%s</itunes:subtitle>' % escape(pod.subtitle)) if pod.subtitle else None,
             '<itunes:author>%s</itunes:author>' % escape(pod.author_name),
             '<itunes:summary><![CDATA[%s]]></itunes:summary>' % md_pod_desc,
             '<description><![CDATA[%s]]></description>' % md_pod_desc,
@@ -100,6 +106,7 @@ def feed(req, podcast_slug):
             '<itunes:explicit>%s</itunes:explicit>' % ('yes' if pod.is_explicit else 'no'),
             '<itunes:image href=%s />' % quoteattr(pod.cover_image),
             category_output,
+            ('<dc:copyright>%s</dc:copyright>' % escape(pod.copyright)) if pod.copyright else None,
             '\n'.join(items),
         '</channel>',
         '</rss>',
@@ -119,7 +126,7 @@ def feed(req, podcast_slug):
             },
         })
 
-    return HttpResponse('\n'.join(content), content_type='application/rss+xml')
+    return HttpResponse('\n'.join(c for c in content if c), content_type='application/rss+xml')
 
 
 @xframe_options_exempt
