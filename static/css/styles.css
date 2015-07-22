@@ -671,6 +671,15 @@ dl dd {
     width: 85%;
 }
 
+@media (max-width: 1280px) {
+    dl dt {
+        width: 30%;
+    }
+    dl dd {
+        width: 70%;
+    }
+}
+
 abbr {
     border-bottom: 1px dotted #ccc;
 }

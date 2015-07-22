@@ -376,3 +376,27 @@ def importer_lookup(req):
         return {'error': 'invalid xml'}
 
     return importer_lib.get_details(req, parsed)
+
+
+@login_required
+@json_response
+def start_import(req):
+    p = Podcast(
+        slug=req.POST.get('slug'),
+        name=req.POST.get('name'),
+        homepage=req.POST.get('homepage'),
+        # TODO: convert this to markdown?
+        description=req.POST.get('description'),
+        language=req.POST.get('language'),
+        copyright=req.POST.get('copyright'),
+        subtitle=req.POST.get('subtitle'),
+        author_name=req.POST.get('author_name'),
+        is_explicit=req.POST.get('is_explicit', 'false') == 'true',
+
+        # This is just temporary for the feed, just so it's usable in the interim
+        cover_image=req.POST.get('cover_image'),
+    )
+    p.save()
+    p.set_category_list(req.POST.get('categories')
+
+    # cover_image

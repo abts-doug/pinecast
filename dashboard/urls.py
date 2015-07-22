@@ -21,4 +21,5 @@ urlpatterns = [
 
     url(r'^services/slug_available$', views.slug_available, name='slug_available'),
     url(r'^services/getUploadURL/(?P<podcast_slug>([\w-]+|\$none))/(?P<type>[\w]+)$', views.get_upload_url, name='get_upload_url'),
+    url(r'^services/start_import$', views.start_import),
 ]

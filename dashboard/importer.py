@@ -45,12 +45,17 @@ def get_details(req, parsed):
         'copyright': first_tag_text(rss, 'dc:copyright', ''),
 
         'items': items,
+        '__ignored_items': 0,
     }
 
     item_nodes = rss.getElementsByTagName('item')
     if not item_nodes:
         raise FormatException('No <item> nodes in the feed were found')
     for node in item_nodes:
+        audio_url = first_tag_attr(node, 'enclosure', 'url')
+        if not audio_url:
+            data['__ignored_items'] += 1
+            continue
         items.append({
             'title': first_tag_text(node, 'title'),
             'description': first_tag_text(node, 'description'),
@@ -58,7 +63,7 @@ def get_details(req, parsed):
             'publish': parsedate(first_tag_text(node, 'pubDate')),
             'image_url': first_tag_attr(node, 'itunes:image', 'href', ''),
             'duration': first_tag_text(node, 'itunes:duration', '0:00'),
-            'audio_url': first_tag_attr(node, 'enclosure', 'url'),
+            'audio_url': audio_url,
             'audio_size': first_tag_attr(node, 'enclosure', 'length'),
             'audio_type': first_tag_attr(node, 'enclosure', 'type'),
             'copyright': first_tag_text(node, 'dc:copyright', ''),
