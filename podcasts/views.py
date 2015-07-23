@@ -81,8 +81,6 @@ def feed(req, podcast_slug):
                 yield '<itunes:category text=%s>%s</itunes:category>' % (
                     quoteattr(k), '\n'.join(render_cat(v)))
 
-    category_output = '\n'.join(render_cat(category_map))
-
     md_pod_desc = gfm.markdown(pod.description)
     content = [
         '<?xml version="1.0" encoding="UTF-8"?>',
@@ -105,7 +103,7 @@ def feed(req, podcast_slug):
             '</itunes:owner>',
             '<itunes:explicit>%s</itunes:explicit>' % ('yes' if pod.is_explicit else 'no'),
             '<itunes:image href=%s />' % quoteattr(pod.cover_image),
-            category_output,
+            '\n'.join(render_cat(category_map)),
             ('<dc:copyright>%s</dc:copyright>' % escape(pod.copyright)) if pod.copyright else None,
             '\n'.join(items),
         '</channel>',

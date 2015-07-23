@@ -1,6 +1,6 @@
 from django.conf.urls import url
 
-from . import views
+from . import views, views_importer
 
 
 urlpatterns = [
@@ -16,11 +16,11 @@ urlpatterns = [
     url(r'^podcast/(?P<podcast_slug>[\w-]+)/episode/(?P<episode_id>[\w-]+)/delete$', views.delete_podcast_episode, name='delete_podcast_episode'),
     url(r'^podcast/(?P<podcast_slug>[\w-]+)/episode/(?P<episode_id>[\w-]+)/edit$', views.edit_podcast_episode, name='edit_podcast_episode'),
 
-    url(r'^import$', views.importer, name='importer'),
-    url(r'^import/feed$', views.importer_lookup),
+    url(r'^import$', views_importer.importer, name='importer'),
+    url(r'^import/feed$', views_importer.importer_lookup),
 
     url(r'^services/slug_available$', views.slug_available, name='slug_available'),
     url(r'^services/getUploadURL/(?P<podcast_slug>([\w-]+|\$none))/(?P<type>[\w]+)$', views.get_upload_url, name='get_upload_url'),
-    url(r'^services/start_import$', views.start_import),
-    url(r'^services/import_progress/(?P<podcast_slug>[\w-]+)$', views.import_progress),
+    url(r'^services/start_import$', views_importer.start_import),
+    url(r'^services/import_progress/(?P<podcast_slug>[\w-]+)$', views_importer.import_progress),
 ]

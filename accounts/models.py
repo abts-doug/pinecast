@@ -36,5 +36,6 @@ class Network(models.Model):
     created = models.DateTimeField(auto_now=True)
 
     image_url = models.URLField(blank=True)
+    deactivated = models.BooleanField(default=False)
 
     members = models.ManyToManyField(User)

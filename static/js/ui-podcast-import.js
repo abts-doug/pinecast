@@ -53,7 +53,7 @@ var SlugField = React.createClass({
                     onInput: this.checkValidity,
                 }
             ),
-            this.state.isValid === null ? null : React.createElement(
+            !this.props.readonly && this.state.isValid === null ? null : React.createElement(
                 'div',
                 {className: 'url-availability ' + (this.state.isValid ? 'is-available' : 'is-unavailable')},
                 this.state.isValid ? 'The slug is available!' : 'The slug is unavailable.'
@@ -239,7 +239,7 @@ var PodcastImporter = React.createClass({
             React.createElement(
                 'div',
                 {className: 'progress'},
-                React.createElement('i', {width: progress + 'px', 'data-tooltip': progress + '%'})
+                React.createElement('i', {style: {width: progress + '%'}, 'data-tooltip': progress + '%'})
             )
         );
     },
@@ -420,6 +420,9 @@ var PodcastImporter = React.createClass({
                 'feed that did not have an <enclosure /> tag. There was no audio attached to these ' +
                 'items, so we cannot import them.'
             )
+
+            // TODO: Show a warning if any of the files are too big for the user's account
+
         );
     },
 
@@ -428,7 +431,7 @@ var PodcastImporter = React.createClass({
             this.setState({step2error: 'You must find an available slug before proceeding'});
             return;
         }
-        this.setState({step: 3, step3process: 'submitting'});
+        this.setState({step: 3, step3process: 'submitting', step2error: null});
 
         var body = new FormData();
         for (var key in this.state.podcastData) {

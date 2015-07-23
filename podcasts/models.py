@@ -83,14 +83,6 @@ class PodcastEpisode(models.Model):
         return '%s - %s' % (self.title, self.subtitle)
 
 
-class EpisodeImportRequest(models.Model):
-    episode = models.ForeignKey(PodcastEpisode)
-    expiration = models.DateTimeField()
-    audio_source_url = models.URLField()
-    image_source_url = models.URLField(blank=True)
-    access_token = models.CharField(max_length=128)
-
-
 CATEGORIES = set([
     'Arts',
     'Arts/Design',

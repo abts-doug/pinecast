@@ -56,13 +56,22 @@ def get_details(req, parsed):
         if not audio_url:
             data['__ignored_items'] += 1
             continue
+
+        duration = first_tag_text(node, 'itunes:duration', '0:00')
+        dur_tup = map(int, duration.split(':'))
+        if len(dur_tup) == 1:
+            dur_seconds = dur_tup[0]
+        elif len(dur_tup) == 2:
+            dur_seconds = dur_tup[0] * 60 + dur_tup[1]
+        else:
+            dur_seconds = dur_tup[-2] * 3600 + dur_tup[-1] * 60 + dur_tup[0]
         items.append({
             'title': first_tag_text(node, 'title'),
             'description': first_tag_text(node, 'description'),
             'subtitle': first_tag_text(node, 'itunes:subtitle', ''),
             'publish': parsedate(first_tag_text(node, 'pubDate')),
             'image_url': first_tag_attr(node, 'itunes:image', 'href', ''),
-            'duration': first_tag_text(node, 'itunes:duration', '0:00'),
+            'duration': dur_seconds,
             'audio_url': audio_url,
             'audio_size': first_tag_attr(node, 'enclosure', 'length'),
             'audio_type': first_tag_attr(node, 'enclosure', 'type'),
