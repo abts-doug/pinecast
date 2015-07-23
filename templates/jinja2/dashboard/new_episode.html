@@ -58,7 +58,7 @@
     <strong>Image</strong>
 
     <div class="upload-placeholder"
-      data-default-url="{{ default.get('image-url', podcast.cover_image) }}"
+      data-default-url="{{ sign(default.get('image-url', podcast.cover_image)) }}"
       data-default-size="{{ default.get('image-url-size') }}"
       data-default-name="{{ default.get('image-url-name', 'Current podcast cover image') }}"
       data-default-type="{{ default.get('image-url-type') }}"
@@ -72,7 +72,7 @@
     <strong>Audio</strong>
 
     <div class="upload-placeholder"
-      data-default-url="{{ default.get('audio-url') }}"
+      data-default-url="{{ sign(default.get('audio-url')) }}"
       data-default-size="{{ default.get('audio-url-size') }}"
       data-default-name="{{ default.get('audio-url-name') }}"
       data-default-type="{{ default.get('audio-url-type') }}"

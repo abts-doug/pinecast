@@ -35,7 +35,7 @@ def _pmrender(req, template, data=None):
             return d
 
     data.setdefault('default', DefaultEmptyDict())
-    data['sign'] = signer.sign
+    data['sign'] = lambda x: signer.sign(x) if x else x
     if not req.user.is_anonymous():
         data.setdefault('user', req.user)
         data.setdefault('podcasts', req.user.podcast_set.all())
@@ -381,22 +381,76 @@ def importer_lookup(req):
 @login_required
 @json_response
 def start_import(req):
-    p = Podcast(
-        slug=req.POST.get('slug'),
-        name=req.POST.get('name'),
-        homepage=req.POST.get('homepage'),
-        # TODO: convert this to markdown?
-        description=req.POST.get('description'),
-        language=req.POST.get('language'),
-        copyright=req.POST.get('copyright'),
-        subtitle=req.POST.get('subtitle'),
-        author_name=req.POST.get('author_name'),
-        is_explicit=req.POST.get('is_explicit', 'false') == 'true',
+    try:
+        parsed_items = json.loads(req.POST.get('items'))
+    except Exception:
+        return {'error': 'Invalid JSON'}
 
-        # This is just temporary for the feed, just so it's usable in the interim
-        cover_image=req.POST.get('cover_image'),
-    )
-    p.save()
-    p.set_category_list(req.POST.get('categories')
+    try:
+        p = Podcast(
+            owner=req.user,
+            slug=req.POST.get('slug'),
+            name=req.POST.get('name'),
+            homepage=req.POST.get('homepage'),
+            # TODO: convert this to markdown?
+            description=req.POST.get('description'),
+            language=req.POST.get('language'),
+            copyright=req.POST.get('copyright'),
+            subtitle=req.POST.get('subtitle'),
+            author_name=req.POST.get('author_name'),
+            is_explicit=req.POST.get('is_explicit', 'false') == 'true',
 
-    # cover_image
+            # This is just temporary for the feed, just so it's usable in the interim
+            cover_image=req.POST.get('cover_image'),
+        )
+        p.save()
+        p.set_category_list(req.POST.get('categories')
+    except Exception as e:
+        if p:
+            try:
+                p.delete()
+            except Exception:
+                pass
+        return {'error': 'There was a problem saving the podcast: %s' % str(e)}
+
+    created_items = []
+    try:
+        for item in parsed_items:
+            i = PodcastEpisode(
+                podcast=p,
+                title=item['title'],
+                subtitle=item['subtitle'],
+                publish=datetime.datetime(item['publish']),
+                description=item['description'],  # TODO: convert to markdown?
+                duration=item['duration'],
+                audio_url=item['audio_url'],
+                audio_size=item['audio_size'],
+                audio_type=item['audio_type'],
+                image_url=item['image_url'],
+                copyright=item['copyright'],
+                license=item['license'],
+                awaiting_import=True
+            )
+            i.save()
+            created_items.append(i)
+    except Exception as e:
+        p.delete()
+        for i in created_items:
+            try:
+                i.delete()
+            except Exception:
+                pass
+        return {'error': 'There was a problem saving the podcast items: %s' % str(e)}
+
+    return {'error': False}
+
+    # podcast.cover_image
+    # podcast_episode.image_url
+    # podcast_episode.audio_url
+
+
+@login_required
+@json_response
+def import_progress(req, podcast_slug):
+    p = get_object_or_404(Podcast, slug=podcast_slug, owner=req.owner)
+    pass

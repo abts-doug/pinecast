@@ -162,6 +162,11 @@ GETCONNECT_IO_PUSH_KEY = os.environ.get('GETCONNECT_IO_PUSH_KEY')
 S3_BUCKET = os.environ.get('S3_BUCKET')
 S3_ACCESS_ID = os.environ.get('S3_ACCESS_ID')
 S3_SECRET_KEY = os.environ.get('S3_SECRET_KEY')
+SQS_ACCESS_ID = os.environ.get('SQS_ACCESS_ID')
+SQS_SECRET_KEY = os.environ.get('SQS_SECRET_KEY')
+
+SQS_IMPORT_QUEUE = 'import_work'
+SNS_IMPORT_BUS = 'import_notify'
 
 LAMBDA_ACCESS_SECRET = os.environ.get('LAMBDA_ACCESS_SECRET')
 

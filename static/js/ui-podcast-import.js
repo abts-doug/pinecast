@@ -110,6 +110,8 @@ var PodcastImporter = React.createClass({
             step2error: null,
             slugValue: null,
             slugValid: false,
+            step3process: null,
+            step3xhr: null,
 
             podcastData: null,
         };
@@ -228,6 +230,7 @@ var PodcastImporter = React.createClass({
             return null;
         }
 
+        var progress = this.getStep3Progress();
         return React.createElement(
             'div',
             {className: 'card card-block'},
@@ -236,7 +239,7 @@ var PodcastImporter = React.createClass({
             React.createElement(
                 'div',
                 {className: 'progress'},
-                React.createElement('i', {width: this.getStep3Progress()})
+                React.createElement('i', {width: progress + 'px', 'data-tooltip': progress + '%'})
             )
         );
     },
@@ -439,11 +442,58 @@ var PodcastImporter = React.createClass({
         this.req('post', '/dashboard/services/start_import', body, this.importStarted, this.importError);
     },
 
-    importStarted: function() {},
-    importError: function() {},
+    importStarted: function(responseText) {
+        var parsed = JSON.parse(responseText);
+        if (parsed.error) {
+            this.setState({step: 2, step2error: parsed.error});
+            return;
+        }
+        this.setState({step3process: 'importing'});
 
-    getStep3Progress: function() {},
-    getStep3ProgressText: function() {},
+        setInterval(function() {
+            if (this.state.step3xhr) return;
+            var req = this.req(
+                'get',
+                '/dashboard/services/import_progress/' + encodeURIComponent(this.state.slugValue),
+                null,
+                function(responseText) {
+                    this.setState({step3xhr: null});
+                    var parsed = JSON.parse(responseText);
+                    //
+                }.bind(this),
+                function() {
+                    this.setState({step3xhr: null});
+                }.bind(this)
+            );
+        }.bind(this), 3000);
+    },
+    importError: function() {
+        this.setState({step: 2, step2error: 'There was an error while connecting to PodMaster'});
+    },
+
+    getStep3Progress: function() {
+        switch (this.state.step3process) {
+            case 'submitting':
+                return 2;
+            case 'importing':
+                return 5;
+        }
+        return 0;
+    },
+    getStep3ProgressText: function() {
+        var text = 'Working...';
+        switch (this.state.step3process) {
+            case 'submitting':
+                text = 'Submitting podcast import request to Podmaster...';
+                break;
+            case 'importing':
+                text = 'Waiting for assets to import...';
+                break;
+            default:
+                text = '¯\\_(ツ)_/¯';
+        }
+        return React.createElement('p', {}, text);
+    },
 
     req: request,
 
