@@ -44,6 +44,7 @@ exports.handler = function(event, context) {
             Bucket: record.bucket,
             Key: record.key,
             Body: res,
+            ContentType: res.headers['content-type'],
             ACL: 'public-read',
         };
         s3.putObject(params, function(err) {
@@ -83,8 +84,6 @@ exports.handler = function(event, context) {
     }
 
     function postSuccess(newUrl) {
-        e = e.toString();
-        console.error(e);
         if (!record.cb_url) {
             console.log('No callback url provided, quitting');
             context.succeed(newUrl);
