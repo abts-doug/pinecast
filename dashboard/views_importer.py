@@ -6,6 +6,9 @@ import requests
 from defusedxml.minidom import parseString as parseXMLString
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseBadRequest
+from django.shortcuts import get_object_or_404
+from django.views.decorators.http import require_POST
 
 from . import importer as importer_lib
 from . import importer_worker
@@ -100,61 +103,83 @@ def start_import(req):
         return {'error': 'There was a problem saving the podcast: %s' % str(e)}
 
     created_items = []
-    # try:
-    for item in parsed_items:
-        i = PodcastEpisode(
-            podcast=p,
-            title=item['title'],
-            subtitle=item['subtitle'],
-            publish=datetime.datetime.fromtimestamp(time.mktime(item['publish'])),
-            description=item['description'],  # TODO: convert to markdown?
-            duration=int(item['duration']),
-            audio_url=item['audio_url'],
-            audio_size=int(item['audio_size']),
-            audio_type=item['audio_type'],
-            image_url=item['image_url'] or show_image_url,
-            copyright=item['copyright'],
-            license=item['license'],
-            awaiting_import=True)
-        i.save()
-        created_items.append(i)
+    try:
+        for item in parsed_items:
+            i = PodcastEpisode(
+                podcast=p,
+                title=item['title'],
+                subtitle=item['subtitle'],
+                publish=datetime.datetime.fromtimestamp(time.mktime(item['publish'])),
+                description=item['description'],  # TODO: convert to markdown?
+                duration=int(item['duration']),
+                audio_url=item['audio_url'],
+                audio_size=int(item['audio_size']),
+                audio_type=item['audio_type'],
+                image_url=item['image_url'] or show_image_url,
+                copyright=item['copyright'],
+                license=item['license'],
+                awaiting_import=True)
+            i.save()
+            created_items.append(i)
 
-        # Audio import request
-        imp_req = AssetImportRequest.create(
-            episode=i,
-            expiration=datetime.datetime.now() + datetime.timedelta(hours=3),
-            audio_source_url=i.audio_url)
-        asset_requests.append(imp_req)
+            # Audio import request
+            imp_req = AssetImportRequest.create(
+                episode=i,
+                expiration=datetime.datetime.now() + datetime.timedelta(hours=3),
+                audio_source_url=i.audio_url)
+            asset_requests.append(imp_req)
 
 
-        if i.image_url == p.cover_image: continue
+            if i.image_url == p.cover_image: continue
 
-        # Image import request
-        imp_req = AssetImportRequest.create(
-            episode=i,
-            expiration=datetime.datetime.now() + datetime.timedelta(hours=3),
-            image_source_url=i.image_url)
-        asset_requests.append(imp_req)
+            # Image import request
+            imp_req = AssetImportRequest.create(
+                episode=i,
+                expiration=datetime.datetime.now() + datetime.timedelta(hours=3),
+                image_source_url=i.image_url)
+            asset_requests.append(imp_req)
 
-    # except Exception as e:
-    #     p.delete()
-    #     for i in created_items:
-    #         try:
-    #             i.delete()
-    #         except Exception:
-    #             pass
-    #     return {'error': 'There was a problem saving the podcast items: %s' % str(e)}
+    except Exception as e:
+        p.delete()
+        for i in created_items:
+            try:
+                i.delete()
+            except Exception:
+                pass
+        return {'error': 'There was a problem saving the podcast items: %s' % str(e)}
 
     for ir in asset_requests:
         ir.save()
 
-    importer_worker.push_batch(settings.SNS_IMPORT_BUS, [x.get_payload() for x in asset_requests])
+    payloads = (x.get_payload() for x in asset_requests)
+    payloads = importer_worker.prep_payloads(payloads)
+    importer_worker.push_batch(settings.SNS_IMPORT_BUS, payloads)
 
-    return {'error': False, 'ids': [x.id for x in ir]}
+    return {'error': False, 'ids': [x.id for x in asset_requests]}
 
 
 @login_required
 @json_response
 def import_progress(req, podcast_slug):
-    p = get_object_or_404(Podcast, slug=podcast_slug, owner=req.owner)
-    pass
+    p = get_object_or_404(Podcast, slug=podcast_slug, owner=req.user)
+    return {'status': 0}
+
+
+@require_POST
+@json_response
+def import_result(req):
+    p = get_object_or_404(AssetImportRequest,
+                          access_token=req.POST.get('token'),
+                          id=req.POST.get('id'))
+
+    if req.POST.get('failed'):
+        p.failure_message = req.POST.get('error')
+        p.save()
+        return {'success': True}
+
+    try:
+        p.resolve(req.POST.get('url'))
+    except Exception as e:
+        return HttpResponseBadRequest(str(e))
+
+    return {'success': True}

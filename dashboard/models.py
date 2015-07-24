@@ -21,6 +21,9 @@ class AssetImportRequest(models.Model):
 
     resolved = models.BooleanField(default=False)
 
+    failed = models.BooleanField(default=False)
+    failure_message = models.TextField(null=True)
+
     @classmethod
     def create(cls, *args, **kwargs):
         if 'access_token' not in kwargs:
@@ -56,6 +59,10 @@ class AssetImportRequest(models.Model):
                 self.episode.audio_url = new_url
             else:
                 self.episode.image_url = new_url
+
+            if (settings.S3_BUCKET in self.episode.audio_url and
+                settings.S3_BUCKET in self.episode.image_url):
+                self.episode.awaiting_import = False
             self.episode.save()
 
         else:
@@ -67,7 +74,7 @@ class AssetImportRequest(models.Model):
     def get_payload(self):
         source = self.audio_source_url or self.image_source_url
         if self.podcast:
-            key = '/podcasts/covers/'
+            key = 'podcasts/covers/'
         else:
             key = 'podcasts/%s/%s/' % (
                 str(self.episode.podcast.id),
@@ -76,6 +83,7 @@ class AssetImportRequest(models.Model):
         return {
             'type': 'import_asset',
             'token': self.access_token,
+            'id': self.id,
             'url': source,
             'bucket': settings.S3_BUCKET,
             'key': key,

@@ -43,6 +43,9 @@ def _pmrender(req, template, data=None):
 def json_response(view):
     def func(*args, **kwargs):
         resp = view(*args, **kwargs)
+        if not isinstance(resp, dict):
+            # Handle HttpResponse/HttpResponseBadRequest/etc
+            return resp
         return JsonResponse(resp)
     return func
 

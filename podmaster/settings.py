@@ -167,7 +167,7 @@ SQS_ACCESS_ID = os.environ.get('SQS_ACCESS_ID')
 SQS_SECRET_KEY = os.environ.get('SQS_SECRET_KEY')
 
 SQS_IMPORT_QUEUE = 'import_work'
-SNS_IMPORT_BUS = 'import_notify'
+SNS_IMPORT_BUS = 'arn:aws:sns:us-east-1:575938143306:import_notify'
 
 LAMBDA_ACCESS_SECRET = os.environ.get('LAMBDA_ACCESS_SECRET')
 

@@ -23,4 +23,5 @@ urlpatterns = [
     url(r'^services/getUploadURL/(?P<podcast_slug>([\w-]+|\$none))/(?P<type>[\w]+)$', views.get_upload_url, name='get_upload_url'),
     url(r'^services/start_import$', views_importer.start_import),
     url(r'^services/import_progress/(?P<podcast_slug>[\w-]+)$', views_importer.import_progress),
+    url(r'^services/import_result$', views_importer.import_result),
 ]
