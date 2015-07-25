@@ -7,7 +7,7 @@ from podcasts.models import Podcast, PodcastEpisode
 
 
 class Command(BaseCommand):
-    help = 'Closes the specified poll for voting'
+    help = 'Removes unreferenced files from the S3 bucket'
 
     def add_arguments(self, parser):
         parser.add_argument('--run',
@@ -22,6 +22,9 @@ class Command(BaseCommand):
         bucket = conn.get_bucket(settings.S3_BUCKET)
         files = bucket.list()
 
+        to_delete = []
+
+        self.stdout.write('Analyzing bucket contents...')
         for f in files:
             canon_url = 'http://%s.s3.amazonaws.com/%s' % (settings.S3_BUCKET, f.key)
             self.stdout.write(' - %s' % canon_url)
@@ -33,10 +36,15 @@ class Command(BaseCommand):
             if PodcastEpisode.objects.filter(
                 Q(audio_url=canon_url) | Q(image_url=canon_url)).count():
                 self.stdout.write('     Still in use by PodcastEpisode')
+                continue
 
-            self.stdout.write('     No longer in use!')
+            to_delete.append(f)
 
-            if options['run']:
+        self.stdout.write('Completed analysis')
+        self.stdout.write('%d files to remove' % len(to_delete))
+        if options['run']:
+            for f in to_delete:
                 f.delete()
-
-        self.stdout.write('Completed')
+            self.stdout.write('Completed removal')
+        else:
+            self.stdout.write('No files were removed. Use --run to actually GC')

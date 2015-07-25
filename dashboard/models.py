@@ -73,13 +73,19 @@ class AssetImportRequest(models.Model):
 
     def get_payload(self):
         source = self.audio_source_url or self.image_source_url
+        clean_source = source
+        if '#' in clean_source:  # Strip off hashes
+            clean_source = clean_source[:clean_source.index('#')]
+        if '?' in clean_source:  # Strip off query params
+            clean_source = clean_source[:clean_source.index('?')]
+
         if self.podcast:
             key = 'podcasts/covers/'
         else:
             key = 'podcasts/%s/%s/' % (
                 str(self.episode.podcast.id),
                 'image' if self.image_source_url else 'audio')
-        key = '%s%s/%s' % (key, str(uuid.uuid4()), source[source.rindex('/') + 1:])
+        key = '%s%s/%s' % (key, str(uuid.uuid4()), clean_source[clean_source.rindex('/') + 1:])
         return {
             'type': 'import_asset',
             'token': self.access_token,
