@@ -124,7 +124,9 @@ def feed(req, podcast_slug):
             },
         })
 
-    return HttpResponse('\n'.join(c for c in content if c), content_type='application/rss+xml')
+    resp = HttpResponse('\n'.join(c for c in content if c), content_type='application/rss+xml')
+    resp.setdefault('Cache-Control', 'public, max-age=120')
+    return resp
 
 
 @xframe_options_exempt
