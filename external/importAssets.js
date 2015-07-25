@@ -53,7 +53,7 @@ exports.handler = function(event, context) {
                 return;
             }
             console.log('Object posted successfully');
-            postSuccess('http://' + params.Bucket + '.s2.amazonaws.com/' + params.Key);
+            postSuccess('http://' + params.Bucket + '.s3.amazonaws.com/' + params.Key);
         });
     });
     req.on('error', function(e) {

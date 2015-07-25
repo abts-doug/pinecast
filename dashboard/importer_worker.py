@@ -9,8 +9,12 @@ def push_batch(bus, payloads):
         'us-east-1', # TODO: make this an env variable?
         aws_access_key_id=settings.SQS_ACCESS_ID,
         aws_secret_access_key=settings.SQS_SECRET_KEY)
+    count = 0
     for p in payloads:
         conn.publish(bus, json.dumps(p))
+        count += 1
+
+    print 'Dispatched %d events to SNS' % count
 
 
 def prep_payloads(payloads):

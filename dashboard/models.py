@@ -11,8 +11,8 @@ from podcasts.models import Podcast, PodcastEpisode
 class AssetImportRequest(models.Model):
     created = models.DateTimeField(auto_now=True)
 
-    podcast = models.ForeignKey(Podcast, null=True)
-    episode = models.ForeignKey(PodcastEpisode, null=True)
+    podcast = models.ForeignKey(Podcast, null=True, blank=True)
+    episode = models.ForeignKey(PodcastEpisode, null=True, blank=True)
 
     expiration = models.DateTimeField()
     audio_source_url = models.URLField(blank=True)
@@ -22,7 +22,7 @@ class AssetImportRequest(models.Model):
     resolved = models.BooleanField(default=False)
 
     failed = models.BooleanField(default=False)
-    failure_message = models.TextField(null=True)
+    failure_message = models.TextField(null=True, blank=True)
 
     @classmethod
     def create(cls, *args, **kwargs):
@@ -88,3 +88,6 @@ class AssetImportRequest(models.Model):
             'bucket': settings.S3_BUCKET,
             'key': key,
         }
+
+    def __unicode__(self):
+        return self.audio_source_url or self.image_source_url

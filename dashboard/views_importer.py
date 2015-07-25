@@ -8,6 +8,7 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseBadRequest
 from django.shortcuts import get_object_or_404
+from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
 from . import importer as importer_lib
@@ -162,9 +163,13 @@ def start_import(req):
 @json_response
 def import_progress(req, podcast_slug):
     p = get_object_or_404(Podcast, slug=podcast_slug, owner=req.user)
-    return {'status': 0}
+    ids = req.GET.get('ids')
+    reqs = AssetImportRequest.objects.filter(id__in=ids.split(','))
+    total = reqs.count()
+    return {'status': sum(1.0 for r in reqs if r.resolved) / total * 100.0}
 
 
+@csrf_exempt
 @require_POST
 @json_response
 def import_result(req):
