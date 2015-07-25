@@ -200,6 +200,5 @@ class PodcastCategory(models.Model):
                                 choices=[(x, x) for x in CATEGORIES])
     podcast = models.ForeignKey(Podcast)
 
-
     def __unicode__(self):
         return '%s: %s' % (self.podcast.name, self.category)
