@@ -14,13 +14,37 @@ exports.handler = function(event, context) {
 
     var record = event.Records[0].Sns.Message;
     record = JSON.parse(record);
-    var parsed = url.parse(record.url);
-    var handler = parsed.protocol === 'https:' ? https : http;
+    
+    var redirects = 0;
 
-    parsed.method = 'GET';
-    parsed.headers = {'agent': 'PodMaster/Importer 1.0'};
-    var req = handler.request(parsed, function(res) {
+    function getAsset(assetUrl) {
+        var parsed = url.parse(assetUrl);
+        var handler = parsed.protocol === 'https:' ? https : http;
+
+        parsed.method = 'GET';
+        parsed.headers = {'agent': 'PodMaster/Importer 1.0'};
+        
+        var req = handler.request(parsed, responseHandler);
+        req.on('error', function(e) {
+            postFailure(e)
+        });
+        req.end();
+    }
+
+    getAsset(record.url);
+    
+    function responseHandler(res) {
         console.log('Got response back from server');
+        if (res.statusCode >= 300 && res.statusCode < 400) {
+            redirects++;
+            console.warn('Got 3XX status code: ' + res.statusCode);
+            if (redirects > 3) {
+                postFailure('Too many redirects');
+                return;
+            }
+            getAsset(res.headers.location);
+            return;
+        }
         if (res.statusCode < 200 || res.statusCode > 299) {
             postFailure('Invalid status code: ' + res.statusCode);
             return;
@@ -55,11 +79,7 @@ exports.handler = function(event, context) {
             console.log('Object posted successfully');
             postSuccess('http://' + params.Bucket + '.s3.amazonaws.com/' + params.Key);
         });
-    });
-    req.on('error', function(e) {
-        postFailure(e)
-    });
-    req.end();
+    }
 
     function postFailure(e) {
         console.error('Terminating because of error');
@@ -86,6 +106,8 @@ exports.handler = function(event, context) {
     function postSuccess(newUrl) {
         if (!record.cb_url) {
             console.log('No callback url provided, quitting');
+            console.log('Token: ' + record.token);
+            console.log('ID: ' + record.id);
             context.succeed(newUrl);
             return;
         }

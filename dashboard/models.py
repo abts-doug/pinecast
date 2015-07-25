@@ -38,7 +38,7 @@ class AssetImportRequest(models.Model):
         if self.resolved:
             raise Exception('Attempting to double-resolve import request')
 
-        if self.expired < datetime.datetime.now():
+        if self.expiration < datetime.datetime.now():
             raise Exception('Attempting to resolve expired import request')
 
         if self.podcast:
