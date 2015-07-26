@@ -4,13 +4,13 @@ import requests
 from django.conf import settings
 
 
-def write(collection, blob):
+def write(collection, blob, req=None):
     if 'profile' in blob and 'ip' in blob['profile']:
-        blob['profile']['country'] = _get_country(blob['profile']['ip'])
+        blob['profile']['country'] = _get_country(blob['profile']['ip'], req=req)
     _post('https://api.getconnect.io/events/%s' % collection, json.dumps(blob))
 
 
-def write_many(collection, blobs):
+def write_many(collection, blobs, req=None):
     # TODO: Convert this to use requests.async
     for blob in blobs: 
         if 'profile' in blob and 'ip' in blob['profile']:
@@ -34,7 +34,9 @@ def _post(url, payload):
         # 409 is a duplicate ID error, which is expected
         print posted.status_code, posted.text
 
-def _get_country(ip):
+def _get_country(ip, req=None):
+    if req and req.META.get('HTTP_CF_IPCOUNTRY'):
+        return req.META.get('HTTP_CF_IPCOUNTRY').upper()
     if ip == '127.0.0.1':
         return 'US'
     res = requests.get('http://www.telize.com/geoip/%s' % ip)

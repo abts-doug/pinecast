@@ -28,7 +28,7 @@ def listen(req, episode_id):
                 'device': device,
                 'os': os,
             },
-        })
+        }, req=req)
 
     return redirect(ep.audio_url)
 
@@ -122,7 +122,7 @@ def feed(req, podcast_slug):
                 'device': device,
                 'os': os,
             },
-        })
+        }, req=req)
 
     resp = HttpResponse('\n'.join(c for c in content if c), content_type='application/rss+xml')
     resp.setdefault('Cache-Control', 'public, max-age=120')
