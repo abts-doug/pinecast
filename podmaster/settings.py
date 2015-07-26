@@ -170,6 +170,7 @@ SQS_IMPORT_QUEUE = 'import_work'
 SNS_IMPORT_BUS = 'arn:aws:sns:us-east-1:575938143306:import_notify'
 
 LAMBDA_ACCESS_SECRET = os.environ.get('LAMBDA_ACCESS_SECRET')
+RSS_FETCH_ENDPOINT = os.environ.get('RSS_FETCH_ENDPOINT')
 
 DEPLOY_SLACKBOT_URL = os.environ.get('DEPLOY_SLACKBOT_URL')
 

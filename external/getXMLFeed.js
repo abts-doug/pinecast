@@ -11,25 +11,27 @@ exports.handler = function(event, context) {
     var token = event.token;
     var feedURL = event.url;
 
-    http.get('https://host.podmaster.io/dashboard/services/check_request_token?token=' + encodeURIComponent(token), function(res) {
+    http.get('http://host.podmaster.io/dashboard/services/check_request_token?token=' + encodeURIComponent(token), function(res) {
         var content = '';
         res.on('data', function(d) {
             content += d.toString();
         });
-        res.on('close', function() {
+        res.on('end', function() {
             var data = JSON.parse(content);
             if (!data.success) {
-                console.fail('Invalid request token: ' + token);
+                context.fail('Invalid request token: ' + token);
+                return;
             }
 
             processFeed(feedURL);
         });
     }).on('error', function(e) {
         console.error(e);
-        console.fail('Could not validate request token from host server');
+        context.fail('Could not validate request token from host server');
     });
 
     function processFeed(feedURL) {
+        console.log('Visiting ' + feedURL);
         var parsed = url.parse(feedURL);
         var handler = parsed.protocol === 'https:' ? https : http;
 
@@ -45,8 +47,8 @@ exports.handler = function(event, context) {
             res.on('data', function(d) {
                 content += d.toString();
             });
-            res.on('close', function() {
-                context.succeed(content);
+            res.on('end', function() {
+                context.succeed({content: content});
             });
         });
         req.on('error', function(e) {

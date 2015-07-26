@@ -7,14 +7,11 @@ function request(method, url, body, onload, onerror) {
         else onload(xhr.responseText);
     };
     xhr.onerror = onerror;
+
     xhr.open(method, url, true);
-
-    if (typeof body === 'string') {
-        body += '&csrfmiddlewaretoken=' + encodeURIComponent(this.props.csrf);
-    } else if (body && typeof body === 'object') {
-        body.append('csrfmiddlewaretoken', this.props.csrf);
+    if (method.toUpperCase() === 'POST' && url[0] === '/') {
+        xhr.setRequestHeader('X-CSRFToken', this.props.csrf);
     }
-
     xhr.send(body);
     return xhr;
 }
@@ -42,7 +39,7 @@ var SlugField = React.createClass({
                 'input',
                 {
                     className: 'slug-field width-full',
-                    maxlength: 64,
+                    maxLength: 64,
                     pattern: '[\\w-]+',
                     placeholder: 'my-great-podcast',
                     ref: 'inp',
@@ -154,6 +151,8 @@ var PodcastImporter = React.createClass({
                         ref: 's1url',
                         placeholder: 'http://wtfpod.libsyn.com/rss',
                         readOnly: this.state.step !== 1,
+                        pattern: 'https?://',
+                        title: 'Enter a HTTP or HTTPS feed URL',
                     }
                 )
             ),
@@ -222,7 +221,13 @@ var PodcastImporter = React.createClass({
                         'button',
                         {
                             className: 'btn-neutral',
-                            onClick: this.backToStep1,
+                            onClick: function() {
+                                this.setState({
+                                    step: 1,
+                                    step1error: null,
+                                    step2loaded: false,
+                                });
+                            }.bind(this),
                         },
                         'Try Again'
                     )
@@ -269,14 +274,6 @@ var PodcastImporter = React.createClass({
         );
     },
 
-    backToStep1: function() {
-        this.setState({
-            step: 1,
-            step1error: null,
-            step2loaded: false,
-        });
-    },
-
     downloadFeed: function() {
         var val = this.refs.s1url.getDOMNode().value;
         if (!val) {
@@ -285,44 +282,76 @@ var PodcastImporter = React.createClass({
         }
         this.setState({step: 2, step1error: null});
 
-        this.req(
-            'get',
-            '/dashboard/import/feed?url=' + encodeURIComponent(val),
-            null,
-            function(responseText) {
-                var parsed = JSON.parse(responseText);
-                if (parsed.error) {
-                    switch(parsed.error) {
-                        case 'protocol':
-                            this.setState({step: 1, step1error: 'The URL you provided must start with http:// or https://'});
-                            return;
-                        case 'connection':
-                            this.setState({step: 1, step1error: 'Could not download a feed at that URL'});
-                            return;
-                        case 'invalid encoding':
-                            this.setState({step: 1, step1error: 'We were able to download the feed, but it had a bad encoding.'});
-                            return;
-                        case 'invalid xml':
-                            this.setState({step: 1, step1error: 'We were able to download the feed, but could not parse it. Try validating your feed first.'});
-                            return;
-                        case 'invalid format':
-                            this.setState({step: 1, step1error: parsed.details});
-                            return;
+        this.req('get', '/dashboard/services/get_request_token', null, function(text) {
+            getFeed.call(this, JSON.parse(text).token);
+        }.bind(this), function() {
+            this.setState({
+                step: 1,
+                step1error: 'Unable to get an access token from PodMaster',
+            });
+        }.bind(this));
+
+        function getFeed(token) {
+            this.req(
+                'get',
+                this.props.rssFetch +
+                    '?token=' + encodeURIComponent(token) +
+                    '&url=' + encodeURIComponent(val),
+                null,
+                function(text) {
+                    var parsed = JSON.parse(text);
+                    if (parsed.errorMessage) {
+                        this.setState({step: 1, step1error: parsed.errorMessage});
+                        return;
                     }
-                    return;
-                }
-                this.setState({
-                    step2loaded: true,
-                    podcastData: parsed,
-                });
-            }.bind(this),
-            function() {
-                this.setState({
-                    step: 1,
-                    step1error: 'Could not connect to PodMaster',
-                })
-            }.bind(this)
-        );
+                    processFeed.call(this, parsed.content);
+                }.bind(this),
+                function() {
+                    this.setState({
+                        step: 1,
+                        step1error: 'Could not connect to the PodMaster import server',
+                    });
+                }.bind(this)
+            );
+        }
+
+        function processFeed(feedContent) {
+            var fd = new FormData();
+            fd.append('feed', feedContent);
+            this.req(
+                'post',
+                '/dashboard/import/feed',
+                fd,
+                function(responseText) {
+                    var parsed = JSON.parse(responseText);
+                    if (parsed.error) {
+                        switch(parsed.error) {
+                            case 'invalid encoding':
+                                this.setState({step: 1, step1error: 'We were able to download the feed, but it had a bad encoding.'});
+                                return;
+                            case 'invalid xml':
+                                this.setState({step: 1, step1error: 'We were able to download the feed, but could not parse it. Try validating your feed first.'});
+                                return;
+                            case 'invalid format':
+                                this.setState({step: 1, step1error: parsed.details});
+                                return;
+                        }
+                        return;
+                    }
+                    this.setState({
+                        step2loaded: true,
+                        podcastData: parsed,
+                    });
+                }.bind(this),
+                function() {
+                    this.setState({
+                        step: 1,
+                        step1error: 'Could not connect to PodMaster',
+                    })
+                }.bind(this)
+            );
+        }
+
     },
 
     renderPodcastData: function() {
@@ -332,6 +361,12 @@ var PodcastImporter = React.createClass({
             if (val) return obj;
             obj.style = {'font-style': 'italic'};
             return obj
+        }
+        function trunc(str) {
+            if (str.length < 60) {
+                return str;
+            }
+            return str.substr(0, 60) + '...';
         }
 
         return React.createElement(
@@ -379,8 +414,8 @@ var PodcastImporter = React.createClass({
                         margin: '10px 0',
                     },
                 },
-                data.categories.map(function(c) {
-                    return React.createElement('li', {}, c);
+                data.categories.map(function(c, i) {
+                    return React.createElement('li', {key: i}, c);
                 })
             ),
             React.createElement('h3', {}, 'Details'),
@@ -424,11 +459,10 @@ var PodcastImporter = React.createClass({
                     )
                 ),
                 React.createElement('tbody', {},
-                    data.items.slice(0, 10).map(function(i) {
-                        //
-                        return React.createElement('tr', {},
+                    data.items.slice(0, 10).map(function(i, j) {
+                        return React.createElement('tr', {key: j},
                             React.createElement('td', {}, i.title),
-                            React.createElement('td', nullStyle({}, i.subtitle), i.subtitle || 'No Subtitle')
+                            React.createElement('td', nullStyle({}, i.subtitle), trunc(i.subtitle) || 'No Subtitle')
                         )
                     })
                 )
@@ -548,6 +582,7 @@ Array.prototype.slice.call(placeholders).forEach(function(placeholder) {
         React.createElement(PodcastImporter, {
             origElement: placeholder,
             csrf: placeholder.getAttribute('data-csrf'),
+            rssFetch: placeholder.getAttribute('data-rss-fetch'),
         }),
         placeholder
     );

@@ -4,7 +4,6 @@ import time
 import uuid
 
 import itsdangerous
-import requests
 from defusedxml.minidom import parseString as parseXMLString
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -25,31 +24,18 @@ signer = itsdangerous.TimestampSigner(settings.SECRET_KEY)
 
 @login_required
 def importer(req):
-    if not req.POST:
-        return _pmrender(req, 'dashboard/importer.html')
     return _pmrender(req, 'dashboard/importer.html')
 
+
+@require_POST
 @login_required
 @json_response
 @importer_lib.handle_format_exceptions
 def importer_lookup(req):
-    url = req.GET.get('url')
-    if not url:
-        return {'error': 'no url'}
-
-    if url.startswith('feed://'):
-        url = 'http://' + url[7:]
-    if not url.startswith('http://') and not url.startswith('https://'):
-        return {'error': 'protocol'}
+    data = req.POST.get('feed')
 
     try:
-        data = requests.get(url, timeout=5)
-    except Exception as e:
-        print e
-        return {'error': 'connection'}
-    
-    try:
-        encoded = data.text.encode(data.encoding or 'utf-8')
+        encoded = data.encode('utf-8')
     except Exception as e:
         print e
         return {'error': 'invalid encoding'}

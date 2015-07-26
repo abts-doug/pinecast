@@ -14,6 +14,7 @@ logout_view = lambda r: logout(r) or redirect('home')
 
 
 urlpatterns = account_urlpatterns + podcast_urlpatterns + [
+    url(r'^accounts/login/$', lambda: redirect('home')),
     url(r'^logout$', logout_view, name='logout'),
     url(r'^analytics/', include(analytics.urls)),
     url(r'^dashboard/', include(dashboard.urls)),
