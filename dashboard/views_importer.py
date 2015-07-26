@@ -1,7 +1,9 @@
 import datetime
 import json
 import time
+import uuid
 
+import itsdangerous
 import requests
 from defusedxml.minidom import parseString as parseXMLString
 from django.conf import settings
@@ -16,6 +18,9 @@ from . import importer_worker
 from .models import AssetImportRequest
 from .views import _pmrender, json_response
 from podcasts.models import Podcast, PodcastEpisode
+
+
+signer = itsdangerous.TimestampSigner(settings.SECRET_KEY)
 
 
 @login_required
@@ -167,6 +172,21 @@ def import_progress(req, podcast_slug):
     reqs = AssetImportRequest.objects.filter(id__in=ids.split(','))
     total = reqs.count()
     return {'status': sum(1.0 for r in reqs if r.resolved) / total * 100.0}
+
+
+@login_required
+@json_response
+def get_request_token(req):
+    return {'token': signer.sign(str(uuid.uuid4()))}
+
+
+@json_response
+def check_request_token(req):
+    try:
+        signer.unsign(req.GET.get('token'), max_age=60)
+        return {'success': True}
+    except Exception:
+        return {'success': False}
 
 
 @csrf_exempt

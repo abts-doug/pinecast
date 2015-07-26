@@ -1,6 +1,6 @@
 console.log('Loading function');
 
-var http = require('http');
+var https = require('https');
 var aws = require('aws-sdk');
 var s3 = new aws.S3({ apiVersion: '2006-03-01' });
 
@@ -30,9 +30,9 @@ exports.handler = function(event, context) {
     };
     s3.getObject(params, function(err, data) {
         if (err) {
-            console.log("Error getting object " + key + " from bucket " + bucket +
-                ". Make sure they exist and your bucket is in the same region as this function.");
-            context.fail("Error getting file: " + err);
+            console.log('Error getting object ' + key + ' from bucket ' + bucket +
+                '. Make sure they exist and your bucket is in the same region as this function.');
+            context.fail('Error getting file: ' + err);
             return;
         }
 
@@ -98,7 +98,7 @@ exports.handler = function(event, context) {
 
         console.log('Submitting ' + postData.length + 'byte payload');
         console.log(postData);
-        var req = http.request(
+        var req = https.request(
             {
                 hostname: 'host.podmaster.io',
                 port: 80,

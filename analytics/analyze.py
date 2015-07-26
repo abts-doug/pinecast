@@ -37,6 +37,10 @@ def _parse_req(req):
 
 
 def get_request_ip(req):
+    cf_ip = req.META.get('HTTP_CF_CONNECTING_IP')
+    if cf_ip:
+        return cf_ip
+
     x_forwarded_for = req.META.get('HTTP_X_FORWARDED_FOR')
     if x_forwarded_for:
         return x_forwarded_for.split(',')[0]
