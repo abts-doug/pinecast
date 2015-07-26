@@ -10,4 +10,5 @@ class Feedback(models.Model):
     episode = models.ForeignKey(PodcastEpisode, null=True, blank=True)
 
     sender = models.EmailField()
+    sender_ip = models.GenericIPAddressField(null=True)
     message = models.TextField()
