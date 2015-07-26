@@ -29,7 +29,14 @@ function buildTabs(tab) {
         select(e.target);
     });
 
-    select(tab.querySelector('li a'));
+    var selected = null;
+    if (window.location.hash) {
+        selected = tab.querySelector('a[data-tab=".' + window.location.hash.substr(1) + '"]')
+    }
+    if (!selected) {
+        selected = tab.querySelector('li a');
+    }
+    select(selected);
 }
 
 var tabs = document.querySelectorAll('menu.tabs');

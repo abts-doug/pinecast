@@ -3,7 +3,7 @@
 <header>
   <h1>PodMaster Hosting{% block title %}{% endblock %}</h1>
   <a class="user-card">
-    <img src="{{ user_avatar }}" alt="">
+    <img src="{{ gravatar(user.email) }}" alt="">
     <span>{{ user.username }}</span>
   </a>
 </header>

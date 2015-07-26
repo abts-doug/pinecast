@@ -29,6 +29,7 @@
 
 <menu class="tabs">
   <li class="selected"><a data-tab=".tab-overview" href="">Overview</a></li>
+  <li><a data-tab=".tab-feedback" href="">Feedback</a></li>
   <li><a data-tab=".tab-analytics" href="">Analytics</a></li>
   <li><a data-tab=".tab-audio" href="">Audio</a></li>
 </menu>
@@ -73,6 +74,34 @@
   </div>
 </div>
 
+<div class="tab-feedback">
+  <div class="card-block card">
+    <strong>Comment Box</strong>
+    <p>Your listeners can leave questions, comments, and other feedback about this episode at this URL.</p>
+    <input type="url"
+      title="Comment Box"
+      readonly
+      value="https://host.podmaster.io{{ url('ep_comment_box', kwargs={'podcast_slug': podcast.slug, 'episode_id': str(episode.id)}) }}"
+      class="width-full">
+  </div>
+  {% for f in feedback %}
+    <div class="card-block card card-comment">
+      <a class="comment-from" href="mailto:{{ f.sender }}">
+        <img src="{{ gravatar(f.sender) }}" class="comment-from-gravatar">
+        <span>{{ f.sender }}</span>
+      </a>
+      <p>{{ f.message }}</p>
+      <menu class="toolbar">
+        <a href="{{ url('delete_comment', kwargs={'podcast_slug': podcast.slug, 'comment_id': str(f.id)}) }}">Delete Comment</a>
+      </menu>
+    </div>
+  {% else %}
+    <div class="episode-empty-state empty-state">
+      Nobody has submitted feedback about the episode yet.
+    </div>
+  {% endfor %}
+</div>
+
 <div class="tab-analytics" style="overflow: hidden; height: 0">
   {% if analytics.total_listens %}
     <div class="card-block card chart-placeholder"
@@ -102,14 +131,14 @@
 
   <div class="card-block card">
     <strong>Embed Code</strong>
-    <textarea readonly class="embed-textarea"><iframe src="http://host.podmaster.io/player/{{ str(episode.id) }}" seamless height="60" style="border:0" class="podmaster-embed"></iframe></textarea>
+    <textarea readonly class="embed-textarea"><iframe src="https://host.podmaster.io/player/{{ str(episode.id) }}" seamless height="60" style="border:0" class="podmaster-embed"></iframe></textarea>
   </div>
   
   <div class="card-block card">
     <strong>Audio URL</strong>
     <input type="url"
       readonly
-      value="http://host.podmaster.io{{ url('listen', kwargs={'episode_id': str(episode.id)}) }}"
+      value="https://host.podmaster.io{{ url('listen', kwargs={'episode_id': str(episode.id)}) }}"
       class="width-full">
   </div>
 

@@ -1,4 +1,5 @@
 import datetime
+import hashlib
 import json
 
 import gfm
@@ -15,12 +16,18 @@ def environment(**options):
         'str': str,
         'url': reverse,
         'plural': plural,
+        'gravatar': gravatar,
     })
+    env.filters['https'] = lambda s: ('https:%s' % s[5:]) if s.startswith('http:') else s
     env.filters['json'] = json.dumps
     env.filters['markdown'] = gfm.markdown
     env.filters['pretty_date'] = pretty_date
     return env
 
+
+def gravatar(s, size=40):
+    dig = hashlib.md5(s).hexdigest()
+    return 'https://www.gravatar.com/avatar/%s?s=%d' % (dig, size)
 
 def plural(sing, plur, n, **kwargs):
     return (plur if n != 1 else sing).format(n=str(n), **kwargs)

@@ -15,6 +15,7 @@ from django.http import Http404, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
 import analytics.query as analytics_query
+from feedback.models import Feedback
 from podcasts.models import CATEGORIES, Podcast, PodcastCategory, PodcastEpisode
 
 
@@ -37,8 +38,6 @@ def _pmrender(req, template, data=None):
     if not req.user.is_anonymous():
         data.setdefault('user', req.user)
         data.setdefault('podcasts', req.user.podcast_set.all())
-        user_avatar = hashlib.md5(req.user.email).hexdigest()
-        data.setdefault('user_avatar', 'http://www.gravatar.com/avatar/%s?s=40' % user_avatar)
     return render(req, template, data)
 
 def json_response(view):
@@ -53,7 +52,7 @@ def json_response(view):
 
 @login_required
 def dashboard(req):
-    return _pmrender(req, 'dashboard.html')
+    return _pmrender(req, 'dashboard/dashboard.html')
 
 
 MILESTONES = [1, 100, 250, 500, 1000, 2000, 5000, 7500, 10000, 15000, 20000,
@@ -74,7 +73,8 @@ def podcast_dashboard(req, podcast_slug):
             'total_listens_this_week': analytics_query.total_listens_this_week(pod),
             'subscribers': analytics_query.total_subscribers(pod),
         },
-        'next_milestone': next(x for x in MILESTONES if x > total_listens)
+        'next_milestone': next(x for x in MILESTONES if x > total_listens),
+        'feedback': Feedback.objects.filter(podcast=pod, episode=None).order_by('-created'),
     }
     return _pmrender(req, 'dashboard/podcast.html', data)
 
@@ -268,6 +268,7 @@ def podcast_episode(req, podcast_slug, episode_id):
         'analytics': {
             'total_listens': analytics_query.total_listens(pod, str(ep.id)),
         },
+        'feedback': Feedback.objects.filter(podcast=pod, episode=ep).order_by('-created'),
     }
     return _pmrender(req, 'dashboard/podcast_episode.html', data)
 
@@ -336,3 +337,16 @@ def get_upload_url(req, podcast_slug, type):
         },
         'destination_url': signed_dest_url,
     }
+
+
+@login_required
+def delete_comment(req, podcast_slug, comment_id):
+    pod = get_object_or_404(Podcast, slug=podcast_slug, owner=req.user)
+    comment = get_object_or_404(Feedback, podcast=pod, id=comment_id)
+
+    ep = comment.episode
+    comment.delete()
+    if ep:
+        return redirect('podcast_episode', podcast_slug=pod.slug, episode_id=str(ep.id), tab='tab-feedback')
+    else:
+        return redirect('podcast_dashboard', podcast_slug=pod.slug, tab='tab-feedback')

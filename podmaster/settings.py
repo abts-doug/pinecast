@@ -46,6 +46,7 @@ INSTALLED_APPS = (
 
     'accounts',
     'dashboard',
+    'feedback',
     'podcasts',
 )
 

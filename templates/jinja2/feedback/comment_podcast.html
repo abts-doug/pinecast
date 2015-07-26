@@ -1,0 +1,30 @@
+{% extends 'feedback/comment_base.html' %}
+{% block content %}
+<main>
+  <img src="{{ podcast.cover_image|https }}" alt="{{ podcast.name }}" class="cover-image">
+  <h1>{{ podcast.name }}</h1>
+  <h2>Leave feedback</h2>
+  {% if error %}
+    <div class="error">
+      There was a problem submitting your feedback
+    </div>
+  {% endif %}
+  <form action="#" method="post">
+    <label>
+      <span>Email</span>
+      <input type="email" placeholder="youremail@gmail.com" name="email" required value="{{ default.get('email') }}">
+      <small>No junk, promise.</small>
+    </label>
+
+    <label>
+      <span>Message</span>
+      <textarea name="message" required>{{ default.get('message') }}</textarea>
+    </label>
+
+    <menu class="buttons">
+      <button>Submit Feedback</button>
+    </menu>
+    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+  </form>
+</main>
+{% endblock %}

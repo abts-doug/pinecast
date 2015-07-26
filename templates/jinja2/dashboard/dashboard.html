@@ -5,7 +5,7 @@
   {% for p in podcasts %}
     <li class="card">
       <strong><a href="{{ url('podcast_dashboard', kwargs={'podcast_slug': p.slug}) }}">{{ p.name }}</a></strong>
-      <img src="{{ p.cover_image }}" alt="">
+      <img src="{{ p.cover_image|https }}" alt="">
     </li>
   {% endfor %}
   <li class="empty-state">

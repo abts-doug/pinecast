@@ -29,6 +29,7 @@
   <li class="selected"><a data-tab=".tab-overview" href="">Overview</a></li>
   <li><a data-tab=".tab-episodes" href="">Episodes</a></li>
   <li><a data-tab=".tab-analytics" href="">Analytics</a></li>
+  <li><a data-tab=".tab-feedback" href="">Feedback</a></li>
 </menu>
 
 <div class="tab-overview">
@@ -47,7 +48,7 @@
     <input type="url"
       title="RSS Feed"
       readonly
-      value="http://host.podmaster.io{{ url('feed', kwargs={'podcast_slug': podcast.slug}) }}"
+      value="https://host.podmaster.io{{ url('feed', kwargs={'podcast_slug': podcast.slug}) }}"
       class="width-full">
   </div>
 
@@ -56,8 +57,8 @@
     <p>Your next milestone is {{ next_milestone }} listens!</p>
     <div class="progress"><i data-tooltip="{{ (analytics.total_listens / next_milestone * 100)|int }}%" style="width: {{ analytics.total_listens / next_milestone * 100 }}%"></i></div>
   </div>
-
 </div>
+
 <div class="tab-episodes" style="overflow: hidden; height: 0">
   {% if not episodes %}
     <div class="episode-empty-state empty-state">
@@ -87,6 +88,7 @@
     </table>
   {% endif %}
 </div>
+
 <div class="tab-analytics" style="overflow: hidden; height: 0">
   {% if not episodes %}
     <div class="episode-empty-state empty-state">
@@ -136,11 +138,41 @@
   {% endif %}
 </div>
 
-{% if episodes %}
-
-
-{% else %}
-{% endif %}
+<div class="tab-feedback" style="overflow: hidden; height: 0">
+  {% if not episodes %}
+    <div class="episode-empty-state empty-state">
+      You will receive listener feedback here once you've uploaded en episode.<br>
+      <a class="btn" href="{{ url('new_episode', kwargs={'podcast_slug': podcast.slug})}}">Upload One Now</a>
+    </div>
+  {% else %}
+    <div class="card-block card">
+      <strong>Podcast Comment Box</strong>
+      <p>Your listeners can leave questions, comments, and other feedback about your podcast. Direct them to this URL. You can shorten the URL with a service like <a href="https://bitly.com">bit.ly</a>.</p>
+      <input type="url"
+        title="Podcast Comment Box"
+        readonly
+        value="https://host.podmaster.io{{ url('podcast_comment_box', kwargs={'podcast_slug': podcast.slug}) }}"
+        class="width-full">
+      <p>Listeners can also leave feedback on individual episodes. See the Feedback tab on an episode dashboard to find out how.</p>
+    </div>
+    {% for f in feedback %}
+      <div class="card-block card card-comment">
+        <a class="comment-from" href="mailto:{{ f.sender }}">
+          <img src="{{ gravatar(f.sender) }}" class="comment-from-gravatar">
+          <span>{{ f.sender }}</span>
+        </a>
+        <p>{{ f.message }}</p>
+        <menu class="toolbar">
+          <a href="{{ url('delete_comment', kwargs={'podcast_slug': podcast.slug, 'comment_id': str(f.id)}) }}">Delete Comment</a>
+        </menu>
+      </div>
+    {% else %}
+      <div class="episode-empty-state empty-state">
+        Nobody has submitted feedback about the show yet.
+      </div>
+    {% endfor %}
+  {% endif %}
+</div>
 
 {% endblock %}
 

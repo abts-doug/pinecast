@@ -7,13 +7,13 @@
 }
 
 html, body {
-    background: #2e8dcd;
+    background: #ecf0f1;
     margin: 0;
     padding: 0;
 }
 
 body {
-    color: #fff;
+    color: #2c3e50;
     font-family: Lato, Helvetica, Arial, sans-serif;
     font-size: 13px;
 }
@@ -21,21 +21,18 @@ body {
 h1, h2, h3 {
     color: #34495e;
     font-family: Titillium Web, sans-serif;
-    margin: 0;
+    line-height: 1.2em;
+    margin: 0 0 20px;
 }
 
-.hero {
-    background: #ecf0f1;
-    font-size: 2em;
-    padding: 100px 0;
-    text-align: center;
+.error {
+    background: #e74c3c;
+    border-radius: 4px;
+    color: #fff;
+    font-weight: bold;
+    margin: 10px;
+    padding: 20px;
 }
-
-.hero h2 {
-    color: #7f8c8d;
-    font-size: 1em;
-}
-
 
 input[type="text"],
 input[type="email"],
@@ -44,13 +41,13 @@ input[type="number"],
 input[type="password"],
 input[type="datetime-local"],
 textarea {
-    border: 0;
+    border: 1px solid #888;
     border-radius: 2px;
-    box-shadow: 0 0 0 0 transparent;
+    box-shadow: 0 0 0 transparent;
     margin: 2px 0 5px;
     padding: 8px;
     transition: box-shadow 0.2s;
-    width: 300px;
+    width: 100%;
 }
 
 input[type="text"]:focus,
@@ -60,7 +57,13 @@ input[type="number"]:focus,
 input[type="password"]:focus,
 input[type="datetime-local"]:focus,
 textarea:focus {
-    box-shadow: 0 0 2px 2px #fff;
+    border: 1px solid #555;
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+textarea {
+    height: 100px;
+    width: 100%;
 }
 
 button, .btn {
@@ -100,17 +103,22 @@ button:disabled, .btn:disabled {
 main {
     font-size: 15px;
     margin: 0 auto;
-    padding: 30px 0;
-    width: 500px;
+    max-width: 560px;
+    padding: 30px 30px 0;
 }
 
-main h3 {
-    color: #fff;
-    font-size: 1.5em;
+.cover-image {
+    border-radius: 5%;
+    display: block;
+    margin: 0 auto 50px;
+    max-height: 300px;
+    max-width: 300px;
+    width: 100%;
 }
-
-main p {
-    line-height: 1.75em;
+@media (max-width: 720px) {
+    .cover-image {
+        display: none;
+    }
 }
 
 label {
@@ -126,7 +134,7 @@ label > span {
     text-transform: uppercase;
 }
 label > small {
-    color: rgba(255, 255, 255, 0.5);
+    color: rgba(0, 0, 0, 0.5);
     display: block;
     font-size: 0.8em;
 }
@@ -141,64 +149,4 @@ select {
 
 menu {
     padding: 0;
-}
-
-section.features {
-    background: #34495e;
-}
-section.features > div {
-    display: flex;
-    margin: 0 auto;
-    width: 800px;
-}
-
-section.features > div > div {
-    flex: 1 0;
-    padding: 40px 30px 40px 70px;
-    position: relative;
-    text-align: justify;
-}
-section.features > div > div > svg {
-    bottom: 0;
-    height: 40px;
-    left: 15px;
-    margin: auto;
-    position: absolute;
-    top: 0;
-    width: 40px;
-}
-section.features > div > div > strong {
-    display: block;
-    font-size: 1.2em;
-    margin-bottom: 0.25em;
-}
-section.features > div > div > p {
-    line-height: 1.5em;
-    margin: 0;
-}
-
-.signup-done {
-    text-align: center;
-}
-.signup-done svg {
-    display: block;
-    height: 256px;
-    margin: 50px auto;
-    width: 256px;
-}
-
-nav {
-    padding: 10px;
-    position: absolute;
-    top: 0;
-    right: 0;
-}
-nav a {
-    color: #2980b9;
-    font-size: 13px;
-    font-weight: 500;
-    text-decoration: none;
-}
-nav a:hover {
-    text-decoration: underline;
 }

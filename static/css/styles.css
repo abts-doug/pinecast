@@ -1,5 +1,5 @@
-@import url(http://fonts.googleapis.com/css?family=Titillium+Web:400,300,600);
-@import url(http://fonts.googleapis.com/css?family=Lato);
+@import url(//fonts.googleapis.com/css?family=Titillium+Web:400,300,600);
+@import url(//fonts.googleapis.com/css?family=Lato);
 
 *, *:before, *:after {
     box-sizing: border-box;
@@ -149,7 +149,8 @@ button:disabled, .btn:disabled {
     padding: 20px;
 }
 .card > strong:first-child,
-.card .chart-title {
+.card .chart-title,
+.card-comment > .comment-from {
     display: block;
     border-bottom: 1px solid #eee;
     font: 16px Titillium Web, Lato, sans-serif;
@@ -170,6 +171,27 @@ button:disabled, .btn:disabled {
 .card > .label {
     padding-left: 0;
     padding-right: 0;
+}
+
+.card.card-comment {
+    border: 1px solid #bbb;
+    margin: 15px;
+}
+.card-comment .comment-from {
+    padding-left: 5px;
+}
+.card-comment .comment-from img {
+    border-radius: 1.5em;
+    height: 1.5em;
+    vertical-align: middle;
+    width: 1.5em;
+}
+.card-comment menu {
+    opacity: 0.2;
+    transition: opacity 0.25s;
+}
+.card-comment:hover menu {
+    opacity: 1;
 }
 
 

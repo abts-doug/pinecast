@@ -108,6 +108,17 @@ def podcast_listen_history(req):
         lambda d: d.strftime('%x'),
         pick='podcast')
 
+    if not out:
+        return {'labels': [],
+            'datasets': [
+                {'label': pod.name,
+                 'data': [],
+                 'fillColor': 'transparent',
+                 'strokeColor': '#2980b9',
+                 'pointColor': '#3498db',
+                 'pointStrokeColor': '#fff'}
+            ]}
+
     return {'labels': out['labels'],
             'datasets': [
                 {'label': pod.name,
@@ -187,6 +198,9 @@ def podcast_listen_breakdown(req):
         'source',
         pick='podcast')
 
+    if not out:
+        return []
+
     out = [{'label': label, 'value': value} for
             label, value in
             zip(out['labels'], out['dataset'])]
@@ -217,6 +231,9 @@ def podcast_listen_platform_breakdown(req):
         key,
         pick='podcast')
 
+    if not out:
+        return []
+
     out = [{'label': label, 'value': value} for
             label, value in
             zip(out['labels'], out['dataset'])]
@@ -244,7 +261,7 @@ def episode_listen_breakdown(req):
         pick='episode')
 
     if not out:
-       out = {'labels': [], 'dataset': []}
+        return []
 
     out = [{'label': label, 'value': value} for
             label, value in
