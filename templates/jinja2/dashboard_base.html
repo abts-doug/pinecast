@@ -25,6 +25,17 @@
           {% endfor %}
         </ul>
       {% endif %}
+      {% if networks %}
+        <ul>
+          {% for n in networks %}
+            <li>
+              <a href="{{ url('network_dashboard', kwargs={'network_id': n.id}) }}" {{'class="selected"'|safe if network == n else ''}}>
+                {{ n.name }}
+              </a>
+            </li>
+          {% endfor %}
+        </ul>
+      {% endif %}
     {% endblock %}
   </nav>
   <main>

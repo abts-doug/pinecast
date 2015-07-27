@@ -39,3 +39,6 @@ class Network(models.Model):
     deactivated = models.BooleanField(default=False)
 
     members = models.ManyToManyField(User)
+
+    def __unicode__(self):
+        return self.name

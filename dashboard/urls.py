@@ -20,6 +20,9 @@ urlpatterns = [
     url(r'^podcast/(?P<podcast_slug>[\w-]+)/episode/(?P<episode_id>[\w-]+)/delete$', views.delete_podcast_episode, name='delete_podcast_episode'),
     url(r'^podcast/(?P<podcast_slug>[\w-]+)/episode/(?P<episode_id>[\w-]+)/edit$', views.edit_podcast_episode, name='edit_podcast_episode'),
 
+    url(r'^network/(?P<network_id>[\w-]+)$', views.network_dashboard, name='network_dashboard'),
+    url(r'^network/(?P<network_id>[\w-]+)/add_show$', views.network_add_show, name='network_add_show'),
+
     url(r'^feedback/remove/(?P<podcast_slug>[\w-]+)/(?P<comment_id>[\w-]+)$', views.delete_comment, name='delete_comment'),
 
     url(r'^import$', views_importer.importer, name='importer'),

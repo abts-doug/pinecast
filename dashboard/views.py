@@ -15,6 +15,7 @@ from django.http import Http404, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
 import analytics.query as analytics_query
+from accounts.models import Network
 from feedback.models import Feedback
 from podcasts.models import (CATEGORIES, Podcast, PodcastCategory,
                              PodcastEpisode, PodcastReviewAssociation)
@@ -39,6 +40,7 @@ def _pmrender(req, template, data=None):
     if not req.user.is_anonymous():
         data.setdefault('user', req.user)
         data.setdefault('podcasts', req.user.podcast_set.all())
+        data.setdefault('networks', req.user.network_set.all())
     return render(req, template, data)
 
 def json_response(view):
@@ -378,7 +380,7 @@ def podcast_ratings(req, podcast_slug, service=None):
     if req.POST:
         url = req.POST.get('url')
         try:
-            pra = PodcastReviewAssociation.create_for_service(service, url=url)
+            pra = PodcastReviewAssociation.create_for_service(service, podcast=pod, url=url)
             if service_obj:
                 service_obj.delete()
             pra.save()
@@ -388,3 +390,14 @@ def podcast_ratings(req, podcast_slug, service=None):
             data['error'] = 'Could not connect service'
 
     return _pmrender(req, 'dashboard/podcast_ratings.html', data)
+
+
+@login_required
+def network_dashboard(req, network_id):
+    net = get_object_or_404(Network, id=network_id, members__in=[req.user])
+    return _pmrender(req, 'dashboard/network/netdash.html', {'network': net})
+
+@login_required
+def network_add_show(req, network_id):
+    net = get_object_or_404(Network, id=network_id, members__in=[req.user])
+    return _pmrender(req, 'dashboard/network/netdash.html', {'network': net})

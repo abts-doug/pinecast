@@ -1,0 +1,68 @@
+{% extends 'dashboard_base.html' %}
+{% block dashboard_body %}
+
+<header>
+  <div class="breadcrumb">
+    <a href="{{ url('dashboard') }}">&laquo; Back to All Podcasts</a>
+  </div>
+
+  <h1>{{ network.name }}</h1>
+</header>
+
+<menu class="tabs dynamic">
+  <li class="selected"><a data-tab=".tab-podcasts" href="">Podcasts</a></li>
+  <li><a data-tab=".tab-members" href="">Members</a></li>
+</menu>
+
+<div class="tab-podcasts">
+  <ul class="dashboard-podcasts">
+    {% for p in network.podcast_set.all() %}
+      <li class="card">
+        <strong><a href="{{ url('podcast_dashboard', kwargs={'podcast_slug': p.slug}) }}">{{ p.name }}</a></strong>
+        <img src="{{ p.cover_image|https }}" alt="">
+      </li>
+    {% endfor %}
+    <li class="empty-state">
+      <a href="{{ url('network_add_show', kwargs={'network_id': network.id}) }}">
+        <i>&plus;</i>
+        <span>
+          {% if network.podcast_set.count() %}
+            Add another show to the network
+          {% else %}
+            Add first show to the network
+          {% endif %}
+        </span>
+      </a>
+    </li>
+  </ul>
+</div>
+
+<div class="tab-members" style="overflow: hidden; height: 0">
+  <div class="card card-block">
+    <strong>Owner</strong>
+    <address class="user-card">
+      <img src="{{ gravatar(network.owner.email) }}" alt="">
+      <span class="name">{{ network.owner.username }}</span>
+      <a href="mailto:{{ network.owner.email }}" class="email">{{ network.owner.email }}</a>
+    </address>
+  </div>
+
+  <div class="card card-block">
+    <strong>Members</strong>
+    <ul class="network-members">
+      {% for m in network.members.all() %}
+        <li class="user-card">
+          <img src="{{ gravatar(m.email) }}" alt="">
+          <span class="name">{{ m.username }}</span>
+          <a href="mailto:{{ m.email }}" class="email">{{ m.email }}</a>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block after_content %}
+<script src="/static/js/tabs.js"></script>
+{% endblock %}

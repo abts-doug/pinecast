@@ -746,3 +746,59 @@ abbr {
 .breadcrumb a {
     color: #95a5a6;
 }
+
+address.user-card {
+    font-size: 14px;
+    font-style: normal;
+    padding-left: 60px;
+}
+
+address.user-card img {
+    border-radius: 40px;
+    float: left;
+    height: 40px;
+    margin-left: -50px;
+    width: 40px;
+}
+
+address.user-card > * {
+    display: block;
+}
+
+address.user-card span.name {
+    font-size: 1.1em;
+    font-weight: bold;
+}
+
+.network-members {
+    list-style: none;
+    margin: 0;
+    padding-left: 0;
+}
+
+.network-members li + li {
+    border-top: 1px solid #eee;
+}
+
+li.user-card {
+    font-size: 13px;
+    font-style: normal;
+    padding: 15px 0 15px 40px;
+}
+
+li.user-card img {
+    border-radius: 20px;
+    float: left;
+    height: 20px;
+    margin-left: -30px;
+    width: 20px;
+}
+
+li.user-card > * {
+    display: block;
+}
+
+li.user-card span.name {
+    font-size: 1.1em;
+    font-weight: bold;
+}
