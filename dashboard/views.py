@@ -16,7 +16,8 @@ from django.shortcuts import get_object_or_404, redirect, render
 
 import analytics.query as analytics_query
 from feedback.models import Feedback
-from podcasts.models import CATEGORIES, Podcast, PodcastCategory, PodcastEpisode
+from podcasts.models import (CATEGORIES, Podcast, PodcastCategory,
+                             PodcastEpisode, PodcastReviewAssociation)
 
 
 signer = itsdangerous.Signer(settings.SECRET_KEY)
@@ -350,3 +351,40 @@ def delete_comment(req, podcast_slug, comment_id):
         return redirect('podcast_episode', podcast_slug=pod.slug, episode_id=str(ep.id), tab='tab-feedback')
     else:
         return redirect('podcast_dashboard', podcast_slug=pod.slug, tab='tab-feedback')
+
+
+@login_required
+def podcast_ratings(req, podcast_slug, service=None):
+    pod = get_object_or_404(Podcast, slug=podcast_slug, owner=req.user)
+    if service:
+        service = service.upper()
+    data = {
+        'podcast': pod,
+        'service': service,
+        'service_obj': None,
+        'PRA': PodcastReviewAssociation,
+        'connected_services': set(x.service for x in PodcastReviewAssociation.objects.filter(podcast=pod)),
+    }
+
+    if service and service not in PodcastReviewAssociation.SERVICES_MAP:
+        return Http404('Unknown service')
+
+    try:
+        service_obj = PodcastReviewAssociation.objects.get(podcast=pod, service=service)
+        data['service_obj'] = service_obj
+    except PodcastReviewAssociation.DoesNotExist:
+        service_obj = None
+
+    if req.POST:
+        url = req.POST.get('url')
+        try:
+            pra = PodcastReviewAssociation.create_for_service(service, url=url)
+            if service_obj:
+                service_obj.delete()
+            pra.save()
+            service_obj = data['service_obj'] = pra
+        except Exception as e:
+            print e
+            data['error'] = 'Could not connect service'
+
+    return _pmrender(req, 'dashboard/podcast_ratings.html', data)

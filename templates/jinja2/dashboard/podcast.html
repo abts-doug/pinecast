@@ -25,7 +25,7 @@
   </div>
 </div>
 
-<menu class="tabs">
+<menu class="tabs dynamic">
   <li class="selected"><a data-tab=".tab-overview" href="">Overview</a></li>
   <li><a data-tab=".tab-episodes" href="">Episodes</a></li>
   <li><a data-tab=".tab-analytics" href="">Analytics</a></li>
@@ -145,6 +145,9 @@
       <a class="btn" href="{{ url('new_episode', kwargs={'podcast_slug': podcast.slug})}}">Upload One Now</a>
     </div>
   {% else %}
+    <menu class="toolbar">
+      <a href="{{ url('podcast_ratings', kwargs={'podcast_slug': podcast.slug}) }}" class="btn">Podcast Reviews</a>
+    </menu>
     <div class="card-block card">
       <strong>Podcast Comment Box</strong>
       <p>Your listeners can leave questions, comments, and other feedback about your podcast. Direct them to this URL. You can shorten the URL with a service like <a href="https://bitly.com">bit.ly</a>.</p>

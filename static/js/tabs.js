@@ -39,7 +39,7 @@ function buildTabs(tab) {
     select(selected);
 }
 
-var tabs = document.querySelectorAll('menu.tabs');
+var tabs = document.querySelectorAll('menu.tabs.dynamic');
 Array.prototype.slice.call(tabs).forEach(function(tab) {
     buildTabs(tab);
 });

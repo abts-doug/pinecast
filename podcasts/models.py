@@ -1,6 +1,8 @@
 import datetime
+import re
 import uuid
 
+import requests
 from django.contrib.auth.models import User
 from django.db import models
 
@@ -202,3 +204,54 @@ class PodcastCategory(models.Model):
 
     def __unicode__(self):
         return '%s: %s' % (self.podcast.name, self.category)
+
+
+class PodcastReviewAssociation(models.Model):
+    SERVICE_ITUNES = 'ITUNES'
+    SERVICE_STITCHER = 'STITCHER'
+    SERVICES = (
+        (SERVICE_ITUNES, 'iTunes'),
+        (SERVICE_STITCHER, 'Stitcher Radio'),
+    )
+    SERVICES_SET = set(x for x, y in SERVICES)
+    SERVICES_MAP = {x: y for x, y in SERVICES}
+
+    EXAMPLE_URLS = {
+        SERVICE_ITUNES: 'https://itunes.apple.com/us/podcast/this-american-life/id201671138',
+        SERVICE_STITCHER: 'http://www.stitcher.com/podcast/this-american-life',
+    }
+
+    podcast = models.ForeignKey(Podcast)  # Not one-to-one because you can have multiple services
+    service = models.CharField(choices=SERVICES, max_length=16)    
+    payload = models.CharField(max_length=256)    
+
+    def __unicode__(self):
+        return '%s: %s' % (self.podcast.name, self.service)
+
+    @classmethod
+    def create_for_service(cls, service, **kwargs):
+        kwargs['service'] = service
+        if service == SERVICE_STITCHER:
+            return cls.create_service_stitcher(**kwargs)
+        elif service == SERVICE_ITUNES:
+            return cls.create_service_itunes(**kwargs)
+        else:
+            raise Exception('Unknown service')
+
+    @classmethod
+    def create_service_stitcher(cls, **kwargs):
+        stitcher_page = requests.get(kwargs['url'], timeout=5)
+        result = re.search(r'productId:\s+"(\w+)"', stitcher_page.text)
+        if not result:
+            raise Exception('Could not find podcast ID')
+
+        return cls(payload=result.group(1), **kwargs)
+
+    @classmethod
+    def create_service_itunes(cls, **kwargs):
+        page = requests.get(kwargs['url'], timeout=5, headers={'user-agent': 'iTunes/9.1.1'})
+        result = re.search(r'<string>\s*(https://itunes\.apple\.com/.*)\s*</string>', page.text)
+        if not result:
+            raise Exception('Could not find podcast ID')
+
+        return cls(payload=result.group(1), **kwargs)
