@@ -400,4 +400,15 @@ def network_dashboard(req, network_id):
 @login_required
 def network_add_show(req, network_id):
     net = get_object_or_404(Network, id=network_id, members__in=[req.user])
-    return _pmrender(req, 'dashboard/network/netdash.html', {'network': net})
+    if req.POST:
+        slug = req.POST.get('slug')
+        try:
+            pod = Podcast.objects.get(slug=slug)
+        except Podcast.DoesNotExist:
+            return _pmrender(req, 'dashboard/network/add_show.html', {'network': net, 'error': 'No podcast with the slug "%s" was found' % slug})
+        else:
+            pod.networks.add(net)
+            pod.save()
+        return redirect('network_dashboard', network_id=net.id)
+            
+    return _pmrender(req, 'dashboard/network/add_show.html', {'network': net})
