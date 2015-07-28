@@ -65,17 +65,17 @@ var Uploader = React.createClass({
                 {
                     className: 'uploaded-file-card'
                 },
-                React.createElement('b', null, 'File Uploaded'),
+                React.createElement('b', null, gettext('File Uploaded')),
                 (this.state.fileObj.size || this.state.fileObj.name || this.state.fileObj.type ?
                     React.createElement(
                         'dl',
                         null,
-                        React.createElement('dt', null, 'Size:'),
-                        React.createElement('dd', null, this.state.fileObj.size || 'Unknown'),
-                        React.createElement('dt', null, 'Name:'),
-                        React.createElement('dd', null, this.state.fileObj.name || 'Unknown'),
-                        React.createElement('dt', null, 'Type:'),
-                        React.createElement('dd', null, this.state.fileObj.type || 'Unknown')
+                        React.createElement('dt', null, gettext('Size:')),
+                        React.createElement('dd', null, this.state.fileObj.size || gettext('Unknown')),
+                        React.createElement('dt', null, gettext('Name:')),
+                        React.createElement('dd', null, this.state.fileObj.name || gettext('Unknown')),
+                        React.createElement('dt', null, gettext('Type:')),
+                        React.createElement('dd', null, this.state.fileObj.type || gettext('Unknown'))
                     ) : null),
                 React.createElement(
                     'button',
@@ -83,7 +83,7 @@ var Uploader = React.createClass({
                         className: 'btn-warn',
                         onClick: this.clearFile,
                     },
-                    'Clear File'
+                    gettext('Clear File')
                 ),
                 this.getError(),
                 React.createElement(
@@ -145,8 +145,8 @@ var Uploader = React.createClass({
                 }.bind(this),
             },
             React.createElement('i', {
-                'data-text-choose': 'Choose a file to upload',
-                'data-text-drop': 'or Drop files to upload',
+                'data-text-choose': gettext('Choose a file to upload'),
+                'data-text-drop': gettext('or Drop files to upload'),
             }),
             React.createElement(
                 'input',
@@ -181,7 +181,7 @@ var Uploader = React.createClass({
             function(err, data) {
                 if (err) {
                     console.error(err);
-                    alert('There was a problem contacting the server for upload information');
+                    alert(gettext('There was a problem contacting the server for upload information'));
                     this.setState({
                         fileObj: null,
                         uploading: false,
@@ -234,7 +234,7 @@ var Uploader = React.createClass({
         }.bind(this);
         xhr.onerror = xhr.upload.onerror = function() {
             console.error(xhr);
-            alert('There was a problem while uploading the file');
+            alert(gettext('There was a problem while uploading the file'));
             this.setState({
                 fileObj: null,
                 uploading: false,
@@ -279,13 +279,13 @@ var Uploader = React.createClass({
                 return React.createElement(
                     'div',
                     {className: 'warning'},
-                    'Warning! The image does not meet the iTunes minimum size of 1440x1440px.'
+                    gettext('Warning! The image does not meet the iTunes minimum size of 1440x1440px.')
                 );
             case 'not_square':
                 return React.createElement(
                     'div',
                     {className: 'warning'},
-                    'Warning! The image is not square. This may cause distortion on some devices.'
+                    gettext('Warning! The image is not square. This may cause distortion on some devices.')
                 );
         }
         return null;

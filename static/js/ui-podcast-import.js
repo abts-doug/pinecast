@@ -53,7 +53,7 @@ var SlugField = React.createClass({
             !this.props.readonly && this.state.isValid === null ? null : React.createElement(
                 'div',
                 {className: 'url-availability ' + (this.state.isValid ? 'is-available' : 'is-unavailable')},
-                this.state.isValid ? 'The slug is available!' : 'The slug is unavailable.'
+                this.state.isValid ? gettext('The slug is available!') : gettext('The slug is unavailable.')
             )
         );
     },
@@ -138,12 +138,12 @@ var PodcastImporter = React.createClass({
         return React.createElement(
             'div',
             {className: 'card card-block'},
-            React.createElement('strong', {}, 'Step One'),
-            this.state.step !== 1 ? null : React.createElement('p', {}, 'Enter the feed URL of your existing podcast'),
+            React.createElement('strong', {}, gettext('Step One')),
+            this.state.step !== 1 ? null : React.createElement('p', {}, gettext('Enter the feed URL of your existing podcast')),
             React.createElement(
                 'label',
                 {},
-                React.createElement('span', {}, 'Feed URL'),
+                React.createElement('span', {}, gettext('Feed URL')),
                 React.createElement(
                     'input',
                     {
@@ -152,7 +152,7 @@ var PodcastImporter = React.createClass({
                         placeholder: 'http://wtfpod.libsyn.com/rss',
                         readOnly: this.state.step !== 1,
                         pattern: 'https?://',
-                        title: 'Enter a HTTP or HTTPS feed URL',
+                        title: gettext('Enter a HTTP or HTTPS feed URL'),
                     }
                 )
             ),
@@ -161,7 +161,7 @@ var PodcastImporter = React.createClass({
                 {
                     onClick: this.downloadFeed,
                 },
-                'Continue'
+                gettext('Continue')
             )
         );
     },
@@ -174,20 +174,20 @@ var PodcastImporter = React.createClass({
             return React.createElement(
                 'div',
                 {className: 'card card-block'},
-                React.createElement('strong', {}, 'Step Two'),
-                React.createElement('p', {}, 'Loading feed information...')
+                React.createElement('strong', {}, gettext('Step Two')),
+                React.createElement('p', {}, gettext('Loading feed information...'))
             );
         }
 
         return React.createElement(
             'div',
             {className: 'card card-block'},
-            React.createElement('strong', {}, 'Step Two'),
-            this.state.step !== 2 ? null : React.createElement('p', {}, 'Review the feed information below'),
+            React.createElement('strong', {}, gettext('Step Two')),
+            this.state.step !== 2 ? null : React.createElement('p', {}, gettext('Review the feed information below')),
             this.renderPodcastData(),
             React.createElement('hr'),
             !this.state.step2error ? null : React.createElement('div', {className: 'error'}, this.state.step2error),
-            this.state.step !== 2 ? null : React.createElement('p', {}, 'Please choose a slug for the podcast.'),
+            this.state.step !== 2 ? null : React.createElement('p', {}, gettext('Please choose a slug for the podcast.')),
             React.createElement(
                 SlugField,
                 {
@@ -211,7 +211,7 @@ var PodcastImporter = React.createClass({
                         {
                             onClick: this.beginImport,
                         },
-                        'Continue'
+                        gettext('Continue')
                     )
                 ),
                 React.createElement(
@@ -229,7 +229,7 @@ var PodcastImporter = React.createClass({
                                 });
                             }.bind(this),
                         },
-                        'Try Again'
+                        gettext('Try Again')
                     )
                 )
             )
@@ -244,7 +244,7 @@ var PodcastImporter = React.createClass({
         return React.createElement(
             'div',
             {className: 'card card-block'},
-            React.createElement('strong', {}, 'Step Three'),
+            React.createElement('strong', {}, gettext('Step Three')),
             this.getStep3ProgressText(),
             React.createElement(
                 'div',
@@ -261,15 +261,15 @@ var PodcastImporter = React.createClass({
         return React.createElement(
             'div',
             {className: 'card card-block'},
-            React.createElement('strong', {}, 'Import Complete'),
-            React.createElement('p', {}, 'We\'ve finished importing your podcast. Thanks for choosing PodMaster!'),
+            React.createElement('strong', {}, gettext('Import Complete')),
+            React.createElement('p', {}, gettext('We\'ve finished importing your podcast. Thanks for choosing PodMaster!')),
             React.createElement(
                 'a',
                 {
                     className: 'btn',
                     href: '/dashboard/podcast/' + encodeURIComponent(this.state.slugValue),
                 },
-                'Go to Podcast'
+                gettext('Go to Podcast')
             )
         );
     },
@@ -277,7 +277,7 @@ var PodcastImporter = React.createClass({
     downloadFeed: function() {
         var val = this.refs.s1url.getDOMNode().value;
         if (!val) {
-            this.setState({step1error: 'You must enter a feed URL'});
+            this.setState({step1error: gettext('You must enter a feed URL')});
             return;
         }
         this.setState({step: 2, step1error: null});
@@ -287,7 +287,7 @@ var PodcastImporter = React.createClass({
         }.bind(this), function() {
             this.setState({
                 step: 1,
-                step1error: 'Unable to get an access token from PodMaster',
+                step1error: gettext('Unable to get an access token from PodMaster'),
             });
         }.bind(this));
 
@@ -309,7 +309,7 @@ var PodcastImporter = React.createClass({
                 function() {
                     this.setState({
                         step: 1,
-                        step1error: 'Could not connect to the PodMaster import server',
+                        step1error: gettext('Could not connect to the PodMaster import server'),
                     });
                 }.bind(this)
             );
@@ -327,10 +327,10 @@ var PodcastImporter = React.createClass({
                     if (parsed.error) {
                         switch(parsed.error) {
                             case 'invalid encoding':
-                                this.setState({step: 1, step1error: 'We were able to download the feed, but it had a bad encoding.'});
+                                this.setState({step: 1, step1error: gettext('We were able to download the feed, but it had a bad encoding.')});
                                 return;
                             case 'invalid xml':
-                                this.setState({step: 1, step1error: 'We were able to download the feed, but could not parse it. Try validating your feed first.'});
+                                this.setState({step: 1, step1error: gettext('We were able to download the feed, but could not parse it. Try validating your feed first.')});
                                 return;
                             case 'invalid format':
                                 this.setState({step: 1, step1error: parsed.details});
@@ -346,7 +346,7 @@ var PodcastImporter = React.createClass({
                 function() {
                     this.setState({
                         step: 1,
-                        step1error: 'Could not connect to PodMaster',
+                        step1error: gettext('Could not connect to PodMaster'),
                     })
                 }.bind(this)
             );
@@ -395,7 +395,7 @@ var PodcastImporter = React.createClass({
             ),
             React.createElement('hgroup', {},
                 React.createElement('h1', {className: 'podcast-import-title'}, data.name),
-                React.createElement('h2', nullStyle(data.subtitle, {className: 'podcast-import-subtitle'}), data.subtitle || 'No Subtitle')
+                React.createElement('h2', nullStyle(data.subtitle, {className: 'podcast-import-subtitle'}), data.subtitle || gettext('No Subtitle'))
             ),
             React.createElement(
                 'div',
@@ -405,7 +405,7 @@ var PodcastImporter = React.createClass({
                     style: {margin: '20px 10px'},
                 }
             ),
-            React.createElement('h3', {}, 'Categories'),
+            React.createElement('h3', {}, gettext('Categories')),
             React.createElement(
                 'ul',
                 {
@@ -418,31 +418,42 @@ var PodcastImporter = React.createClass({
                     return React.createElement('li', {key: i}, c);
                 })
             ),
-            React.createElement('h3', {}, 'Details'),
+            React.createElement('h3', {}, gettext('Details')),
             React.createElement(
                 'dl',
                 {
                     style: {padding: '15px'},
                 },
-                React.createElement('dt', {}, 'Homepage'),
+                React.createElement('dt', {}, gettext('Homepage')),
                 React.createElement('dd', {}, data.homepage),
                 
-                React.createElement('dt', {}, 'Language'),
+                React.createElement('dt', {}, gettext('Language')),
                 React.createElement('dd', {}, data.language),
                 
-                React.createElement('dt', {}, 'Copyright'),
+                React.createElement('dt', {}, gettext('Copyright')),
                 React.createElement('dd', {}, data.copyright),
                 
-                React.createElement('dt', {}, 'Author Name'),
+                React.createElement('dt', {}, gettext('Author Name')),
                 React.createElement('dd', {}, data.author_name),
                 
-                React.createElement('dt', {}, 'Explicit?'),
-                React.createElement('dd', {}, data.is_explicit ? 'Yes' : 'No')
+                React.createElement('dt', {}, gettext('Explicit?')),
+                React.createElement('dd', {}, data.is_explicit ? gettext('Yes') : gettext('No'))
                 
             ),
 
             React.createElement('h3', {}, 'Items'),
-            React.createElement('p', {style: {padding: '0 10px'}}, 'There are ' + data.items.length + ' episodes in this podcast.'),
+            React.createElement(
+                'p',
+                {style: {padding: '0 10px'}},
+                interpolate(
+                    ngettext(
+                        'There is %d episode in this podcast.',
+                        'There are %d episodes in this podcast.',
+                        data.items.length
+                    ),
+                    [data.items.length]
+                )
+            ),
             
             React.createElement(
                 'table',
@@ -454,15 +465,15 @@ var PodcastImporter = React.createClass({
                 },
                 React.createElement('thead', {},
                     React.createElement('tr', {},
-                        React.createElement('th', {}, 'Episode Name'),
-                        React.createElement('th', {}, 'Subtitle')
+                        React.createElement('th', {}, gettext('Episode Name')),
+                        React.createElement('th', {}, gettext('Subtitle)')
                     )
                 ),
                 React.createElement('tbody', {},
                     data.items.slice(0, 10).map(function(i, j) {
                         return React.createElement('tr', {key: j},
                             React.createElement('td', {}, i.title),
-                            React.createElement('td', nullStyle({}, i.subtitle), trunc(i.subtitle) || 'No Subtitle')
+                            React.createElement('td', nullStyle({}, i.subtitle), trunc(i.subtitle) || gettext('No Subtitle'))
                         )
                     })
                 )
@@ -470,14 +481,15 @@ var PodcastImporter = React.createClass({
             data.items.length > 10 ? React.createElement(
                 'p',
                 {style: {'font-style': 'italic', 'padding-left': '10px'}},
-                (data.items.length - 10) + ' item(s) not shown'
+                interpolate(ngettext('%d item not shown', '%d items not shown', data.items.length - 10), [data.items.length - 10])
             ) : null,
             !this.state.podcastData.__ignored_items ? null : React.createElement(
                 'div',
                 {className: 'warning'},
-                'Warning! We found ' + this.state.podcastData.__ignored_items + ' items in your ' +
-                'feed that did not have an <enclosure /> tag. There was no audio attached to these ' +
-                'items, so we cannot import them.'
+                interpolate(
+                    gettext('Warning! We found %d items in your feed that did not have an <enclosure /> tag. There was no audio attached to these items, so we cannot import them.'),
+                    [this.state.podcastData.__ignored_items]
+                )
             )
 
             // TODO: Show a warning if any of the files are too big for the user's account
@@ -487,7 +499,7 @@ var PodcastImporter = React.createClass({
 
     beginImport: function() {
         if (!this.state.slugValue || !this.state.slugValid) {
-            this.setState({step2error: 'You must find an available slug before proceeding'});
+            this.setState({step2error: gettext('You must find an available slug before proceeding')});
             return;
         }
         this.setState({step: 3, step3process: 'submitting', step2error: null});
@@ -540,7 +552,7 @@ var PodcastImporter = React.createClass({
         this.setState({step3interval: interval});
     },
     importError: function() {
-        this.setState({step: 2, step2error: 'There was an error while connecting to PodMaster'});
+        this.setState({step: 2, step2error: gettext('There was an error while connecting to PodMaster')});
     },
 
     getStep3Progress: function() {
@@ -558,13 +570,13 @@ var PodcastImporter = React.createClass({
         var text = 'Working...';
         switch (this.state.step3process) {
             case 'submitting':
-                text = 'Submitting podcast import request to Podmaster...';
+                text = gettext('Submitting podcast import request to Podmaster...');
                 break;
             case 'importing':
-                text = 'Waiting for assets to import...';
+                text = gettext('Waiting for assets to import...');
                 break;
             case 'done':
-                text = 'Import completed';
+                text = gettext('Import completed');
                 break;
             default:
                 text = '¯\\_(ツ)_/¯';

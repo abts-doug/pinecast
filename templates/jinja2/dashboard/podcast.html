@@ -54,7 +54,7 @@
 
   <div class="card-block card">
     <strong>{{ _('Milestones') }}</strong>
-    <p>{{ ngettext('Your next milestone is {milestone} listen!', 'Your next milestone is {milestone listens!', next_milestone).format(milestone=next_milestone) }}</p>
+    <p>{{ ngettext('Your next milestone is {n} listen!', 'Your next milestone is {n} listens!', next_milestone).format(n=next_milestone) }}</p>
     <div class="progress"><i data-tooltip="{{ (analytics.total_listens / next_milestone * 100)|int }}%" style="width: {{ analytics.total_listens / next_milestone * 100 }}%"></i></div>
   </div>
 </div>

@@ -2,6 +2,7 @@ from django.conf.urls import include, url
 from django.contrib import admin
 from django.contrib.auth import logout
 from django.shortcuts import redirect
+from django.views.i18n import javascript_catalog
 
 import analytics.urls
 import dashboard.urls
@@ -13,6 +14,9 @@ from podcasts.urls import urlpatterns as podcast_urlpatterns
 
 logout_view = lambda r: logout(r) or redirect('home')
 
+js_info_dict = {
+    'packages': ('podcasts', 'dashboard'),
+}
 
 urlpatterns = (
     account_urlpatterns +
@@ -27,5 +31,8 @@ urlpatterns = (
 
         url(r'^services/deploy_complete$', views.deploy_complete),
         url(r'^services/log$', views.log),
+
+        url(r'^jsi18n/$', javascript_catalog, js_info_dict),
     ]
 )
+
