@@ -13,9 +13,9 @@
       <i>&plus;</i>
       <span>
         {% if podcasts %}
-          Create a new podcast
+          {{ _('Create a new podcast') }}
         {% else %}
-          Create your first podcast
+          {{ _('Create your first podcast') }}
         {% endif %}
       </span>
     </a>
@@ -24,7 +24,7 @@
     <a href="{{ url('importer') }}">
       <i>&#8595;</i>
       <span>
-        Import Existing Podcast
+        {{ _('Import Existing Podcast') }}
       </span>
     </a>
   </li>

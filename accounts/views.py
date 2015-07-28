@@ -1,6 +1,7 @@
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.shortcuts import redirect, render
+from django.utils.translation import ugettext
 
 from .models import BetaRequest
 
@@ -30,7 +31,7 @@ def login_page(req):
         user.check_password(password)):
         login(req, authenticate(username=user.username, password=password))
         return redirect('dashboard')
-    return render(req, 'login.html', {'error': 'Invalid credentials'})
+    return render(req, 'login.html', {'error': ugettext('Invalid credentials')})
 
 
 def private_beta_signup(req):

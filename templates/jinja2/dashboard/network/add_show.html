@@ -2,11 +2,8 @@
 {% block dashboard_body %}
 
 <header>
-  <div class="breadcrumb">
-    <a href="{{ url('network_dashboard', kwargs={'network_id': network.id}) }}">&laquo; Back to {{ network.name }}</a>
-  </div>
-
-  <h1>Add podcast to {{ network.name }}</h1>
+  {{ breadcrumb(network.name, url('network_dashboard', kwargs={'network_id': network.id})) }}
+  <h1>{% trans name=network.name %}Add podcast to {{ name }}{% endtrans %}</h1>
 </header>
 
 {% if error %}
@@ -16,17 +13,17 @@
 <form method="post">
   
   <div class="card card-block">
-    <strong>Podcast</strong>
+    <strong>{{ _('Podcast') }}</strong>
 
     <label>
-      <span>Show Slug</span>
+      <span>{{ _('Podcast Slug') }}</span>
       <input type="text" name="slug" pattern="[\w-]+" required>
     </label>
 
   </div>
 
   <menu class="toolbar">
-    <li><button type="submit">Add</button></li>
+    <li><button type="submit">{{ _('Add') }}</button></li>
   </menu>
 
   <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">

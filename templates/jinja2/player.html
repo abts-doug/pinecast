@@ -57,9 +57,9 @@
 <div class="main-body">
   <div class="info-card">
     <b>{{ episode.title }}</b>
-    <span>by {{ episode.podcast.author_name }}</span>
+    <span>{% trans author=episode.podcast.author_name %}by {{ author }}{% endtrans %}</span>
   </div>
-  <button class="play-button">Play</button>
+  <button class="play-button">{{ _('Play') }}</button>
   <i class="seek-bar"></i>
 </div>
 <script>
@@ -72,11 +72,11 @@
     audio = new Audio('/listen/{{ str(episode.id) }}?embed=true');
     audio.addEventListener('pause', function() {
       button.className = 'play-button paused';
-      button.textContent = button.innerText = 'Play';
+      button.textContent = button.innerText = '{{ _('Play') }}';
     });
     audio.addEventListener('playing', function() {
       button.className = 'play-button playing';
-      button.textContent = button.innerText = 'Pause';
+      button.textContent = button.innerText = '{{ _('Pause') }}';
     });
     audio.addEventListener('timeupdate', function() {
       bar.style.width = (audio.currentTime / audio.duration * 100) + '%';

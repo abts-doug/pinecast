@@ -13,6 +13,7 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.http import Http404, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.utils.translation import ugettext
 
 import analytics.query as analytics_query
 from accounts.models import Network
@@ -411,7 +412,7 @@ def podcast_ratings(req, podcast_slug, service=None):
             service_obj = data['service_obj'] = pra
         except Exception as e:
             print e
-            data['error'] = 'Could not connect service'
+            data['error'] = ugettext('Could not connect service')
 
     return _pmrender(req, 'dashboard/podcast_ratings.html', data)
 

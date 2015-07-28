@@ -1,12 +1,10 @@
 {% extends 'dashboard_base.html' %}
 {% block dashboard_body %}
 <header>
-  <div class="breadcrumb">
-    <a href="{{ url('podcast_dashboard', kwargs={'podcast_slug': podcast.slug}) }}">&laquo; Back to {{ podcast.name }}</a>
-  </div>
+  {{ breadcrumb(podcast.name, url('podcast_dashboard', kwargs={'podcast_slug': podcast.slug})) }}
 
   <menu class="toolbar toolbar-right">
-    <li><a class="btn" href="{{ url('edit_podcast_episode', kwargs={'podcast_slug': podcast.slug, 'episode_id': str(episode.id)}) }}">Edit Episode</a></li>
+    <li><a class="btn" href="{{ url('edit_podcast_episode', kwargs={'podcast_slug': podcast.slug, 'episode_id': str(episode.id)}) }}">{{ _('Edit Episode') }}</a></li>
   </menu>
 
   <hgroup>
@@ -18,56 +16,56 @@
 
 <div class="row">
   <div class="card stat-card">
-    <strong>Total Listens</strong>
+    <strong>{{ _('Total Listens') }}</strong>
     <span>{{ analytics.total_listens }}</span>
   </div>
   <div class="card stat-card">
-    <strong>{{'Published' if episode.is_published() else 'Pending'}}</strong>
+    <strong>{{_('Published') if episode.is_published() else _('Pending')}}</strong>
     <span><time datetime="{{ episode.publish }}" title="{{ episode.publish }}">{{ episode.publish|pretty_date }}</time></span>
   </div>
 </div>
 
 <menu class="tabs dynamic">
-  <li class="selected"><a data-tab=".tab-overview" href="">Overview</a></li>
-  <li><a data-tab=".tab-feedback" href="">Feedback</a></li>
-  <li><a data-tab=".tab-analytics" href="">Analytics</a></li>
-  <li><a data-tab=".tab-audio" href="">Audio</a></li>
+  <li class="selected"><a data-tab=".tab-overview" href="">{{ _('Overview') }}</a></li>
+  <li><a data-tab=".tab-feedback" href="">{{ _('Feedback') }}</a></li>
+  <li><a data-tab=".tab-analytics" href="">{{ _('Analytics') }}</a></li>
+  <li><a data-tab=".tab-audio" href="">{{ _('Audio') }}</a></li>
 </menu>
 
 <div class="tab-overview">
   <div class="card-block card">
-    <strong>Description</strong>
+    <strong>{{ _('Description') }}</strong>
     <div class="markdown-editor-preview">
       {{ episode.description|markdown|safe }}
     </div>
   </div>
   
   <div class="card-block card">
-    <strong>Episode information</strong>
+    <strong>{{ _('Episode information') }}</strong>
     <dl>
-      <dt>Created</dt> {#- -#}
+      <dt>{{ _('Created') }}</dt> {#- -#}
       <dd><abbr title="{{ episode.created }}">{{ episode.created.strftime('%Y-%m-%d') }}</abbr></dd>
       
-      <dt>{{ 'Published' if episode.is_published() else 'Publish On' }}</dt> {#- -#}
+      <dt>{{ _('Published') if episode.is_published() else _('Publish On') }}</dt> {#- -#}
       <dd><abbr title="{{ episode.publish }} (UTC)">{{ episode.publish.strftime('%Y-%m-%d') }}</abbr></dd>
       
-      <dt>Duration</dt> {#- -#}
+      <dt>{{ _('Duration') }}</dt> {#- -#}
       <dd>
         {{ '%02d'|format((episode.duration / 3600)|round(1, 'floor')|int) }} :
         {{ '%02d'|format((episode.duration % 3600 / 60)|round(1, 'floor')|int) }} :
         {{ '%02d'|format((episode.duration % 60)|round(1, 'floor')|int) }}
       </dd>
       
-      <dt>File Size</dt> {#- -#}
+      <dt>{{ _('File Size') }}</dt> {#- -#}
       <dd>{{ episode.audio_size|filesizeformat }}</dd>
       
-      <dt>File Type</dt> {#- -#}
+      <dt>{{ _('File Type') }}</dt> {#- -#}
       <dd>{{ episode.audio_type }}</dd>
       
-      <dt>Copyright</dt> {#- -#}
+      <dt>{{ _('Copyright') }}</dt> {#- -#}
       <dd>{{ episode.copyright }}</dd>
       
-      <dt>License</dt> {#- -#}
+      <dt>{{ _('License') }}</dt> {#- -#}
       <dd>{{ episode.license }}</dd>
 
     </dl>
@@ -76,10 +74,10 @@
 
 <div class="tab-feedback">
   <div class="card-block card">
-    <strong>Comment Box</strong>
-    <p>Your listeners can leave questions, comments, and other feedback about this episode at this URL.</p>
+    <strong>{{ _('Comment Box') }}</strong>
+    <p>{{ _('Your listeners can leave questions, comments, and other feedback about this episode at this URL.') }}</p>
     <input type="url"
-      title="Comment Box"
+      title="{{ _('Comment Box') }}"
       readonly
       value="https://host.podmaster.io{{ url('ep_comment_box', kwargs={'podcast_slug': podcast.slug, 'episode_id': str(episode.id)}) }}"
       class="width-full">
@@ -92,12 +90,12 @@
       </a>
       <p>{{ f.message }}</p>
       <menu class="toolbar">
-        <a href="{{ url('delete_comment', kwargs={'podcast_slug': podcast.slug, 'comment_id': str(f.id)}) }}">Delete Comment</a>
+        <a href="{{ url('delete_comment', kwargs={'podcast_slug': podcast.slug, 'comment_id': str(f.id)}) }}">{{ _('Delete Comment') }}</a>
       </menu>
     </div>
   {% else %}
     <div class="episode-empty-state empty-state">
-      Nobody has submitted feedback about the episode yet.
+      {{ _('Nobody has submitted feedback about the episode yet.') }}
     </div>
   {% endfor %}
 </div>
@@ -108,7 +106,7 @@
       data-type="episode-listen-history"
       data-podcast="{{ podcast.slug }}"
       data-episode="{{ str(episode.id) }}"
-      data-title="Listen history over one month"
+      data-title="{{ _('Listen history over one month') }}"
       data-chart-type="line"></div>
 
     <div class="chunky-row">
@@ -116,12 +114,12 @@
         data-type="episode-listen-breakdown"
         data-podcast="{{ podcast.slug }}"
         data-episode="{{ str(episode.id) }}"
-        data-title="Listens by Source"
+        data-title="{{ _('Listens by Source') }}"
         data-chart-type="pie"></div>
     </div>
   {% else %}
     <div class="episode-empty-state empty-state">
-      Analytics will become available when you've received your first listen
+      {% trans %}Analytics will become available when you've received your first listen{% endtrans %}
     </div>
   {% endif %}
 </div>
@@ -130,12 +128,12 @@
   <iframe src="/player/{{ str(episode.id) }}" seamless height="60" style="border:0" class="podmaster-embed"></iframe>
 
   <div class="card-block card">
-    <strong>Embed Code</strong>
+    <strong>{{ _('Embed Code') }}</strong>
     <textarea readonly class="embed-textarea"><iframe src="https://host.podmaster.io/player/{{ str(episode.id) }}" seamless height="60" style="border:0" class="podmaster-embed"></iframe></textarea>
   </div>
   
   <div class="card-block card">
-    <strong>Audio URL</strong>
+    <strong>{{ _('Audio URL') }}</strong>
     <input type="url"
       readonly
       value="https://host.podmaster.io{{ url('listen', kwargs={'episode_id': str(episode.id)}) }}"

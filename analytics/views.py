@@ -3,6 +3,7 @@ import datetime
 from django.contrib.auth.decorators import login_required
 from django.http import Http404, JsonResponse
 from django.shortcuts import get_object_or_404, render
+from django.utils.translation import ugettext, ugettext_lazy
 
 from . import query
 from dashboard.views import get_podcast
@@ -31,7 +32,7 @@ def podcast_subscriber_locations(req):
          'groupBy': 'profile.country',
          'filter': {'podcast': {'eq': unicode(pod.id)}}})
 
-    return [['Country', 'Subscribers']] + [
+    return [[ugettext('Country'), ugettext('Subscribers')]] + [
         [p['profile.country'], p['podcast']] for
         p in
         res['results'] if
@@ -52,7 +53,7 @@ def podcast_listener_locations(req):
          'filter': {'podcast': {'eq': unicode(pod.id)}},
          'timezone': int(req.GET.get('timezone', 0))})
 
-    return [['Country', 'Subscribers']] + [
+    return [[ugettext('Country'), ugettext('Subscribers')]] + [
         [p['profile.country'], p['podcast']] for
         p in
         res['results'] if
@@ -174,10 +175,10 @@ def episode_listen_history(req):
 
 
 SOURCE_MAP = {
-    'direct': 'Direct',
-    'rss': 'Subscription',
-    'embed': 'Embedded Player',
-    None: 'Unknown',
+    'direct': ugettext_lazy('Direct'),
+    'rss': ugettext_lazy('Subscription'),
+    'embed': ugettext_lazy('Embedded Player'),
+    None: ugettext_lazy('Unknown'),
 }
 
 @login_required

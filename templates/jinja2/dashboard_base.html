@@ -1,7 +1,16 @@
 {% extends 'base.html' %}
+
+{% macro breadcrumb(title, url) -%}
+  <div class="breadcrumb">
+    <a href="{{ url }}">
+      {% trans name=title %}&laquo; Back to {{ name }}{% endtrans %}
+    </a>
+  </div>
+{%- endmacro %}
+
 {% block content %}
 <header>
-  <h1>PodMaster Hosting{% block title %}{% endblock %}</h1>
+  <h1>{{ _('PodMaster Hosting') }}{% block title %}{% endblock %}</h1>
   <a class="user-card">
     <img src="{{ gravatar(user.email) }}" alt="">
     <span>{{ user.username }}</span>
@@ -11,8 +20,8 @@
   <nav class="sidebar">
     {% block sidebar %}
       <ul>
-        <li><a href="{{ url('logout') }}">Sign Out</a></li>
-        <li><a href="{{ url('dashboard') }}">All Podcasts</a></li>
+        <li><a href="{{ url('logout') }}">{{ _('Sign Out') }}</a></li>
+        <li><a href="{{ url('dashboard') }}">{{ _('All Podcasts') }}</a></li>
       </ul>
       {% if podcasts %}
         <ul>
@@ -41,7 +50,9 @@
   <main>
     <noscript>
       <div class="error">
-        It looks like JavaScript is turned off in your browser! Our dashboards will probably not work until it's turned back on.
+        {% trans %}
+          It looks like JavaScript is turned off in your browser! Our dashboards will probably not work until it's turned back on.
+        {% endtrans %}
       </div>
     </noscript>
     {% block dashboard_body %}{% endblock %}

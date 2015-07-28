@@ -2,27 +2,25 @@
 {% block dashboard_body %}
 
 <header>
-  <div class="breadcrumb">
-    <a href="{{ url('podcast_dashboard', kwargs={'podcast_slug': podcast.slug}) }}">&laquo; Back to {{ podcast.name }}</a>
-  </div>
-  <h1>New Episode: {{ podcast.name }}</h1>
+  {{ breadcrumb(podcast.name, url('podcast_dashboard', kwargs={'podcast_slug': podcast.slug})) }}
+  <h1>{% trans name=podcast.name %}New Episode: {{ name }}{% endtrans %}</h1>
 </header>
 
 {% if error %}
 <div class="error">
-  Please check that all fields are filled out correctly.
+  {{ _('Please check that all fields are filled out correctly.') }}
 </div>
 {% endif %}
 
 <form action="?" method="post">
   <div class="card-block card">
-    <strong>Details</strong>
+    <strong>{{ _('Details') }}</strong>
 
     <label>
-      <span>Title</span>
+      <span>{{ _('Title') }}</span>
       <input type="text"
         name="title"
-        placeholder="Episode 1 - Best one ever"
+        placeholder="{{ _('Episode 1 - Best one ever') }}"
         required
         maxlength="1024"
         value="{{ default.get('title') }}"
@@ -30,17 +28,17 @@
     </label>
 
     <label>
-      <span>Subtitle</span>
+      <span>{{ _('Subtitle') }}</span>
       <input type="text"
         name="subtitle"
-        placeholder="You'll never believe it"
+        placeholder="{{ _('You\'ll never believe it') }}"
         maxlength="1024"
         value="{{ default.get('subtitle') }}"
         class="width-full">
     </label>
 
     <label>
-      <span>Publish On</span>
+      <span>{{ _('Publish On') }}</span>
       <input type="datetime-local"
         name="publish"
         required
@@ -48,19 +46,19 @@
     </label>
 
     <label>
-      <span>Episode Description</span>
-      <textarea name="description" id="description-field">{{ default.get('description', '# Episode Notes\n\nNotes go here')|safe }}</textarea>
+      <span>{{ _('Episode Description') }}</span>
+      <textarea name="description" id="description-field">{{ default.get('description', _('# Episode Notes\n\nNotes go here'))|safe }}</textarea>
     </label>
 
   </div>
 
   <div class="card-block card">
-    <strong>Image</strong>
+    <strong>{{ _('Episode Image') }}</strong>
 
     <div class="upload-placeholder"
       data-default-url="{{ sign(default.get('image-url', podcast.cover_image)) }}"
       data-default-size="{{ default.get('image-url-size') }}"
-      data-default-name="{{ default.get('image-url-name', 'Current podcast cover image') }}"
+      data-default-name="{{ default.get('image-url-name', _('Current podcast cover image')) }}"
       data-default-type="{{ default.get('image-url-type') }}"
       data-accept="image/*"
       data-name="image-url"
@@ -69,8 +67,7 @@
   </div>
 
   <div class="card-block card">
-    <strong>Audio</strong>
-
+    <strong>{{ _('Audio') }}</strong>
     <div class="upload-placeholder"
       data-default-url="{{ sign(default.get('audio-url')) }}"
       data-default-size="{{ default.get('audio-url-size') }}"
@@ -82,33 +79,33 @@
       data-podcast="{{ podcast.slug }}"></div>
 
     <label class="duration-control">
-      <span>Duration</span>
-      <input type="number" class="duration-hours" name="duration-hours" value="{{ default.get('duration-hours', '0') }}">:
-      <input type="number" class="duration-minutes" name="duration-minutes" value="{{ default.get('duration-minutes') }}">:
-      <input type="number" class="duration-seconds" name="duration-seconds" value="{{ default.get('duration-seconds') }}">
+      <span>{{ _('Duration') }}</span>
+      <input type="number" class="duration-hours" name="duration-hours" value="{{ default.get('duration-hours', '0') }}" title="{{ _('Hours') }}">:
+      <input type="number" class="duration-minutes" name="duration-minutes" value="{{ default.get('duration-minutes', '0') }}" title="{{ _('Minutes') }}">:
+      <input type="number" class="duration-seconds" name="duration-seconds" value="{{ default.get('duration-seconds', '0') }}" title="{{ _('Seconds') }}">
     </label>
 
   </div>
 
   <div class="card-block card">
-    <strong>Meta</strong>
+    <strong>{{ _('Meta') }}</strong>
 
     <label>
-      <span>Copyright</span>
+      <span>{{ _('Copyright') }}</span>
       <input type="text"
         name="copyright"
         maxlength="1024"
         value={{ default.get('copyright', podcast.copyright) }}
-        placeholder="Copyright 2015 Foo Bar Inc."
+        placeholder="{{ _('Copyright 2015 Foo Bar Inc.') }}"
         required>
     </label>
 
     <label>
-      <span>License</span>
+      <span>{{ _('License') }}</span>
       <input type="text"
         name="license"
         maxlength="1024"
-        placeholder="Creative Commons 4.0"
+        placeholder="{{ _('Creative Commons 4.0') }}"
         required
         value="{{ default.get('license') }}">
     </label>
@@ -116,7 +113,7 @@
   </div>
 
   <menu class="toolbar">
-    <li><button type="submit">Save New Episode</button></li>
+    <li><button type="submit">{{ _('Save New Episode') }}</button></li>
   </menu>
 
   <input type="hidden" name="timezone" value="">

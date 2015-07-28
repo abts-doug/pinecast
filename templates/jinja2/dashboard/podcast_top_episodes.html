@@ -1,19 +1,18 @@
 {% extends 'dashboard_base.html' %}
 {% block dashboard_body %}
 <header>
-  <div class="breadcrumb">
-    <a href="{{ url('podcast_dashboard', kwargs={'podcast_slug': podcast.slug}) }}">&laquo; Back to {{ podcast.name }}</a>
-  </div>
+  {{ breadcrumb(podcast.name, url('podcast_dashboard', kwargs={'podcast_slug': podcast.slug})) }}
 
-  <h1>Top Episodes for {{ podcast.name }}</h1>
+  <h1>{% trans name=podcast.name %}Top Episodes for {{ name }}{% endtrans %}</h1>
 </header>
+
 
 {% if podcast.podcastepisode_set.count() %}
   <table>
     <thead>
       <tr>
-        <th class="primary">Episode Name</th>
-        <th>Listens</th>
+        <th class="primary">{{ _('Episode Name') }}</th>
+        <th>{{ _('Listens') }}</th>
       </tr>
     </thead>
     <tbody>
@@ -30,7 +29,7 @@
 
 {% else %}
   <div class="episode-empty-state empty-state">
-    You haven't uploaded any episodes yet.
+    {{ _('You haven\'t uploaded any episodes yet.') }}
   </div>
 {% endif %}
 

@@ -5,6 +5,7 @@ import uuid
 import requests
 from django.contrib.auth.models import User
 from django.db import models
+from django.utils.translation import ugettext, ugettext_lazy
 
 from accounts.models import Network
 
@@ -64,7 +65,7 @@ class PodcastEpisode(models.Model):
     created = models.DateTimeField(auto_now=True)
     publish = models.DateTimeField()
     description = models.TextField(default='')
-    duration = models.PositiveIntegerField(help_text='Audio duration in seconds')
+    duration = models.PositiveIntegerField(help_text=ugettext_lazy('Audio duration in seconds'))
 
     audio_url = models.URLField()
     audio_size = models.PositiveIntegerField(default=0)
@@ -243,7 +244,7 @@ class PodcastReviewAssociation(models.Model):
         stitcher_page = requests.get(kwargs['url'], timeout=5)
         result = re.search(r'productId:\s+"(\w+)"', stitcher_page.text)
         if not result:
-            raise Exception('Could not find podcast ID')
+            raise Exception(ugettext('Could not find podcast ID'))
 
         return cls(payload=result.group(1), **kwargs)
 
@@ -252,6 +253,6 @@ class PodcastReviewAssociation(models.Model):
         page = requests.get(kwargs['url'], timeout=5, headers={'user-agent': 'iTunes/9.1.1'})
         result = re.search(r'<string>\s*(https://itunes\.apple\.com/.*)\s*</string>', page.text)
         if not result:
-            raise Exception('Could not find podcast ID')
+            raise Exception(ugettext('Could not find podcast ID'))
 
         return cls(payload=result.group(1), **kwargs)

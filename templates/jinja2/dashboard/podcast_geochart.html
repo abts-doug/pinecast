@@ -2,22 +2,20 @@
 {% block dashboard_body %}
 
 <header>
-  <div class="breadcrumb">
-    <a href="{{ url('podcast_dashboard', kwargs={'podcast_slug': podcast.slug}) }}">&laquo; Back to {{ podcast.name }}</a>
-  </div>
+  {{ breadcrumb(podcast.name, url('podcast_dashboard', kwargs={'podcast_slug': podcast.slug})) }}
 
-  <h1>Geo Data for {{ podcast.name }}</h1>
+  <h1>{% trans name=podcast.name %}Geo Data for {{ name }}{% endtrans %}</h1>
 </header>
 
 <div class="card-block card geo-chart-placeholder"
   data-type="podcast-subscriber-locations"
   data-podcast="{{ podcast.slug }}"
-  data-title="Subscriber locations this month"></div>
+  data-title="{{ _('Subscriber locations this month') }}"></div>
 
 <div class="card-block card geo-chart-placeholder"
   data-type="podcast-listener-locations"
   data-podcast="{{ podcast.slug }}"
-  data-title="Listener locations this month"></div>
+  data-title="{{ _('Listener locations this month') }}"></div>
 
 {% endblock %}
 

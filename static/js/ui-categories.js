@@ -37,7 +37,7 @@ var CategoryComponent = React.createClass({
         return React.createElement(
             'div',
             {className: 'category-picker-unselected'},
-            React.createElement('b', {}, 'Unselected Categories'),
+            React.createElement('b', {}, this.props.transUnsel),
             unselected.map(function(u) {
                 return React.createElement(
                     'a',
@@ -55,7 +55,7 @@ var CategoryComponent = React.createClass({
         return React.createElement(
             'div',
             {className: 'category-picker-selected'},
-            React.createElement('b', {}, 'Selected Categories'),
+            React.createElement('b', {}, this.props.transSel),
             this.state.selectedCats.map(function(s) {
                 return React.createElement(
                     'a',
@@ -92,6 +92,9 @@ Array.prototype.slice.call(fields).forEach(function(field) {
         React.createElement(CategoryComponent, {
             name: field.getAttribute('data-name'),
             defCats: field.getAttribute('data-default-cats'),
+
+            transUnsel: field.getAttribute('data-trans-unselcats'),
+            transSel: field.getAttribute('data-trans-selcats'),
         }),
         field
     );

@@ -9,6 +9,7 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseBadRequest
 from django.shortcuts import get_object_or_404
+from django.utils.translation import ugettext
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
@@ -55,7 +56,7 @@ def start_import(req):
     try:
         parsed_items = json.loads(req.POST.get('items'))
     except Exception:
-        return {'error': 'Invalid JSON'}
+        return {'error': ugettext('Invalid JSON')}
 
 
     asset_requests = []
@@ -92,7 +93,7 @@ def start_import(req):
                 p.delete()
             except Exception:
                 pass
-        return {'error': 'There was a problem saving the podcast: %s' % str(e)}
+        return {'error': ugettext('There was a problem saving the podcast: %s') % str(e)}
 
     created_items = []
     try:
@@ -138,7 +139,7 @@ def start_import(req):
                 i.delete()
             except Exception:
                 pass
-        return {'error': 'There was a problem saving the podcast items: %s' % str(e)}
+        return {'error': ugettext('There was a problem saving the podcast items: %s') % str(e)}
 
     for ir in asset_requests:
         ir.save()

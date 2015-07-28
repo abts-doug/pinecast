@@ -2,65 +2,63 @@
 {% block dashboard_body %}
 
 <header>
-  <div class="breadcrumb">
-    <a href="{{ url('podcast_episode', kwargs={'podcast_slug': podcast.slug, 'episode_id': str(episode.id)}) }}">&laquo; Back to {{ episode.title }}</a>
-  </div>
+  {{ breadcrumb(episode.title, url('podcast_episode', kwargs={'podcast_slug': podcast.slug, 'episode_id': str(episode.id)})) }}
 
   <menu class="toolbar toolbar-right">
-    <li><a class="btn btn-danger" href="{{ url('delete_podcast_episode', kwargs={'podcast_slug': podcast.slug, 'episode_id': str(episode.id)}) }}">Delete Episode</a></li>
+    <li><a class="btn btn-danger" href="{{ url('delete_podcast_episode', kwargs={'podcast_slug': podcast.slug, 'episode_id': str(episode.id)}) }}">{{ _('Delete Episode') }}</a></li>
   </menu>
-  <h1>Edit {{ episode.title }}</h1>
+  <h1>{% trans title=episode.title %}Edit {{ title }}{% endtrans %}</h1>
 </header>
 
 {% if error %}
 <div class="error">
-  Please check that all fields are filled out correctly.
+  {{ _('Please check that all fields are filled out correctly.') }}
 </div>
 {% endif %}
 
 <form action="?" method="post">
   <div class="card-block card">
-    <strong>Details</strong>
+    <strong>{{ _('Details') }}</strong>
 
     <label>
-      <span>Title</span>
+      <span>{{ _('Title') }}</span>
       <input type="text"
         name="title"
-        placeholder="Episode 1 - Best one ever"
+        placeholder="{{ _('Episode 1 - Best one ever') }}"
         required
         maxlength="1024"
         value="{{ default.get('title', episode.title) }}"
         class="width-full">
     </label>
     <label>
-      <span>Subtitle</span>
+      <span>{{ _('Subtitle') }}</span>
       <input type="text"
         name="subtitle"
-        placeholder="You'll never believe it"
+        placeholder="{{ _('You\'ll never believe it') }}"
         maxlength="1024"
         value="{{ default.get('subtitle', episode.subtitle) }}"
         class="width-full">
     </label>
     <label>
-      <span>Publish On</span>
+      <span>{{ _('Publish On') }}</span>
       <input type="datetime-local"
         name="publish"
         required
         value="{{ default.get('publish', episode.publish.strftime('%Y-%m-%dT%H:%M')) }}">
     </label>
     <label>
-      <span>Episode Description</span>
+      <span>{{ _('Episode Description') }}</span>
       <textarea name="description" id="description-field">{{ default.get('description', episode.description)|safe }}</textarea>
     </label>
 
   </div>
 
   <div class="card-block card">
-    <strong>Audio</strong>
+    <strong>{{ _('Audio') }}</strong>
     <div class="upload-placeholder"
       data-default-url="{{ sign(default.get('audio-url', episode.audio_url)) }}"
       data-default-size="{{ default.get('audio-url-size', episode.audio_size) }}"
-      data-default-name="{{ default.get('audio-url-name', 'Previously uploaded episode audio') }}"
+      data-default-name="{{ default.get('audio-url-name', _('Previously uploaded episode audio')) }}"
       data-default-type="{{ default.get('audio-url-type', episode.audio_type) }}"
       data-accept="audio/*"
       data-name="audio-url"
@@ -68,17 +66,17 @@
       data-podcast="{{ podcast.slug }}"></div>
 
     <label class="duration-control">
-      <span>Duration</span>
-      <input type="number" class="duration-hours" name="duration-hours" value="{{ default.get('duration-hours', (episode.duration / 3600)|round(1, 'floor')|int) }}" title="Hours">:
-      <input type="number" class="duration-minutes" name="duration-minutes" value="{{ default.get('duration-minutes', (episode.duration % 3600 / 60)|round(1, 'floor')|int) }}" title="Minutes">:
-      <input type="number" class="duration-seconds" name="duration-seconds" value="{{ default.get('duration-seconds', (episode.duration % 60)|round(1, 'floor')|int) }}" title="Seconds">
+      <span>{{ _('Duration') }}</span>
+      <input type="number" class="duration-hours" name="duration-hours" value="{{ default.get('duration-hours', (episode.duration / 3600)|round(1, 'floor')|int) }}" title="{{ _('Hours') }}">:
+      <input type="number" class="duration-minutes" name="duration-minutes" value="{{ default.get('duration-minutes', (episode.duration % 3600 / 60)|round(1, 'floor')|int) }}" title="{{ _('Minutes') }}">:
+      <input type="number" class="duration-seconds" name="duration-seconds" value="{{ default.get('duration-seconds', (episode.duration % 60)|round(1, 'floor')|int) }}" title="{{ _('Seconds') }}">
     </label>
 
   </div>
 
 
   <div class="card-block card">
-    <strong>Episode Image</strong>
+    <strong>{{ _('Episode Image') }}</strong>
 
     <div class="upload-placeholder"
       data-default-url="{{ sign(default.get('image-url', episode.image_url)) }}"
@@ -92,24 +90,24 @@
   </div>
 
   <div class="card-block card">
-    <strong>Meta</strong>
+    <strong>{{ _('Meta') }}</strong>
 
     <label>
-      <span>Copyright</span>
+      <span>{{ _('Copyright') }}</span>
       <input type="text"
         name="copyright"
         maxlength="1024"
         value={{ default.get('copyright', episode.copyright) }}
-        placeholder="Copyright 2015 Foo Bar Inc."
+        placeholder="{{ _('Copyright 2015 Foo Bar Inc.') }}"
         required>
     </label>
 
     <label>
-      <span>License</span>
+      <span>{{ _('License') }}</span>
       <input type="text"
         name="license"
         maxlength="1024"
-        placeholder="Creative Commons 4.0"
+        placeholder="{{ _('Creative Commons 4.0') }}"
         required
         value="{{ default.get('license', episode.license) }}">
     </label>
@@ -117,7 +115,7 @@
   </div>
 
   <menu class="toolbar">
-    <li><button type="submit">Save</button></li>
+    <li><button type="submit">{{ _('Save') }}</button></li>
   </menu>
 
   <input type="hidden" name="timezone" value="">

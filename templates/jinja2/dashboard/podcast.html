@@ -3,8 +3,8 @@
 
 <header>
   <menu class="toolbar toolbar-right">
-    <li><a class="btn" href="{{ url('new_episode', kwargs={'podcast_slug': podcast.slug}) }}">New Episode</a></li>
-    <li><a class="btn btn-neutral" href="{{ url('edit_podcast', kwargs={'podcast_slug': podcast.slug}) }}">Edit</a></li>
+    <li><a class="btn" href="{{ url('new_episode', kwargs={'podcast_slug': podcast.slug}) }}">{{ _('New Episode') }}</a></li>
+    <li><a class="btn btn-neutral" href="{{ url('edit_podcast', kwargs={'podcast_slug': podcast.slug}) }}">{{ _('Edit') }}</a></li>
   </menu>
 
   <h1>{{ podcast.name }}</h1>
@@ -12,24 +12,24 @@
 
 <div class="row">
   <div class="card stat-card total-listens">
-    <strong>Total Listens</strong>
+    <strong>{{ _('Total Listens') }}</strong>
     <span>{{ analytics.total_listens }}</span>
   </div>
   <div class="card stat-card this-week">
-    <strong>Listens This Week</strong>
+    <strong>{{ _('Listens This Week') }}</strong>
     <span>{{ analytics.total_listens_this_week }}</span>
   </div>
   <div class="card stat-card total-subscribers">
-    <strong>{{ plural('Subscriber', 'Subscribers', analytics.subscribers) }}</strong>
+    <strong>{{ ngettext('Subscriber', 'Subscribers', analytics.subscribers) }}</strong>
     <span>{{ analytics.subscribers }}</span>
   </div>
 </div>
 
 <menu class="tabs dynamic">
-  <li class="selected"><a data-tab=".tab-overview" href="">Overview</a></li>
-  <li><a data-tab=".tab-episodes" href="">Episodes</a></li>
-  <li><a data-tab=".tab-analytics" href="">Analytics</a></li>
-  <li><a data-tab=".tab-feedback" href="">Feedback</a></li>
+  <li class="selected"><a data-tab=".tab-overview" href="">{{ _('Overview') }}</a></li>
+  <li><a data-tab=".tab-episodes" href="">{{ _('Episodes') }}</a></li>
+  <li><a data-tab=".tab-analytics" href="">{{ _('Analytics') }}</a></li>
+  <li><a data-tab=".tab-feedback" href="">{{ _('Feedback') }}</a></li>
 </menu>
 
 <div class="tab-overview">
@@ -38,23 +38,23 @@
       <div class="chart-placeholder"
         data-type="podcast-listen-history"
         data-podcast="{{ podcast.slug }}"
-        data-title="Listen history"
+        data-title="{{ _('Listen history') }}"
         data-chart-type="line"></div>
     </div>
   {% endif %}
 
   <div class="card-block card">
-    <strong>RSS Feed</strong>
+    <strong>{{ _('RSS Feed') }}</strong>
     <input type="url"
-      title="RSS Feed"
+      title="{{ _('RSS Feed') }}"
       readonly
       value="https://host.podmaster.io{{ url('feed', kwargs={'podcast_slug': podcast.slug}) }}"
       class="width-full">
   </div>
 
   <div class="card-block card">
-    <strong>Milestones</strong>
-    <p>Your next milestone is {{ next_milestone }} listens!</p>
+    <strong>{{ _('Milestones') }}</strong>
+    <p>{{ ngettext('Your next milestone is {milestone} listen!', 'Your next milestone is {milestone listens!', next_milestone).format(milestone=next_milestone) }}</p>
     <div class="progress"><i data-tooltip="{{ (analytics.total_listens / next_milestone * 100)|int }}%" style="width: {{ analytics.total_listens / next_milestone * 100 }}%"></i></div>
   </div>
 </div>
@@ -62,16 +62,16 @@
 <div class="tab-episodes" style="overflow: hidden; height: 0">
   {% if not episodes %}
     <div class="episode-empty-state empty-state">
-      You haven't uploaded any episodes yet.<br>
-      <a class="btn" href="{{ url('new_episode', kwargs={'podcast_slug': podcast.slug})}}">Upload One Now</a>
+      {{ _('You haven\'t uploaded any episodes yet.') }}<br>
+      <a class="btn" href="{{ url('new_episode', kwargs={'podcast_slug': podcast.slug})}}">{{ _('Upload One Now') }}</a>
     </div>
   {% else %}
     <table>
       <thead>
         <tr>
-          <th class="primary">Episode Name</th>
-          <th>Subtitle</th>
-          <th>Published</th>
+          <th class="primary">{{ _('Episode Name') }}</th>
+          <th>{{ _('Subtitle') }}</th>
+          <th>{{ _('Published') }}</th>
         </tr>
       </thead>
       <tbody>
@@ -92,24 +92,24 @@
 <div class="tab-analytics" style="overflow: hidden; height: 0">
   {% if not episodes %}
     <div class="episode-empty-state empty-state">
-      Analytics will become available when you've uploaded your first episode
+      {{ _('Analytics will become available when you\'ve uploaded your first episode') }}
     </div>
   {% else %}
     <menu class="toolbar">
-      <li><a class="btn" href="{{ url('podcast_geo', kwargs={'podcast_slug': podcast.slug}) }}">Geo</a></li>
-      <li><a class="btn" href="{{ url('top_episodes', kwargs={'podcast_slug': podcast.slug}) }}">Top Episodes</a></li>
+      <li><a class="btn" href="{{ url('podcast_geo', kwargs={'podcast_slug': podcast.slug}) }}">{{ _('Geo') }}</a></li>
+      <li><a class="btn" href="{{ url('top_episodes', kwargs={'podcast_slug': podcast.slug}) }}">{{ _('Top Episodes') }}</a></li>
     </menu>
     <div class="row">
       <div class="card chart-placeholder"
         data-type="podcast-listen-breakdown"
         data-podcast="{{ podcast.slug }}"
-        data-title="Listens by Source"
+        data-title="{{ _('Listens by Source') }}"
         data-chart-type="pie"></div>
 
       <div class="card chunkier chart-placeholder"
         data-type="podcast-subscriber-history"
         data-podcast="{{ podcast.slug }}"
-        data-title="Subscriber History"
+        data-title="{{ _('Subscriber History') }}"
         data-chart-type="line"></div>
     </div>
 
@@ -118,21 +118,21 @@
         data-type="podcast-listen-platform-breakdown"
         data-podcast="{{ podcast.slug }}"
         data-extra="breakdown_type=device"
-        data-title="Listens by Device"
+        data-title="{{ _('Listens by Device') }}"
         data-chart-type="pie"></div>
 
       <div class="card chart-placeholder"
         data-type="podcast-listen-platform-breakdown"
         data-podcast="{{ podcast.slug }}"
         data-extra="breakdown_type=browser"
-        data-title="Listens by Browser"
+        data-title="{{ _('Listens by Browser') }}"
         data-chart-type="pie"></div>
 
       <div class="card chart-placeholder"
         data-type="podcast-listen-platform-breakdown"
         data-podcast="{{ podcast.slug }}"
         data-extra="breakdown_type=os"
-        data-title="Listens by OS"
+        data-title="{{ _('Listens by OS') }}"
         data-chart-type="pie"></div>
     </div>
   {% endif %}
@@ -141,22 +141,22 @@
 <div class="tab-feedback" style="overflow: hidden; height: 0">
   {% if not episodes %}
     <div class="episode-empty-state empty-state">
-      You will receive listener feedback here once you've uploaded en episode.<br>
-      <a class="btn" href="{{ url('new_episode', kwargs={'podcast_slug': podcast.slug})}}">Upload One Now</a>
+      {{ _('You will receive listener feedback here once you\'ve uploaded en episode.') }}<br>
+      <a class="btn" href="{{ url('new_episode', kwargs={'podcast_slug': podcast.slug})}}">{{ _('Upload One Now') }}</a>
     </div>
   {% else %}
     <menu class="toolbar">
-      <a href="{{ url('podcast_ratings', kwargs={'podcast_slug': podcast.slug}) }}" class="btn">Podcast Reviews</a>
+      <a href="{{ url('podcast_ratings', kwargs={'podcast_slug': podcast.slug}) }}" class="btn">{{ _('Podcast Reviews') }}</a>
     </menu>
     <div class="card-block card">
-      <strong>Podcast Comment Box</strong>
-      <p>Your listeners can leave questions, comments, and other feedback about your podcast. Direct them to this URL. You can shorten the URL with a service like <a href="https://bitly.com">bit.ly</a>.</p>
+      <strong>{{ _('Podcast Comment Box') }}</strong>
+      <p>{% trans %}Your listeners can leave questions, comments, and other feedback about your podcast. Direct them to this URL. You can shorten the URL with a service like <a href="https://bitly.com">bit.ly</a>.{% endtrans %}</p>
       <input type="url"
-        title="Podcast Comment Box"
+        title="{{ _('Podcast Comment Box') }}"
         readonly
         value="https://host.podmaster.io{{ url('podcast_comment_box', kwargs={'podcast_slug': podcast.slug}) }}"
         class="width-full">
-      <p>Listeners can also leave feedback on individual episodes. See the Feedback tab on an episode dashboard to find out how.</p>
+      <p>{{ _('Listeners can also leave feedback on individual episodes. See the Feedback tab on an episode dashboard to find out how.') }}</p>
     </div>
     {% for f in feedback %}
       <div class="card-block card card-comment">
@@ -166,12 +166,12 @@
         </a>
         <p>{{ f.message }}</p>
         <menu class="toolbar">
-          <a href="{{ url('delete_comment', kwargs={'podcast_slug': podcast.slug, 'comment_id': str(f.id)}) }}">Delete Comment</a>
+          <a href="{{ url('delete_comment', kwargs={'podcast_slug': podcast.slug, 'comment_id': str(f.id)}) }}">{{ _('Delete Comment') }}</a>
         </menu>
       </div>
     {% else %}
       <div class="episode-empty-state empty-state">
-        Nobody has submitted feedback about the show yet.
+        {{ _('Nobody has submitted feedback about the show yet.') }}
       </div>
     {% endfor %}
   {% endif %}

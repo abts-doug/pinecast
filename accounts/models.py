@@ -1,18 +1,19 @@
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.utils.translation import ugettext_lazy
 
 import payment_plans
 
 
 class BetaRequest(models.Model):
     PODCASTER_TYPE = (
-        ('HOBBYIST', 'Hobbyist'),
-        ('AUTHOR', 'Author or Writer'),
-        ('MUSICIAN', 'Musician'),
-        ('RADIO', 'Radio Personality'),
-        ('COMEDY', 'Comedian'),
-        ('POLITIC', 'Politician'),
+        ('HOBBYIST', ugettext_lazy('Hobbyist')),
+        ('AUTHOR', ugettext_lazy('Author or Writer')),
+        ('MUSICIAN', ugettext_lazy('Musician')),
+        ('RADIO', ugettext_lazy('Radio Personality')),
+        ('COMEDY', ugettext_lazy('Comedian')),
+        ('POLITIC', ugettext_lazy('Politician')),
     )
     created = models.DateTimeField(auto_now=True)
     email = models.EmailField()

@@ -2,31 +2,29 @@
 {% block dashboard_body %}
 
 <header>
-  <div class="breadcrumb">
-    <a href="{{ url('podcast_dashboard', kwargs={'podcast_slug': podcast.slug}) }}">&laquo; Back to {{ podcast.name }}</a>
-  </div>
+  {{ breadcrumb(podcast.name, url('podcast_dashboard', kwargs={'podcast_slug': podcast.slug})) }}
 
-  <h1>Ratings for {{ podcast.name }}</h1>
+  <h1>{% trans name=podcast.name %}Ratings for {{ name }}{% endtrans %}</h1>
 </header>
 
 <menu class="tabs">
-  <li><a{{ (' class="selected"' if not service else '')|safe }} href="{{ url('podcast_ratings', kwargs={'podcast_slug': podcast.slug}) }}">Overview</a></li>
-  <li><a{{ (' class="selected"' if service == 'STITCHER' else '')|safe }} href="{{ url('podcast_ratings', kwargs={'podcast_slug': podcast.slug, 'service': 'stitcher'}) }}">Stitcher</a></li>
+  <li><a{{ (' class="selected"' if not service else '')|safe }} href="{{ url('podcast_ratings', kwargs={'podcast_slug': podcast.slug}) }}">{{ _('Overview') }}</a></li>
+  <li><a{{ (' class="selected"' if service == 'STITCHER' else '')|safe }} href="{{ url('podcast_ratings', kwargs={'podcast_slug': podcast.slug, 'service': 'stitcher'}) }}">{{ _('Stitcher') }}</a></li>
 </menu>
 
 {% if not service %}
   <div class="card-block card">
-    <strong>Connected Services</strong>
-    <p>In order to fetch ratings and reviews from third party services, you need to link those services to your PodMaster podcast.</p>
+    <strong>{{ _('Connected Services') }}</strong>
+    <p>{{ _('In order to fetch ratings and reviews from third party services, you need to link those services to your PodMaster podcast.') }}</p>
 
     <ul class="connected-services">
       <li class="connected-service-stitcher">
         <strong>Stitcher Radio</strong>
-        {{ 'Connected!' if PRA.SERVICE_STITCHER in connected_services else 'Not Connected' }}
+        {{ _('Connected!') if PRA.SERVICE_STITCHER in connected_services else _('Not Connected') }}
       </li>
       <li class="connected-service-itunes">
         <strong>iTunes</strong>
-        {{ 'Connected!' if PRA.SERVICE_ITUNES in connected_services else 'Not Connected' }}
+        {{ _('Connected!') if PRA.SERVICE_ITUNES in connected_services else _('Not Connected') }}
       </li>
     </ul>
   </div>
@@ -35,15 +33,15 @@
     <strong>{{ PRA.SERVICES_MAP[service] }}</strong>
 
     {% if not service_obj %}
-      <p>This service is not yet connected to PodMaster.</p>
+      <p>{{ _('This service is not yet connected to PodMaster.') }}</p>
       <form method="POST">
         <label>
-          <span>URL of podcast on {{ PRA.SERVICES_MAP[service] }}</span>
+          <span>{% trans service=PRA.SERVICES_MAP[service] %}URL of podcast on {{ service }}{% endtrans %}</span>
           <input type="url" required name="url" placeholder="{{ PRA.EXAMPLE_URLS[service] }}">
         </label>
 
         <menu class="toolbar">
-          <button>Connect</button>
+          <button>{{ _('Connect') }}</button>
         </menu>
       </form>
     {% else %}

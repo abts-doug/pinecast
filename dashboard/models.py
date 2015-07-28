@@ -3,6 +3,7 @@ import uuid
 
 from django.conf import settings
 from django.db import models
+from django.utils.translation import ugettext
 
 import importer_worker
 from podcasts.models import Podcast, PodcastEpisode
@@ -36,14 +37,14 @@ class AssetImportRequest(models.Model):
 
     def resolve(self, new_url):
         if self.resolved:
-            raise Exception('Attempting to double-resolve import request')
+            raise Exception(ugettext('Attempting to double-resolve import request'))
 
         if self.expiration < datetime.datetime.now():
-            raise Exception('Attempting to resolve expired import request')
+            raise Exception(ugettext('Attempting to resolve expired import request'))
 
         if self.podcast:
             if self.audio_source_url:
-                raise Exception('Invalid import request')
+                raise Exception(ugettext('Invalid import request'))
 
             orig_url = self.podcast.cover_image
             self.podcast.cover_image = new_url
@@ -66,7 +67,7 @@ class AssetImportRequest(models.Model):
             self.episode.save()
 
         else:
-            raise Exception('Invalid import request for neither podcast nor ep')
+            raise Exception(ugettext('Invalid import request for neither podcast nor ep'))
 
         self.resolved = True
         self.save()

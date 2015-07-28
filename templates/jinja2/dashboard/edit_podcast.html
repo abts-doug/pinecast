@@ -2,34 +2,32 @@
 {% block dashboard_body %}
 
 <header>
-  <div class="breadcrumb">
-    <a href="{{ url('podcast_dashboard', kwargs={'podcast_slug': podcast.slug}) }}">&laquo; Back to {{ podcast.name }}</a>
-  </div>
+  {{ breadcrumb(podcast.name, url('podcast_dashboard', kwargs={'podcast_slug': podcast.slug})) }}
 
   {% if podcast.owner == user %}
     <menu class="toolbar toolbar-right">
-      <li><a class="btn btn-danger" href="{{ url('delete_podcast', kwargs={'podcast_slug': podcast.slug}) }}">Delete Podcast</a></li>
+      <li><a class="btn btn-danger" href="{{ url('delete_podcast', kwargs={'podcast_slug': podcast.slug}) }}">{{ _('Delete Podcast') }}</a></li>
     </menu>
   {% endif %}
 
-  <h1>Edit {{ podcast.name }}</h1>
+  <h1>{% trans name=podcast.name %}Edit {{ name }}{% endtrans %}</h1>
 </header>
 
 {% if error %}
 <div class="error">
-  Please check that all fields are filled out correctly.
+  {{ _('Please check that all fields are filled out correctly.') }}
 </div>
 {% endif %}
 
 <form action="?" method="post">
   <div class="card-block card">
-    <strong>Details</strong>
+    <strong>{{ _('Details') }}</strong>
 
     <label>
-      <span>Name</span>
+      <span>{{ _('Name') }}</span>
       <input type="text"
         name="name"
-        placeholder="My Great Podcast"
+        placeholder="{{ _('My Great Podcast') }}"
         required
         maxlength="256"
         class="width-full"
@@ -37,10 +35,10 @@
     </label>
 
     <label>
-      <span>Slug</span>
+      <span>{{ _('Slug') }}</span>
       <input type="text"
         name="slug"
-        placeholder="my-great-podcast"
+        placeholder="{{ _('my-great-podcast') }}"
         required
         maxlength="64"
         pattern="[\w-]+"
@@ -48,55 +46,54 @@
         value="{{ default.get('slug', podcast.slug) }}">
       <div class="url-availability"></div>
       <div class="warning slug-warning">
-        WARNING! Changing your slug will change your RSS feed URL. You will lose all of your subscribers.
+        {{ _('WARNING! Changing your slug will change your RSS feed URL. You will lose all of your subscribers.') }}
       </div>
     </label>
 
     <label>
-      <span>Subtitle</span>
+      <span>{{ _('Subtitle') }}</span>
       <input type="text"
         name="subtitle"
-        placeholder="You'll never believe it"
         maxlength="512"
         value="{{ default.get('subtitle', podcast.subtitle) }}">
     </label>
 
     <label>
       <input type="checkbox" name="is_explicit" value="true" {{ 'checked' if default.get('is_explicit', 'true' if podcast.is_explicit else 'false') == 'true' }}>
-      <span>Explicit?</span>
+      <span>{{ _('Explicit?') }}</span>
     </label>
 
     <label>
-      <span>Description</span>
+      <span>{{ _('Description') }}</span>
       <textarea name="description">{{ default.get('description', podcast.description)|safe }}</textarea>
     </label>
   </div>
 
   <div class="card-block card">
-    <strong>Meta</strong>
+    <strong>{{ _('Meta') }}</strong>
 
     <label>
-      <span>Homepage</span>
+      <span>{{ _('Homepage') }}</span>
       <input type="url" name="homepage" placeholder="https://my-great-podcast.biz" required value="{{ default.get('homepage', podcast.homepage) }}">
     </label>
 
     <label>
-      <span>Language</span>
+      <span>{{ _('Language') }}</span>
       <input type="text" name="language" placeholder="en-US" required maxlength="16" value="{{ default.get('language', podcast.language)}}">
     </label>
 
     <label>
-      <span>Copyright</span>
+      <span>{{ _('Copyright') }}</span>
       <input type="text"
         name="copyright"
         maxlength="1024"
-        placeholder="Copyright 2015 Foo Bar Inc."
+        placeholder="{{ _('Copyright 2015 Foo Bar Inc.') }}"
         required
         value="{{ default.get('copyright', podcast.copyright) }}">
     </label>
 
     <label>
-      <span>Author</span>
+      <span>{{ _('Author') }}</span>
       <input type="text"
         name="author_name"
         maxlength="1024"
@@ -108,7 +105,7 @@
   </div>
 
   <div class="card-block card">
-    <strong>Cover Art</strong>
+    <strong>{{ _('Cover Art') }}</strong>
     <div class="upload-placeholder"
       data-default-url="{{ sign(default.get('image-url', podcast.cover_image)) }}"
       data-default-size="{{ default.get('image-url-size') }}"
@@ -121,14 +118,16 @@
   </div>
 
   <div class="card-block card">
-    <strong>Categories</strong>
+    <strong>{{ _('Categories') }}</strong>
     <div class="category-placeholder"
       data-name="categories"
+      data-trans-unselcats="{{ _('Unselected Categories') }}"
+      data-trans-selcats="{{ _('Selected Categories') }}"
       data-default-cats="{{ default.get('categories', podcast.get_category_list()) }}"></div>
   </div>
 
   <menu class="toolbar">
-    <li><button type="submit">Save</button></li>
+    <li><button type="submit">{{ _('Save') }}</button></li>
   </menu>
 
   <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
@@ -171,10 +170,10 @@ window.PODCAST_CATEGORIES = {{ PODCAST_CATEGORIES|safe }};
       slugXHR = null;
       var parsed = JSON.parse(xhr.responseText);
       if (parsed.valid) {
-        urlAvail.textContent = urlAvail.innerText = '"' + slugField.value + '" is available!';
+        urlAvail.textContent = urlAvail.innerText = '{% trans slug=("' + slugField.value + '"|safe) %}"{{ slug }}" is available!{% endtrans %}';
         urlAvail.className = 'url-availability is-available';
       } else {
-        urlAvail.textContent = urlAvail.innerText = '"' + slugField.value + '" is unavailable';
+        urlAvail.textContent = urlAvail.innerText = '{% trans slug=("' + slugField.value + '"|safe) %}"{{ slug }}" is unavailable{% endtrans %}';
         urlAvail.className = 'url-availability is-unavailable';
       }
     };

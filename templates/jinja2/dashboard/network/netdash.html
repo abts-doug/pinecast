@@ -2,16 +2,14 @@
 {% block dashboard_body %}
 
 <header>
-  <div class="breadcrumb">
-    <a href="{{ url('dashboard') }}">&laquo; Back to All Podcasts</a>
-  </div>
+  {{ breadcrumb(_('All Podcasts'), url('network_dashboard', kwargs={'network_id': network.id})) }}
 
   <h1>{{ network.name }}</h1>
 </header>
 
 <menu class="tabs dynamic">
-  <li class="selected"><a data-tab=".tab-podcasts" href="">Podcasts</a></li>
-  <li><a data-tab=".tab-members" href="">Members</a></li>
+  <li class="selected"><a data-tab=".tab-podcasts" href="">{{ _('Podcasts') }}</a></li>
+  <li><a data-tab=".tab-members" href="">{{ _('Members') }}</a></li>
 </menu>
 
 <div class="tab-podcasts">
@@ -27,9 +25,9 @@
         <i>&plus;</i>
         <span>
           {% if network.podcast_set.count() %}
-            Add another show to the network
+            {{ _('Add another show to the network') }}
           {% else %}
-            Add first show to the network
+            {{ _('Add first show to the network') }}
           {% endif %}
         </span>
       </a>
@@ -39,7 +37,7 @@
 
 <div class="tab-members" style="overflow: hidden; height: 0">
   <div class="card card-block">
-    <strong>Owner</strong>
+    <strong>{{ _('Owner') }}</strong>
     <address class="user-card">
       <img src="{{ gravatar(network.owner.email) }}" alt="">
       <span class="name">{{ network.owner.username }}</span>
@@ -48,7 +46,7 @@
   </div>
 
   <div class="card card-block">
-    <strong>Members</strong>
+    <strong>{{ _('Members') }}</strong>
     <ul class="network-members">
       {% for m in network.members.all() %}
         <li class="user-card">

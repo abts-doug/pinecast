@@ -2,29 +2,35 @@
 {% block dashboard_body %}
 
 <header>
-  <h1>Delete {{ podcast.name }}?</h1>
+  <h1>
+    {% trans name=podcast.name %} Delete {{ name }}?{% endtrans %}
+  </h1>
 </header>
+
 <form action="?" method="post">
 
   <div class="card-block card">
-    <strong>Confirm Delete</strong>
-    <p>Are you absolutely sure you wish to delete "{{ podcast.name }}"? This is permanent.</p>
-    <p>Type your podcast's slug in the box below to confirm this operation.</p>
+    <strong>{{ _('Confirm Delete') }}</strong>
 
+    <p>
+      {% trans name=podcast.name %}Are you absolutely sure you wish to delete "{{ name }}"? This is permanent.{% endtrans %}
+    </p>
+
+    <p>{{ _('Type your podcast\'s slug in the box below to confirm this operation.') }}</p>
 
     <label>
-      <span>Podcast Slug</span>
+      <span>{{ _('Podcast Slug') }}</span>
       <input type="text"
         name="slug"
         placeholder="{{ podcast.slug }}"
         pattern="{{ podcast.slug }}"
         required
-        title="Type '{{ podcast.slug }}' here in order to confirm deletion">
+        title="{% trans slug=podcast.slug %}Type '{{ slug }}' here in order to confirm deletion{% endtrans %}">
     </label>
     
     <menu class="toolbar">
-      <li><button type="submit" class="btn-danger">I'm dead sure</button></li>
-      <li><a class="btn btn-neutral" href="{{ url('podcast_dashboard', kwargs={'podcast_slug': podcast.slug})}}">Never mind</a></li>
+      <li><button type="submit" class="btn-danger">{{ _('I\'m dead sure') }}</button></li>
+      <li><a class="btn btn-neutral" href="{{ url('podcast_dashboard', kwargs={'podcast_slug': podcast.slug})}}">{{ _('Never mind') }}</a></li>
     </menu>
   </div>
 

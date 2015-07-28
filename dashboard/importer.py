@@ -1,5 +1,7 @@
 from email.Utils import parsedate
 
+from django.utils.translation import ugettext
+
 
 def handle_format_exceptions(func):
     def wrap(*args, **kwargs):
@@ -50,7 +52,7 @@ def get_details(req, parsed):
 
     item_nodes = rss.getElementsByTagName('item')
     if not item_nodes:
-        raise FormatException('No <item> nodes in the feed were found')
+        raise FormatException(ugettext('No <item> nodes in the feed were found'))
     for node in item_nodes:
         audio_url = first_tag_attr(node, 'enclosure', 'url')
         if not audio_url:
@@ -86,7 +88,7 @@ def parse_date_format(date):
     try:
         return parsedate(date)
     except Exception:
-        raise FormatException('Could not parse the date "%s"' % date)
+        raise FormatException(ugettext('Could not parse the date "%s"') % date)
 
 
 def first_tag_text(dom, tag, default=None):
@@ -108,7 +110,7 @@ def first_tag_attr(dom, tag, attribute, default=''):
     val = node.getAttribute(attribute)
     if not val:
         if default: return default
-        raise FormatException('Node <%s> does not have expected attribute %s=""' % (tag, attribute))
+        raise FormatException(ugettext('Node <%s> does not have expected attribute %s=""') % (tag, attribute))
     return val
 
 def first_tag_bool(dom, tag, default=False):
@@ -117,7 +119,7 @@ def first_tag_bool(dom, tag, default=False):
 def get_first_tag(dom, tag, default=None):
     elem = dom.getElementsByTagName(tag)
     if not elem and default is None:
-        raise FormatException('Could not find expected tag <%s> in %s' % (tag, dom.nodeName))
+        raise FormatException(ugettext('Could not find expected tag <%s> in %s') % (tag, dom.nodeName))
     elif not elem:
         return default
 
