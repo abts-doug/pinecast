@@ -5,6 +5,7 @@ from django.http import Http404, JsonResponse
 from django.shortcuts import get_object_or_404, render
 
 from . import query
+from dashboard.views import get_podcast
 from podcasts.models import Podcast, PodcastEpisode
 
 
@@ -21,7 +22,7 @@ def json_response(*args, **jr_kwargs):
 @login_required
 @json_response(safe=False)
 def podcast_subscriber_locations(req):
-    pod = get_object_or_404(Podcast, slug=req.GET.get('podcast'), owner=req.user)
+    pod = get_podcast(req, req.GET.get('podcast'))
 
     res = query.query(
         'subscribe',
@@ -41,7 +42,7 @@ def podcast_subscriber_locations(req):
 @login_required
 @json_response(safe=False)
 def podcast_listener_locations(req):
-    pod = get_object_or_404(Podcast, slug=req.GET.get('podcast'), owner=req.user)
+    pod = get_podcast(req, req.GET.get('podcast'))
 
     res = query.query(
         'listen',
@@ -62,7 +63,7 @@ def podcast_listener_locations(req):
 @login_required
 @json_response
 def podcast_subscriber_history(req):
-    pod = get_object_or_404(Podcast, slug=req.GET.get('podcast'), owner=req.user)
+    pod = get_podcast(req, req.GET.get('podcast'))
 
     res = query.query(
         'subscribe',
@@ -92,7 +93,7 @@ def podcast_subscriber_history(req):
 @login_required
 @json_response
 def podcast_listen_history(req):
-    pod = get_object_or_404(Podcast, slug=req.GET.get('podcast'), owner=req.user)
+    pod = get_podcast(req, req.GET.get('podcast'))
 
     res = query.query(
         'listen',
@@ -133,7 +134,7 @@ def podcast_listen_history(req):
 @login_required
 @json_response
 def episode_listen_history(req):
-    pod = get_object_or_404(Podcast, slug=req.GET.get('podcast'), owner=req.user)
+    pod = get_podcast(req, req.GET.get('podcast'))
     ep = get_object_or_404(PodcastEpisode, podcast=pod, id=req.GET.get('episode'))
 
     res = query.query(
@@ -182,7 +183,7 @@ SOURCE_MAP = {
 @login_required
 @json_response(safe=False)
 def podcast_listen_breakdown(req):
-    pod = get_object_or_404(Podcast, slug=req.GET.get('podcast'), owner=req.user)
+    pod = get_podcast(req, req.GET.get('podcast'))
 
     res = query.query(
         'listen',
@@ -210,7 +211,7 @@ def podcast_listen_breakdown(req):
 @login_required
 @json_response(safe=False)
 def podcast_listen_platform_breakdown(req):
-    pod = get_object_or_404(Podcast, slug=req.GET.get('podcast'), owner=req.user)
+    pod = get_podcast(req, req.GET.get('podcast'))
 
     breakdown_type = req.GET.get('breakdown_type', 'device')
     if breakdown_type not in ['device', 'browser', 'os']: return Http404()
@@ -244,7 +245,7 @@ def podcast_listen_platform_breakdown(req):
 @login_required
 @json_response(safe=False)
 def episode_listen_breakdown(req):
-    pod = get_object_or_404(Podcast, slug=req.GET.get('podcast'), owner=req.user)
+    pod = get_podcast(req, req.GET.get('podcast'))
     ep = get_object_or_404(PodcastEpisode, podcast=pod, id=req.GET.get('episode'))
 
     res = query.query(

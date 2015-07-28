@@ -39,8 +39,16 @@ def _pmrender(req, template, data=None):
     data['sign'] = lambda x: signer.sign(x) if x else x
     if not req.user.is_anonymous():
         data.setdefault('user', req.user)
-        data.setdefault('podcasts', req.user.podcast_set.all())
-        data.setdefault('networks', req.user.network_set.all())
+
+        networks = req.user.network_set.all()
+        data.setdefault('networks', networks)
+
+        podcasts = set(req.user.podcast_set.all())
+        for network in networks:
+            for p in network.podcast_set.all():
+                podcasts.add(p)
+        data.setdefault('podcasts', podcasts)
+
     return render(req, template, data)
 
 def json_response(view):
@@ -51,6 +59,20 @@ def json_response(view):
             return resp
         return JsonResponse(resp)
     return func
+
+def get_podcast(req, slug):
+    try:
+        pod = Podcast.objects.get(slug=slug)
+    except Podcast.DoesNotExist:
+        raise HttpResponseNotFound()
+
+    if pod.owner == req.user:
+        return pod
+    pods = Network.objects.filter(members__in=[req.user], podcast__in=[pod])
+    if not pods.count():
+        raise Http404()
+
+    return pod
 
 
 @login_required
@@ -65,7 +87,7 @@ MILESTONES = [1, 100, 250, 500, 1000, 2000, 5000, 7500, 10000, 15000, 20000,
 
 @login_required
 def podcast_dashboard(req, podcast_slug):
-    pod = get_object_or_404(Podcast, slug=podcast_slug, owner=req.user)
+    pod = get_podcast(req, podcast_slug)
 
     total_listens = analytics_query.total_listens(pod)
     data = {
@@ -84,13 +106,13 @@ def podcast_dashboard(req, podcast_slug):
 
 @login_required
 def podcast_geochart(req, podcast_slug):
-    pod = get_object_or_404(Podcast, slug=podcast_slug, owner=req.user)
+    pod = get_podcast(req, podcast_slug)
     return _pmrender(req, 'dashboard/podcast_geochart.html', {'podcast': pod})
 
 
 @login_required
 def podcast_top_episodes(req, podcast_slug):
-    pod = get_object_or_404(Podcast, slug=podcast_slug, owner=req.user)
+    pod = get_podcast(req, podcast_slug)
 
     top_ep_data = analytics_query.get_top_episodes(unicode(pod.id))
     ep_ids = [x['episode'] for x in top_ep_data]
@@ -144,7 +166,7 @@ def new_podcast(req):
 
 @login_required
 def edit_podcast(req, podcast_slug):
-    pod = get_object_or_404(Podcast, slug=podcast_slug, owner=req.user)
+    pod = get_podcast(req, podcast_slug)
 
     ctx = {'podcast': pod,
            'PODCAST_CATEGORIES': json.dumps(list(CATEGORIES))}
@@ -173,6 +195,7 @@ def edit_podcast(req, podcast_slug):
 
 @login_required
 def delete_podcast(req, podcast_slug):
+    # This doesn't use `get_podcast` because only the owner may delete the podcast
     pod = get_object_or_404(Podcast, slug=podcast_slug, owner=req.user)
     if not req.POST:
         return _pmrender(req, 'dashboard/delete_podcast.html', {'podcast': pod})
@@ -185,7 +208,7 @@ def delete_podcast(req, podcast_slug):
 
 @login_required
 def delete_podcast_episode(req, podcast_slug, episode_id):
-    pod = get_object_or_404(Podcast, slug=podcast_slug, owner=req.user)
+    pod = get_podcast(req, podcast_slug)
     ep = get_object_or_404(PodcastEpisode, podcast=pod, id=episode_id)
     if not req.POST:
         return _pmrender(req, 'dashboard/delete_episode.html', {'podcast': pod, 'episode': ep})
@@ -196,7 +219,7 @@ def delete_podcast_episode(req, podcast_slug, episode_id):
 
 @login_required
 def podcast_new_ep(req, podcast_slug):
-    pod = get_object_or_404(Podcast, slug=podcast_slug, owner=req.user)
+    pod = get_podcast(req, podcast_slug)
 
     if not req.POST:
         return _pmrender(req, 'dashboard/new_episode.html', {'podcast': pod})
@@ -229,7 +252,7 @@ def podcast_new_ep(req, podcast_slug):
 
 @login_required
 def edit_podcast_episode(req, podcast_slug, episode_id):
-    pod = get_object_or_404(Podcast, slug=podcast_slug, owner=req.user)
+    pod = get_podcast(req, podcast_slug)
     ep = get_object_or_404(PodcastEpisode, id=episode_id, podcast=pod)
 
     if not req.POST:
@@ -262,7 +285,7 @@ def edit_podcast_episode(req, podcast_slug, episode_id):
 
 @login_required
 def podcast_episode(req, podcast_slug, episode_id):
-    pod = get_object_or_404(Podcast, slug=podcast_slug, owner=req.user)
+    pod = get_podcast(req, podcast_slug)
     ep = get_object_or_404(PodcastEpisode, id=episode_id, podcast=pod)
 
     data = {
@@ -281,9 +304,10 @@ def podcast_episode(req, podcast_slug, episode_id):
 def slug_available(req):
     try:
         Podcast.objects.get(slug=req.GET.get('slug'))
-        return {'valid': False}
     except Podcast.DoesNotExist:
         return {'valid': True}
+    else:
+        return {'valid': False}
 
 
 @login_required
@@ -295,7 +319,7 @@ def get_upload_url(req, podcast_slug, type):
     # TODO: Add validation around the 'type' and 'name' GET params
 
     if podcast_slug != '$none':
-        pod = get_object_or_404(Podcast, slug=podcast_slug, owner=req.user)
+        pod = get_podcast(req, podcast_slug)
         basepath = 'podcasts/%s/%s/' % (pod.id, type)
     else:
         basepath = 'podcasts/covers/'
@@ -344,7 +368,7 @@ def get_upload_url(req, podcast_slug, type):
 
 @login_required
 def delete_comment(req, podcast_slug, comment_id):
-    pod = get_object_or_404(Podcast, slug=podcast_slug, owner=req.user)
+    pod = get_podcast(req, podcast_slug)
     comment = get_object_or_404(Feedback, podcast=pod, id=comment_id)
 
     ep = comment.episode
@@ -357,7 +381,7 @@ def delete_comment(req, podcast_slug, comment_id):
 
 @login_required
 def podcast_ratings(req, podcast_slug, service=None):
-    pod = get_object_or_404(Podcast, slug=podcast_slug, owner=req.user)
+    pod = get_podcast(req, podcast_slug)
     if service:
         service = service.upper()
     data = {
@@ -409,6 +433,8 @@ def network_add_show(req, network_id):
         else:
             pod.networks.add(net)
             pod.save()
+            net.members.add(pod.owner)
+            net.save()
         return redirect('network_dashboard', network_id=net.id)
             
     return _pmrender(req, 'dashboard/network/add_show.html', {'network': net})
