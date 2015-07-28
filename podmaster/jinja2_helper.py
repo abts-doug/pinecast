@@ -4,9 +4,10 @@ import json
 
 import gfm
 from django.contrib.staticfiles.storage import staticfiles_storage
-from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext, ungettext
 from jinja2 import Environment, evalcontextfilter
+
+import helpers
 
 
 def environment(**options):
@@ -21,8 +22,8 @@ def environment(**options):
     env.globals.update({
         'static': staticfiles_storage.url,
         'str': str,
-        'url': reverse,
-        'plural': plural,
+        'url': helpers.reverse,
+        'plural': plural,  # DEPRECATED!
         'gravatar': gravatar,
 
         '_': ugettext,

@@ -46,6 +46,28 @@
   </div>
 
   <div class="card card-block">
+    <strong>{{ _('Add Member') }}</strong>
+    {% if add_member_error %}
+      <div class="error">{{ add_member_error }}</div>
+    {% endif %}
+    {% if add_member_success %}
+      <div class="success">{{ _('Member added successfully') }}</div>
+    {% endif %}
+    <form action="{{ url('network_add_member', kwargs={'network_id': network.id}) }}" method="POST">
+      <label>
+        <span>{{ _('Email') }}</span>
+        <input type="email" name="email">
+      </label>
+
+      <menu class="toolbar">
+        <li><button type="submit">{{ _('Add Member') }}</button></li>
+      </menu>
+
+      <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+    </form>
+  </div>
+
+  <div class="card card-block">
     <strong>{{ _('Members') }}</strong>
     <ul class="network-members">
       {% for m in network.members.all() %}

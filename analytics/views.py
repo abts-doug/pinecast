@@ -8,16 +8,7 @@ from django.utils.translation import ugettext, ugettext_lazy
 from . import query
 from dashboard.views import get_podcast
 from podcasts.models import Podcast, PodcastEpisode
-
-
-def json_response(*args, **jr_kwargs):
-    def wrapper(view):
-        def func(*args, **kwargs):
-            resp = view(*args, **kwargs)
-            return JsonResponse(resp, safe=jr_kwargs.get('safe', True))
-        return func
-    if not jr_kwargs: return wrapper(*args)
-    return wrapper
+from podmaster.helpers import json_response
 
 
 @login_required

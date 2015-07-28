@@ -20,6 +20,7 @@ from accounts.models import Network
 from feedback.models import Feedback
 from podcasts.models import (CATEGORIES, Podcast, PodcastCategory,
                              PodcastEpisode, PodcastReviewAssociation)
+from podmaster.helpers import json_response
 
 
 signer = itsdangerous.Signer(settings.SECRET_KEY)
@@ -51,15 +52,6 @@ def _pmrender(req, template, data=None):
         data.setdefault('podcasts', podcasts)
 
     return render(req, template, data)
-
-def json_response(view):
-    def func(*args, **kwargs):
-        resp = view(*args, **kwargs)
-        if not isinstance(resp, dict):
-            # Handle HttpResponse/HttpResponseBadRequest/etc
-            return resp
-        return JsonResponse(resp)
-    return func
 
 def get_podcast(req, slug):
     try:
@@ -424,6 +416,24 @@ def network_dashboard(req, network_id):
 
 @login_required
 def network_add_show(req, network_id):
+    net = get_object_or_404(Network, id=network_id, members__in=[req.user])
+    if req.POST:
+        slug = req.POST.get('slug')
+        try:
+            pod = Podcast.objects.get(slug=slug)
+        except Podcast.DoesNotExist:
+            return _pmrender(req, 'dashboard/network/add_show.html', {'network': net, 'error': 'No podcast with the slug "%s" was found' % slug})
+        else:
+            pod.networks.add(net)
+            pod.save()
+            net.members.add(pod.owner)
+            net.save()
+        return redirect('network_dashboard', network_id=net.id)
+            
+    return _pmrender(req, 'dashboard/network/add_show.html', {'network': net})
+
+@login_required
+def network_add_member(req, network_id):
     net = get_object_or_404(Network, id=network_id, members__in=[req.user])
     if req.POST:
         slug = req.POST.get('slug')

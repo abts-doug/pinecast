@@ -1,6 +1,6 @@
 from django.conf.urls import url
 
-from . import views, views_importer
+from . import views, views_importer, views_network
 
 
 urlpatterns = [
@@ -20,8 +20,9 @@ urlpatterns = [
     url(r'^podcast/(?P<podcast_slug>[\w-]+)/episode/(?P<episode_id>[\w-]+)/delete$', views.delete_podcast_episode, name='delete_podcast_episode'),
     url(r'^podcast/(?P<podcast_slug>[\w-]+)/episode/(?P<episode_id>[\w-]+)/edit$', views.edit_podcast_episode, name='edit_podcast_episode'),
 
-    url(r'^network/(?P<network_id>[\w-]+)$', views.network_dashboard, name='network_dashboard'),
-    url(r'^network/(?P<network_id>[\w-]+)/add_show$', views.network_add_show, name='network_add_show'),
+    url(r'^network/(?P<network_id>[\w-]+)$', views_network.network_dashboard, name='network_dashboard'),
+    url(r'^network/(?P<network_id>[\w-]+)/add_show$', views_network.network_add_show, name='network_add_show'),
+    url(r'^network/(?P<network_id>[\w-]+)/add_member$', views_network.network_add_member, name='network_add_member'),
 
     url(r'^feedback/remove/(?P<podcast_slug>[\w-]+)/(?P<comment_id>[\w-]+)$', views.delete_comment, name='delete_comment'),
 
@@ -35,5 +36,5 @@ urlpatterns = [
     url(r'^services/import_progress/(?P<podcast_slug>[\w-]+)$', views_importer.import_progress),
     url(r'^services/import_result$', views_importer.import_result),
     url(r'^services/get_request_token$', views_importer.get_request_token),
-    url(r'^services/check_request_token$', views_importer.check_request_token),
+    url(r'^services/check_request_token$', views_importer.check_request_token, name='check_request_token'),
 ]

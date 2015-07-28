@@ -16,8 +16,9 @@ from django.views.decorators.http import require_POST
 from . import importer as importer_lib
 from . import importer_worker
 from .models import AssetImportRequest
-from .views import _pmrender, json_response
+from .views import _pmrender
 from podcasts.models import Podcast, PodcastEpisode
+from podmaster.helpers import json_response
 
 
 signer = itsdangerous.TimestampSigner(settings.SECRET_KEY)

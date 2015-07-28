@@ -538,6 +538,14 @@ menu.tabs a.selected {
     margin: 10px;
     padding: 20px;
 }
+.success {
+    background: #2ecc71;
+    border-radius: 4px;
+    color: #fff;
+    font-weight: bold;
+    margin: 10px;
+    padding: 20px;
+}
 .uploaded-file-card .warning {
     margin-left: 0;
     margin-right: 0;
