@@ -2,9 +2,8 @@
 {% block dashboard_body %}
 
 <header>
-  <h1>
-    {% trans name=podcast.name %} Delete {{ name }}?{% endtrans %}
-  </h1>
+  {{ breadcrumb(podcast.name, url('podcast_dashboard', kwargs={'podcast_slug': podcast.slug})) }}
+  <h1>{% trans name=podcast.name %}Delete {{ name }}?{% endtrans %}</h1>
 </header>
 
 <form action="?" method="post">
@@ -29,8 +28,7 @@
     </label>
     
     <menu class="toolbar">
-      <li><button type="submit" class="btn-danger">{{ _('I\'m dead sure') }}</button></li>
-      <li><a class="btn btn-neutral" href="{{ url('podcast_dashboard', kwargs={'podcast_slug': podcast.slug})}}">{{ _('Never mind') }}</a></li>
+      <li><button type="submit" class="btn-danger">{{ _('Delete') }}</button></li>
     </menu>
   </div>
 

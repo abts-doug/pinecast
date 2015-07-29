@@ -3,6 +3,7 @@ from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 from django.db.models import Q
 
+from accounts.models import Network
 from podcasts.models import Podcast, PodcastEpisode
 
 
@@ -28,6 +29,12 @@ class Command(BaseCommand):
         for f in files:
             canon_url = 'http://%s.s3.amazonaws.com/%s' % (settings.S3_BUCKET, f.key)
             self.stdout.write(' - %s' % canon_url)
+
+            if (f.key.startswith('networks/covers/') and
+                Network.objects.filter(image_url=canon_url).count()):
+                self.stdout.write('     Still in use by Network')
+                continue
+
             if (f.key.startswith('podcasts/covers/') and
                 Podcast.objects.filter(cover_image=canon_url).count()):
                 self.stdout.write('     Still in use by Podcast')

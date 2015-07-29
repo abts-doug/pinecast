@@ -23,6 +23,8 @@ urlpatterns = [
     url(r'^network/(?P<network_id>[\w-]+)$', views_network.network_dashboard, name='network_dashboard'),
     url(r'^network/(?P<network_id>[\w-]+)/add_show$', views_network.network_add_show, name='network_add_show'),
     url(r'^network/(?P<network_id>[\w-]+)/add_member$', views_network.network_add_member, name='network_add_member'),
+    url(r'^network/(?P<network_id>[\w-]+)/edit$', views_network.network_edit, name='network_edit'),
+    url(r'^network/(?P<network_id>[\w-]+)/deactivate$', views_network.network_deactivate, name='network_deactivate'),
 
     url(r'^feedback/remove/(?P<podcast_slug>[\w-]+)/(?P<comment_id>[\w-]+)$', views.delete_comment, name='delete_comment'),
 
@@ -30,7 +32,7 @@ urlpatterns = [
     url(r'^import/feed$', views_importer.importer_lookup),
 
     url(r'^services/slug_available$', views.slug_available, name='slug_available'),
-    url(r'^services/getUploadURL/(?P<podcast_slug>([\w-]+|\$none))/(?P<type>[\w]+)$', views.get_upload_url, name='get_upload_url'),
+    url(r'^services/getUploadURL/(?P<podcast_slug>([\w-]+|\$none|\$net))/(?P<type>[\w]+)$', views.get_upload_url, name='get_upload_url'),
 
     url(r'^services/start_import$', views_importer.start_import),
     url(r'^services/import_progress/(?P<podcast_slug>[\w-]+)$', views_importer.import_progress),

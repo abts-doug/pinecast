@@ -194,6 +194,7 @@ var Uploader = React.createClass({
     },
 
     detectSize: function(fileObj) {
+        if (this.props.noiTunesSizeCheck) return;
         if (!window.FileReader) return;
         switch (fileObj.type) {
             case 'image/jpeg':
@@ -307,6 +308,7 @@ Array.prototype.slice.call(fields).forEach(function(field) {
             defName: field.getAttribute('data-default-name'),
             defSize: field.getAttribute('data-default-size'),
             defType: field.getAttribute('data-default-type'),
+            noiTunesSizeCheck: field.getAttribute('data-no-itunes-size-check') == 'true',
         }),
         field
     );

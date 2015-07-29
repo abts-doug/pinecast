@@ -4,6 +4,12 @@
 <header>
   {{ breadcrumb(_('All Podcasts'), url('dashboard')) }}
 
+  {% if user == network.owner %}
+    <menu class="toolbar toolbar-right">
+      <li><a class="btn btn-neutral" href="{{ url('network_edit', kwargs={'network_id': network.id}) }}">{{ _('Edit') }}</a></li>
+    </menu>
+  {% endif %}
+
   <h1>{{ network.name }}</h1>
 </header>
 

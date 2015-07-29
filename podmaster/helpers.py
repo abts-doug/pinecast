@@ -2,6 +2,7 @@ from functools import wraps
 
 import django.core.urlresolvers
 from django.core.urlresolvers import reverse as reverse_django
+from django.http import JsonResponse
 
 
 def json_response(*args, **jr_kwargs):

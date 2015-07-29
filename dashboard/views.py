@@ -42,7 +42,7 @@ def _pmrender(req, template, data=None):
     if not req.user.is_anonymous():
         data.setdefault('user', req.user)
 
-        networks = req.user.network_set.all()
+        networks = req.user.network_set.filter(deactivated=False)
         data.setdefault('networks', networks)
 
         podcasts = set(req.user.podcast_set.all())
@@ -61,7 +61,7 @@ def get_podcast(req, slug):
 
     if pod.owner == req.user:
         return pod
-    pods = Network.objects.filter(members__in=[req.user], podcast__in=[pod])
+    pods = Network.objects.filter(deactivated=False, members__in=[req.user], podcast__in=[pod])
     if not pods.count():
         raise Http404()
 
@@ -151,7 +151,6 @@ def new_podcast(req):
         # duplicate podcast if something has gone really wrong
         pod.set_category_list(req.POST.get('categories'))
     except Exception as e:
-        print e
         ctx.update(default=req.POST, error=True)
         return _pmrender(req, 'dashboard/new_podcast.html', ctx)
     return redirect('podcast_dashboard', podcast_slug=pod.slug)
@@ -309,13 +308,17 @@ def get_upload_url(req, podcast_slug, type):
     if type not in ['audio', 'image']:
         return Http404('Type not recognized')
 
-    # TODO: Add validation around the 'type' and 'name' GET params
-
-    if podcast_slug != '$none':
+    # NOTE: When udating the code below, make sure to also update gc.py as well
+    # to make sure that the cleanup script continues to work as expected.
+    if podcast_slug != '$none' and podcast_slug != '$net':
         pod = get_podcast(req, podcast_slug)
         basepath = 'podcasts/%s/%s/' % (pod.id, type)
-    else:
+    elif podcast_slug == '$none':
         basepath = 'podcasts/covers/'
+    elif podcast_slug == '$net':
+        basepath = 'networks/covers/'
+    else:
+        return Http404('Unknown slug')
 
     uid = str(uuid.uuid4())
     path = '%s%s/%s' % (basepath, uid, req.GET.get('name'))
@@ -407,45 +410,3 @@ def podcast_ratings(req, podcast_slug, service=None):
             data['error'] = ugettext('Could not connect service')
 
     return _pmrender(req, 'dashboard/podcast_ratings.html', data)
-
-
-@login_required
-def network_dashboard(req, network_id):
-    net = get_object_or_404(Network, id=network_id, members__in=[req.user])
-    return _pmrender(req, 'dashboard/network/netdash.html', {'network': net})
-
-@login_required
-def network_add_show(req, network_id):
-    net = get_object_or_404(Network, id=network_id, members__in=[req.user])
-    if req.POST:
-        slug = req.POST.get('slug')
-        try:
-            pod = Podcast.objects.get(slug=slug)
-        except Podcast.DoesNotExist:
-            return _pmrender(req, 'dashboard/network/add_show.html', {'network': net, 'error': 'No podcast with the slug "%s" was found' % slug})
-        else:
-            pod.networks.add(net)
-            pod.save()
-            net.members.add(pod.owner)
-            net.save()
-        return redirect('network_dashboard', network_id=net.id)
-            
-    return _pmrender(req, 'dashboard/network/add_show.html', {'network': net})
-
-@login_required
-def network_add_member(req, network_id):
-    net = get_object_or_404(Network, id=network_id, members__in=[req.user])
-    if req.POST:
-        slug = req.POST.get('slug')
-        try:
-            pod = Podcast.objects.get(slug=slug)
-        except Podcast.DoesNotExist:
-            return _pmrender(req, 'dashboard/network/add_show.html', {'network': net, 'error': 'No podcast with the slug "%s" was found' % slug})
-        else:
-            pod.networks.add(net)
-            pod.save()
-            net.members.add(pod.owner)
-            net.save()
-        return redirect('network_dashboard', network_id=net.id)
-            
-    return _pmrender(req, 'dashboard/network/add_show.html', {'network': net})
