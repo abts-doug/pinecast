@@ -438,7 +438,6 @@ var PodcastImporter = React.createClass({
                 
                 React.createElement('dt', {}, gettext('Explicit?')),
                 React.createElement('dd', {}, data.is_explicit ? gettext('Yes') : gettext('No'))
-                
             ),
 
             React.createElement('h3', {}, 'Items'),
@@ -454,7 +453,7 @@ var PodcastImporter = React.createClass({
                     [data.items.length]
                 )
             ),
-            
+
             React.createElement(
                 'table',
                 {
@@ -466,7 +465,7 @@ var PodcastImporter = React.createClass({
                 React.createElement('thead', {},
                     React.createElement('tr', {},
                         React.createElement('th', {}, gettext('Episode Name')),
-                        React.createElement('th', {}, gettext('Subtitle)')
+                        React.createElement('th', {}, gettext('Subtitle'))
                     )
                 ),
                 React.createElement('tbody', {},
