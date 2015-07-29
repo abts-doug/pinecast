@@ -29,7 +29,7 @@ class Podcast(models.Model):
 
     owner = models.ForeignKey(User)
 
-    rss_redirect = models.URLField(null=True)
+    rss_redirect = models.URLField(null=True, blank=True)
     stats_base_listens = models.PositiveIntegerField(default=0)
 
     networks = models.ManyToManyField(Network)

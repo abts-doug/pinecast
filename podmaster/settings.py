@@ -166,6 +166,8 @@ S3_ACCESS_ID = os.environ.get('S3_ACCESS_ID')
 S3_SECRET_KEY = os.environ.get('S3_SECRET_KEY')
 SQS_ACCESS_ID = os.environ.get('SQS_ACCESS_ID')
 SQS_SECRET_KEY = os.environ.get('SQS_SECRET_KEY')
+SES_ACCESS_ID = os.environ.get('SES_ACCESS_ID')
+SES_SECRET_KEY = os.environ.get('SES_SECRET_KEY')
 
 SQS_IMPORT_QUEUE = 'import_work'
 SNS_IMPORT_BUS = 'arn:aws:sns:us-east-1:575938143306:import_notify'
@@ -176,6 +178,7 @@ RSS_FETCH_ENDPOINT = os.environ.get('RSS_FETCH_ENDPOINT')
 DEPLOY_SLACKBOT_URL = os.environ.get('DEPLOY_SLACKBOT_URL')
 
 MAX_FILE_SIZE = 1024 * 1024 * 256
+EMAIL_CONFIRMATION_MAX_AGE = 3600 * 24 * 2  # Two days
 
 try:
     from settings_local import *

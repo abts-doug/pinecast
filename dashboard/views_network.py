@@ -1,9 +1,11 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect
 from django.utils.translation import ugettext, ugettext_lazy
 from django.views.decorators.http import require_POST
 
+import podmaster.email
 from accounts.models import Network
 from podcasts.models import Podcast
 from podmaster.helpers import reverse
@@ -54,6 +56,16 @@ def network_add_member(req, network_id):
 
     net.members.add(user)
     net.save()
+    podmaster.send_notification_email(
+        user,
+        ugettext('[PodMaster] You have been added to "%s"') % net.name,
+        ugettext('''
+        We are emailing you to let you know that you were added to the network
+        "%s". No action is required on your part. If you log in to PodMaster,
+        you will now have read and write access to all of the podcasts in the
+        network, and will be able to add your own podcasts to the network.
+        ''') % net.name
+    )
 
     return redirect(reverse('network_dashboard', network_id=net.id) + '?added_member=true#tab-members')
 
@@ -91,3 +103,55 @@ def network_deactivate(req, network_id):
     net.save()
 
     return redirect('dashboard')
+
+
+@login_required
+def network_remove_podcast(req, network_id, podcast_slug):
+    net = get_object_or_404(Network, deactivated=False, id=network_id, members__in=[req.user])
+    pod = get_object_or_404(Podcast, slug=podcast_slug, networks__in=[net])
+    
+    # We don't need to confirm if the user is the owner.
+    if pod.owner == req.user:
+        pod.networks.remove(net)
+        pod.save()
+        return redirect('network_dashboard', network_id=net.id)
+
+    if not req.POST:
+        return _pmrender(req, 'dashboard/network/remove_podcast.html', {'network': net, 'podcast': pod})
+
+    if req.POST.get('confirm') != 'doit':
+        return redirect('network_dashboard', network_id=net.id)
+
+    pod.networks.remove(net)
+    pod.save()
+
+    return redirect('network_dashboard', network_id=net.id)
+
+
+@login_required
+def network_remove_member(req, network_id, member_id):
+    net = get_object_or_404(Network, deactivated=False, id=network_id, members__in=[req.user])
+    user = get_object_or_404(User, id=member_id)
+
+    if not net.members.filter(username=user.username).count():
+        raise Http404()
+
+    pods = Podcast.objects.filter(owner=user, networks__in=[net])
+    
+    # We don't need to confirm if the user is the owner.
+    if net.owner == user:
+        return redirect('network_dashboard', network_id=net.id)
+
+    if not req.POST:
+        return _pmrender(req, 'dashboard/network/remove_member.html', {'network': net, 'member': user, 'pods': pods})
+
+    if req.POST.get('confirm') != 'doit':
+        return redirect('network_dashboard', network_id=net.id)
+
+    for pod in pods:
+        pod.networks.remove(net)
+        pod.save()
+    net.members.remove(user)
+    net.save()
+
+    return redirect('network_dashboard', network_id=net.id)

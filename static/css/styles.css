@@ -520,6 +520,13 @@ menu.tabs a.selected {
 .dashboard-podcasts > li > img {
     width: 100%;
 }
+.dashboard-podcasts > li > .toolbar {
+    opacity: 0.35;
+    transition: opacity 0.2s;
+}
+.dashboard-podcasts > li:hover > .toolbar {
+    opacity: 1;
+}
 
 
 .error {

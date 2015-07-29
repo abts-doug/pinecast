@@ -6,7 +6,7 @@
 
   {% if user == network.owner %}
     <menu class="toolbar toolbar-right">
-      <li><a class="btn btn-neutral" href="{{ url('network_edit', kwargs={'network_id': network.id}) }}">{{ _('Edit') }}</a></li>
+      <li><a class="btn btn-neutral" href="{{ url('network_edit', network_id=network.id) }}">{{ _('Edit') }}</a></li>
     </menu>
   {% endif %}
 
@@ -22,18 +22,21 @@
   <ul class="dashboard-podcasts">
     {% for p in network.podcast_set.all() %}
       <li class="card">
-        <strong><a href="{{ url('podcast_dashboard', kwargs={'podcast_slug': p.slug}) }}">{{ p.name }}</a></strong>
+        <strong><a href="{{ url('podcast_dashboard', podcast_slug=p.slug) }}">{{ p.name }}</a></strong>
         <img src="{{ p.cover_image|https }}" alt="">
+        <menu class="toolbar">
+          <a class="btn btn-neutral" href="{{ url('network_remove_podcast', network_id=network.id, podcast_slug=p.slug) }}">{{ _('Remove from Network') }}</a>
+        </menu>
       </li>
     {% endfor %}
     <li class="empty-state">
-      <a href="{{ url('network_add_show', kwargs={'network_id': network.id}) }}">
+      <a href="{{ url('network_add_show', network_id=network.id) }}">
         <i>&plus;</i>
         <span>
           {% if network.podcast_set.count() %}
-            {{ _('Add another show to the network') }}
+            {{ _('Add another podcast to the network') }}
           {% else %}
-            {{ _('Add first show to the network') }}
+            {{ _('Add first podcast to the network') }}
           {% endif %}
         </span>
       </a>
@@ -59,7 +62,7 @@
     {% if add_member_success %}
       <div class="success">{{ _('Member added successfully') }}</div>
     {% endif %}
-    <form action="{{ url('network_add_member', kwargs={'network_id': network.id}) }}" method="POST">
+    <form action="{{ url('network_add_member', network_id=network.id) }}" method="POST">
       <label>
         <span>{{ _('Email') }}</span>
         <input type="email" name="email">
@@ -78,6 +81,11 @@
     <ul class="network-members">
       {% for m in network.members.all() %}
         <li class="user-card">
+          {% if m != network.owner %}
+            <menu class="toolbar toolbar-right">
+              <li><a class="btn btn-danger" href="{{ url('network_remove_member', network_id=network.id, member_id=m.id) }}">{{ _('Remove') }}</a></li>
+            </menu>
+          {% endif %}
           <img src="{{ gravatar(m.email) }}" alt="">
           <span class="name">{{ m.username }}</span>
           <a href="mailto:{{ m.email }}" class="email">{{ m.email }}</a>

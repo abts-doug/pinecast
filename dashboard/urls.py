@@ -25,6 +25,8 @@ urlpatterns = [
     url(r'^network/(?P<network_id>[\w-]+)/add_member$', views_network.network_add_member, name='network_add_member'),
     url(r'^network/(?P<network_id>[\w-]+)/edit$', views_network.network_edit, name='network_edit'),
     url(r'^network/(?P<network_id>[\w-]+)/deactivate$', views_network.network_deactivate, name='network_deactivate'),
+    url(r'^network/(?P<network_id>[\w-]+)/remove_podcast/(?P<podcast_slug>[\w-]+)$', views_network.network_remove_podcast, name='network_remove_podcast'),
+    url(r'^network/(?P<network_id>[\w-]+)/remove_member/(?P<member_id>[\w]+)$', views_network.network_remove_member, name='network_remove_member'),
 
     url(r'^feedback/remove/(?P<podcast_slug>[\w-]+)/(?P<comment_id>[\w-]+)$', views.delete_comment, name='delete_comment'),
 

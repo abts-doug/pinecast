@@ -27,7 +27,7 @@
         <ul>
           {% for p in podcasts %}
             <li>
-              <a href="{{ url('podcast_dashboard', kwargs={'podcast_slug': p.slug}) }}" {{'class="selected"'|safe if podcast == p else ''}}>
+              <a href="{{ url('podcast_dashboard', podcast_slug=p.slug) }}" {{'class="selected"'|safe if podcast == p and not network else ''}}>
                 {{ p.name }}
               </a>
             </li>
@@ -38,7 +38,7 @@
         <ul>
           {% for n in networks %}
             <li>
-              <a href="{{ url('network_dashboard', kwargs={'network_id': n.id}) }}" {{'class="selected"'|safe if network == n else ''}}>
+              <a href="{{ url('network_dashboard', network_id=n.id) }}" {{'class="selected"'|safe if network == n else ''}}>
                 {{ n.name }}
               </a>
             </li>
