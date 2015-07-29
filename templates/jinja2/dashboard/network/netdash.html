@@ -4,7 +4,7 @@
 <header>
   {{ breadcrumb(_('All Podcasts'), url('dashboard')) }}
 
-  {% if user == network.owner %}
+  {% if minimum_plan(user, PLANS.PLAN_STARTER) %}
     <menu class="toolbar toolbar-right">
       <li><a class="btn btn-neutral" href="{{ url('network_edit', network_id=network.id) }}">{{ _('Edit') }}</a></li>
     </menu>
@@ -24,9 +24,11 @@
       <li class="card">
         <strong><a href="{{ url('podcast_dashboard', podcast_slug=p.slug) }}">{{ p.name }}</a></strong>
         <img src="{{ p.cover_image|https }}" alt="">
-        <menu class="toolbar">
-          <a class="btn btn-neutral" href="{{ url('network_remove_podcast', network_id=network.id, podcast_slug=p.slug) }}">{{ _('Remove from Network') }}</a>
-        </menu>
+        {% if user == network.owner or p.owner == user %}
+          <menu class="toolbar">
+            <a class="btn btn-neutral" href="{{ url('network_remove_podcast', network_id=network.id, podcast_slug=p.slug) }}">{{ _('Remove from Network') }}</a>
+          </menu>
+        {% endif %}
       </li>
     {% endfor %}
     <li class="empty-state">
@@ -54,34 +56,36 @@
     </address>
   </div>
 
-  <div class="card card-block">
-    <strong>{{ _('Add Member') }}</strong>
-    {% if add_member_error %}
-      <div class="error">{{ add_member_error }}</div>
-    {% endif %}
-    {% if add_member_success %}
-      <div class="success">{{ _('Member added successfully') }}</div>
-    {% endif %}
-    <form action="{{ url('network_add_member', network_id=network.id) }}" method="POST">
-      <label>
-        <span>{{ _('Email') }}</span>
-        <input type="email" name="email">
-      </label>
+  {% if minimum_plan(user, PLANS.PLAN_STARTER) %}
+    <div class="card card-block">
+      <strong>{{ _('Add Member') }}</strong>
+      {% if add_member_error %}
+        <div class="error">{{ add_member_error }}</div>
+      {% endif %}
+      {% if add_member_success %}
+        <div class="success">{{ _('Member added successfully') }}</div>
+      {% endif %}
+      <form action="{{ url('network_add_member', network_id=network.id) }}" method="POST">
+        <label>
+          <span>{{ _('Email') }}</span>
+          <input type="email" name="email">
+        </label>
 
-      <menu class="toolbar">
-        <li><button type="submit">{{ _('Add Member') }}</button></li>
-      </menu>
+        <menu class="toolbar">
+          <li><button type="submit">{{ _('Add Member') }}</button></li>
+        </menu>
 
-      <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-    </form>
-  </div>
+        <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+      </form>
+    </div>
+  {% endif %}
 
   <div class="card card-block">
     <strong>{{ _('Members') }}</strong>
     <ul class="network-members">
       {% for m in network.members.all() %}
         <li class="user-card">
-          {% if m != network.owner %}
+          {% if m != network.owner and minimum_plan(user, PLANS.PLAN_STARTER) %}
             <menu class="toolbar toolbar-right">
               <li><a class="btn btn-danger" href="{{ url('network_remove_member', network_id=network.id, member_id=m.id) }}">{{ _('Remove') }}</a></li>
             </menu>

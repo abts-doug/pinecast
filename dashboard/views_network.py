@@ -5,8 +5,10 @@ from django.shortcuts import get_object_or_404, redirect
 from django.utils.translation import ugettext, ugettext_lazy
 from django.views.decorators.http import require_POST
 
+import accounts.payment_plans as plans
 import podmaster.email
-from accounts.models import Network
+from accounts.decorators import restrict_minimum_plan
+from accounts.models import Network, UserSettings
 from podcasts.models import Podcast
 from podmaster.helpers import reverse
 from views import _pmrender, signer
@@ -46,6 +48,7 @@ def network_add_show(req, network_id):
 
 @login_required
 @require_POST
+@restrict_minimum_plan(plans.PLAN_STARTER)
 def network_add_member(req, network_id):
     net = get_object_or_404(Network, deactivated=False, id=network_id, members__in=[req.user])
 
@@ -71,6 +74,7 @@ network, and will be able to add your own podcasts to the network.
 
 
 @login_required
+@restrict_minimum_plan(plans.PLAN_STARTER)
 def network_edit(req, network_id):
     net = get_object_or_404(Network, deactivated=False, id=network_id, members__in=[req.user])
     
@@ -91,7 +95,7 @@ def network_edit(req, network_id):
 
 @login_required
 def network_deactivate(req, network_id):
-    net = get_object_or_404(Network, deactivated=False, id=network_id, members__in=[req.user])
+    net = get_object_or_404(Network, deactivated=False, id=network_id, owner=req.user)
     
     if not req.POST:
         return _pmrender(req, 'dashboard/network/deactivate.html', {'network': net})
@@ -116,6 +120,9 @@ def network_remove_podcast(req, network_id, podcast_slug):
         pod.save()
         return redirect('network_dashboard', network_id=net.id)
 
+    if req.user != net.owner:
+        raise Http404()
+
     if not req.POST:
         return _pmrender(req, 'dashboard/network/remove_podcast.html', {'network': net, 'podcast': pod})
 
@@ -129,6 +136,7 @@ def network_remove_podcast(req, network_id, podcast_slug):
 
 
 @login_required
+@restrict_minimum_plan(plans.PLAN_STARTER)
 def network_remove_member(req, network_id, member_id):
     net = get_object_or_404(Network, deactivated=False, id=network_id, members__in=[req.user])
     user = get_object_or_404(User, id=member_id)

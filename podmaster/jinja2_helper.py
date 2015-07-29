@@ -3,11 +3,14 @@ import hashlib
 import json
 
 import gfm
+from django.contrib.auth.models import User
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.utils.translation import ugettext, ungettext
 from jinja2 import Environment, evalcontextfilter
 
+import accounts.payment_plans as payment_plans
 import helpers
+from accounts.models import UserSettings
 
 
 def environment(**options):
@@ -29,12 +32,22 @@ def environment(**options):
         '_': ugettext,
         'gettext': ugettext,
         'ngettext': ungettext,
+        'get_user_settings': UserSettings.get_from_user,
+        'minimum_plan': minimum_plan,
+        'PLAN_NAMES': payment_plans.PLANS_MAP,
+        'PLANS': payment_plans.PLANS_RAW,
     })
     env.filters['https'] = lambda s: ('https:%s' % s[5:]) if s.startswith('http:') else s
     env.filters['json'] = json.dumps
     env.filters['markdown'] = gfm.markdown
     env.filters['pretty_date'] = pretty_date
     return env
+
+
+def minimum_plan(user_settings, plan):
+    if isinstance(user_settings, User):
+        user_settings = UserSettings.get_from_user(user_settings)
+    return payment_plans.minimum(user_settings.plan, plan)
 
 
 def gravatar(s, size=40):

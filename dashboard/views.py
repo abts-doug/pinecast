@@ -15,8 +15,10 @@ from django.http import Http404, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.translation import ugettext
 
+import accounts.payment_plans as payment_plans
 import analytics.query as analytics_query
-from accounts.models import Network
+from accounts.decorators import restrict_minimum_plan
+from accounts.models import Network, UserSettings
 from feedback.models import Feedback
 from podcasts.models import (CATEGORIES, Podcast, PodcastCategory,
                              PodcastEpisode, PodcastReviewAssociation)
@@ -50,6 +52,9 @@ def _pmrender(req, template, data=None):
             for p in network.podcast_set.all():
                 podcasts.add(p)
         data.setdefault('podcasts', podcasts)
+
+        uset = UserSettings.get_from_user(req.user)
+        data.setdefault('user_settings', uset)
 
     return render(req, template, data)
 
@@ -92,20 +97,31 @@ def podcast_dashboard(req, podcast_slug):
             'subscribers': analytics_query.total_subscribers(pod),
         },
         'next_milestone': next(x for x in MILESTONES if x > total_listens),
-        'feedback': Feedback.objects.filter(podcast=pod, episode=None).order_by('-created'),
     }
+
+    owner_uset = UserSettings.get_from_user(pod.owner)
+    if payment_plans.minimum(owner_uset.plan, payment_plans.FEATURE_MIN_COMMENT_BOX):
+        data['feedback'] = Feedback.objects.filter(podcast=pod, episode=None).order_by('-created')
+
     return _pmrender(req, 'dashboard/podcast.html', data)
 
 
 @login_required
 def podcast_geochart(req, podcast_slug):
     pod = get_podcast(req, podcast_slug)
-    return _pmrender(req, 'dashboard/podcast_geochart.html', {'podcast': pod})
+    owner_uset = UserSettings.get_from_user(pod.owner)
+    if not payment_plans.minimum(owner_uset.plan, payment_plans.FEATURE_MIN_COMMENT_BOX):
+        return _pmrender(req, 'dashboard/podcast/page_geochart_upgrade.html', {'podcast': pod})
+
+    return _pmrender(req, 'dashboard/podcast/page_geochart.html', {'podcast': pod})
 
 
 @login_required
 def podcast_top_episodes(req, podcast_slug):
     pod = get_podcast(req, podcast_slug)
+    owner_uset = UserSettings.get_from_user(pod.owner)
+    if not payment_plans.minimum(owner_uset.plan, payment_plans.FEATURE_MIN_COMMENT_BOX):
+        return _pmrender(req, 'dashboard/podcast/page_top_episodes_upgrade.html', {'podcast': pod})
 
     top_ep_data = analytics_query.get_top_episodes(unicode(pod.id))
     ep_ids = [x['episode'] for x in top_ep_data]
@@ -123,7 +139,7 @@ def podcast_top_episodes(req, podcast_slug):
         'episodes': mapped,
         'top_ep_data': top_ep_data,
     }
-    return _pmrender(req, 'dashboard/podcast_top_episodes.html', data)
+    return _pmrender(req, 'dashboard/podcast/page_top_episodes.html', data)
 
 
 @login_required
@@ -363,6 +379,7 @@ def get_upload_url(req, podcast_slug, type):
 
 
 @login_required
+@restrict_minimum_plan(payment_plans.FEATURE_MIN_COMMENT_BOX)
 def delete_comment(req, podcast_slug, comment_id):
     pod = get_podcast(req, podcast_slug)
     comment = get_object_or_404(Feedback, podcast=pod, id=comment_id)

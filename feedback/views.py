@@ -1,14 +1,19 @@
+from django.http import Http404
 from django.shortcuts import get_object_or_404, render
 
+import accounts.payment_plans as plans
 import analytics.analyze as analyze
 import analytics.log as analytics_log
 from .models import Feedback
+from accounts.models import UserSettings
 from dashboard.views import _pmrender
 from podcasts.models import Podcast, PodcastEpisode
 
 
 def podcast_comment_box(req, podcast_slug):
     pod = get_object_or_404(Podcast, slug=podcast_slug)
+    if not UserSettings.user_meets_plan(pod.owner, plans.FEATURE_MIN_COMMENT_BOX):
+        raise Http404()
     if not req.POST:
         return _pmrender(req, 'feedback/comment_podcast.html', {'podcast': pod})
 
@@ -40,6 +45,8 @@ def podcast_comment_box(req, podcast_slug):
 
 def ep_comment_box(req, podcast_slug, episode_id):
     pod = get_object_or_404(Podcast, slug=podcast_slug)
+    if not UserSettings.user_meets_plan(pod.owner, plans.FEATURE_MIN_COMMENT_BOX):
+        raise Http404()
     ep = get_object_or_404(PodcastEpisode, podcast=pod, id=episode_id)
     if not req.POST:
         return _pmrender(req, 'feedback/comment_episode.html', {'podcast': pod, 'episode': ep})

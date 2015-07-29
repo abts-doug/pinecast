@@ -1,0 +1,18 @@
+{% extends 'dashboard_base.html' %}
+{% block dashboard_body %}
+<header>
+  {{ breadcrumb(podcast.name, url('podcast_dashboard', podcast_slug=podcast.slug)) }}
+  <h1>{% trans name=podcast.name %}Top Episodes for {{ name }}{% endtrans %}</h1>
+</header>
+
+<div class="upgrade-empty-state empty-state">
+  {% if user == podcast.owner %}
+    {{ _('Top episode counts are only to Pro and Ultimate customers.') }}
+    <br>
+    <a class="btn" href="/accounts/upgrade">{{ _('Upgrade Now') }}</a>
+  {% else %}
+    {{ _('Top episode counts are only available to podcasts owned by Pro and Ultimate customers.') }}
+  {% endif %}
+</div>
+
+{% endblock %}

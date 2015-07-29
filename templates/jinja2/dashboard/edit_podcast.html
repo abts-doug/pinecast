@@ -2,11 +2,11 @@
 {% block dashboard_body %}
 
 <header>
-  {{ breadcrumb(podcast.name, url('podcast_dashboard', kwargs={'podcast_slug': podcast.slug})) }}
+  {{ breadcrumb(podcast.name, url('podcast_dashboard', podcast_slug=podcast.slug)) }}
 
   {% if podcast.owner == user %}
     <menu class="toolbar toolbar-right">
-      <li><a class="btn btn-danger" href="{{ url('delete_podcast', kwargs={'podcast_slug': podcast.slug}) }}">{{ _('Delete Podcast') }}</a></li>
+      <li><a class="btn btn-danger" href="{{ url('delete_podcast', podcast_slug=podcast.slug) }}">{{ _('Delete Podcast') }}</a></li>
     </menu>
   {% endif %}
 

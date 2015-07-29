@@ -1,0 +1,58 @@
+{% if not episodes %}
+  <div class="episode-empty-state empty-state">
+    {{ _('You haven\'t uploaded any episodes yet.') }}<br>
+    <a class="btn" href="{{ url('new_episode', podcast_slug=podcast.slug)}}">{{ _('Upload One Now') }}</a>
+  </div>
+{% else %}
+  <table>
+    <thead>
+      <tr>
+        <th class="primary">{{ _('Episode Name') }}</th>
+        <th>{{ _('Subtitle') }}</th>
+        <th>{{ _('Published') }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% macro episode(ep) %}
+        <tr>
+          <td class="primary">
+            <a href="/dashboard/podcast/{{ podcast.slug }}/episode/{{ ep.id }}">{{ ep.title }}</a>
+          </td>
+          <td>{{ ep.subtitle }}</td>
+          <td>{{ ep.publish|pretty_date }}</td>
+        </tr>
+      {% endmacro %}
+
+      {% if get_user_settings(podcast.owner).plan == PLANS.PLAN_DEMO or user_settings.plan == PLANS.PLAN_DEMO %}
+        {% for ep in episodes[:10] %}
+          {{ episode(ep) }}
+        {% endfor %}
+      {% else %}
+        {% for ep in episodes %}
+          {{ episode(ep) }}
+        {% endfor %}
+      {% endif %}
+    </tbody>
+  </table>
+  {% if get_user_settings(podcast.owner).plan == PLANS.PLAN_DEMO or user_settings.plan == PLANS.PLAN_DEMO %}
+    <div class="upgrade-empty-state empty-state">
+      {% if user == podcast.owner and user_settings.plan == PLANS.PLAN_DEMO %}
+        {% trans %}
+          Because you are using a demo account, you can only see up to ten episodes. The oldest episodes will also be removed from the podcast feed.
+          <br>
+          <b>Upgrade to a paid account to avoid this.</b>
+        {% endtrans %}
+        <br>
+        <a class="btn" href="/accounts/upgrade">{{ _('Upgrade Now') }}</a>
+      {% elif user_settings.plan == PLANS.PLAN_DEMO %}
+        {% trans %}
+          Because you are using a demo account, you can only see a maximum of ten episodes. After ten episodes have been uploaded, the oldest episodes will be hidden. To see all of the episodes, upgrade to a paid plan.
+        {% endtrans %}
+        <br>
+        <a class="btn" href="/accounts/upgrade">{{ _('Upgrade Now') }}</a>
+      {% else %}
+        {{ _('Because the owner of this podcast is using a demo account, only ten episodes are shown.') }}
+      {% endif %}
+    </div>
+  {% endif %}
+{% endif %}

@@ -6,11 +6,12 @@ from xml.sax.saxutils import escape, quoteattr
 import gfm
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from django.views.decorators.clickjacking import xframe_options_exempt
 
+import accounts.payment_plans as plans
 import analytics.analyze as analyze
 import analytics.log as analytics_log
 from .models import Podcast, PodcastEpisode
+from accounts.models import UserSettings
 
 
 def listen(req, episode_id):
@@ -40,7 +41,11 @@ def feed(req, podcast_slug):
         return redirect(pod.rss_redirect, permanent=True)
 
     items = []
-    for ep in pod.podcastepisode_set.filter(publish__lt=datetime.datetime.now()):
+    episodes = pod.podcastepisode_set.filter(publish__lt=datetime.datetime.now()).order_by('-publish')
+    if UserSettings.get_from_user(pod.owner).plan == plans.PLAN_DEMO:
+        episodes = episodes[:10]
+
+    for ep in episodes:
         duration = datetime.timedelta(seconds=ep.duration)
         ep_url = ep.audio_url + '?x-source=rss&x-episode=%s' % str(ep.id)
         md_desc = gfm.markdown(ep.description)
@@ -109,6 +114,11 @@ def feed(req, podcast_slug):
         '</channel>',
         '</rss>',
     ]
+    if UserSettings.get_from_user(pod.owner).plan == plans.PLAN_DEMO:
+        if len(episodes) > 10:
+            content.append('<!-- This feed is truncated because the owner is not a paid customer. -->')
+        else:
+            content.append('<!-- This feed will be truncated at 10 items because the owner is not a paid customer. -->')
 
     if not analyze.is_bot(req):
         browser, device, os = analyze.get_device_type(req)
@@ -129,7 +139,11 @@ def feed(req, podcast_slug):
     return resp
 
 
-@xframe_options_exempt
 def player(req, episode_id):
     ep = get_object_or_404(PodcastEpisode, id=episode_id)
-    return render(req, 'player.html', {'episode': ep})
+    resp = render(req, 'player.html', {'episode': ep})
+
+    # If the user is not a demo user, allow the player to be used outside the app.
+    if UserSettings.user_meets_plan(ep.podcast.owner, plans.FEATURE_MIN_PLAYER):
+        resp.xframe_options_exempt = True
+    return resp    

@@ -30,6 +30,20 @@ class UserSettings(models.Model):
         if self.tz_offset < -12 or self.tz_offset > 14:
             raise ValidationError('Timezone offset must be between -12 and 14, inclusive')
 
+    @classmethod
+    def get_from_user(cls, user):
+        try:
+            return cls.objects.get(user=user)
+        except cls.DoesNotExist:
+            us = UserSettings(user=user)
+            us.save()
+            return us
+
+    @classmethod
+    def user_meets_plan(cls, user, min_plan):
+        uset = cls.get_from_user(user)
+        return payment_plans.minimum(uset.plan, min_plan)
+
 
 class Network(models.Model):
     owner = models.ForeignKey(User, related_name='network_ownership')

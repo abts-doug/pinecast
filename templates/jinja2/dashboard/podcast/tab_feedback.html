@@ -1,0 +1,36 @@
+{% if not episodes %}
+  <div class="episode-empty-state empty-state">
+    {{ _('You will receive listener feedback here once you\'ve uploaded en episode.') }}<br>
+    <a class="btn" href="{{ url('new_episode', podcast_slug=podcast.slug)}}">{{ _('Upload One Now') }}</a>
+  </div>
+{% else %}
+  <menu class="toolbar">
+    <a href="{{ url('podcast_ratings', podcast_slug=podcast.slug) }}" class="btn">{{ _('Podcast Reviews') }}</a>
+  </menu>
+  <div class="card-block card">
+    <strong>{{ _('Podcast Comment Box') }}</strong>
+    <p>{% trans %}Your listeners can leave questions, comments, and other feedback about your podcast. Direct them to this URL. You can shorten the URL with a service like <a href="https://bitly.com">bit.ly</a>.{% endtrans %}</p>
+    <input type="url"
+      title="{{ _('Podcast Comment Box') }}"
+      readonly
+      value="https://host.podmaster.io{{ url('podcast_comment_box', podcast_slug=podcast.slug) }}"
+      class="width-full">
+    <p>{{ _('Listeners can also leave feedback on individual episodes. See the Feedback tab on an episode dashboard to find out how.') }}</p>
+  </div>
+  {% for f in feedback %}
+    <div class="card-block card card-comment">
+      <a class="comment-from" href="mailto:{{ f.sender }}">
+        <img src="{{ gravatar(f.sender) }}" class="comment-from-gravatar">
+        <span>{{ f.sender }}</span>
+      </a>
+      <p>{{ f.message }}</p>
+      <menu class="toolbar">
+        <a href="{{ url('delete_comment', kwargs={'podcast_slug': podcast.slug, 'comment_id': str(f.id)}) }}">{{ _('Delete Comment') }}</a>
+      </menu>
+    </div>
+  {% else %}
+    <div class="episode-empty-state empty-state">
+      {{ _('Nobody has submitted feedback about the show yet.') }}
+    </div>
+  {% endfor %}
+{% endif %}

@@ -4,9 +4,11 @@
 <header>
   {{ breadcrumb(network.name, url('network_dashboard', kwargs={'network_id': network.id})) }}
 
-  <menu class="toolbar toolbar-right">
-    <li><a class="btn btn-danger" href="{{ url('network_deactivate', kwargs={'network_id': network.id}) }}">{{ _('Deactivate Network') }}</a></li>
-  </menu>
+  {% if user == network.owner %}
+    <menu class="toolbar toolbar-right">
+      <li><a class="btn btn-danger" href="{{ url('network_deactivate', kwargs={'network_id': network.id}) }}">{{ _('Deactivate Network') }}</a></li>
+    </menu>
+  {% endif %}
 
   <h1>{% trans name=network.name %}Edit {{ name }}{% endtrans %}</h1>
 </header>

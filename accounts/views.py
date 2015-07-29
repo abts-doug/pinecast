@@ -35,11 +35,18 @@ def login_page(req):
 
 
 def private_beta_signup(req):
+    if not req.user.is_anonymous():
+        return redirect('dashboard')
+
     if not req.POST:
         return render(req, 'pb_signup.html', {'types': BetaRequest.PODCASTER_TYPE})
 
+    email = req.POST.get('email')
+    if BetaRequest.objects.filter(email=email).count():
+        return render(req, 'pb_signup_done.html')
+
     request = BetaRequest(
-        email=req.POST.get('email'),
+        email=email,
         podcaster_type=req.POST.get('type')
     )
     request.save()

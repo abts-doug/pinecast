@@ -817,3 +817,11 @@ li.user-card span.name {
     font-size: 1.1em;
     font-weight: bold;
 }
+
+
+.upgrade-empty-state {
+    font-size: 1.2em;
+    line-height: 2em;
+    padding: 50px;
+    text-align: center;
+}

@@ -2,13 +2,13 @@
 {% block dashboard_body %}
 
 <header>
-  {{ breadcrumb(podcast.name, url('podcast_dashboard', kwargs={'podcast_slug': podcast.slug})) }}
+  {{ breadcrumb(podcast.name, url('podcast_dashboard', podcast_slug=podcast.slug)) }}
 
   <h1>{% trans name=podcast.name %}Ratings for {{ name }}{% endtrans %}</h1>
 </header>
 
 <menu class="tabs">
-  <li><a{{ (' class="selected"' if not service else '')|safe }} href="{{ url('podcast_ratings', kwargs={'podcast_slug': podcast.slug}) }}">{{ _('Overview') }}</a></li>
+  <li><a{{ (' class="selected"' if not service else '')|safe }} href="{{ url('podcast_ratings', podcast_slug=podcast.slug) }}">{{ _('Overview') }}</a></li>
   <li><a{{ (' class="selected"' if service == 'STITCHER' else '')|safe }} href="{{ url('podcast_ratings', kwargs={'podcast_slug': podcast.slug, 'service': 'stitcher'}) }}">{{ _('Stitcher') }}</a></li>
 </menu>
 

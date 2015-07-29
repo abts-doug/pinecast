@@ -13,10 +13,13 @@ from django.utils.translation import ugettext
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
+import accounts.payment_plans as plans
 from . import importer as importer_lib
 from . import importer_worker
 from .models import AssetImportRequest
 from .views import _pmrender
+from accounts.decorators import restrict_minimum_plan
+from accounts.models import UserSettings
 from podcasts.models import Podcast, PodcastEpisode
 from podmaster.helpers import json_response
 
@@ -26,12 +29,16 @@ signer = itsdangerous.TimestampSigner(settings.SECRET_KEY)
 
 @login_required
 def importer(req):
-    return _pmrender(req, 'dashboard/importer.html')
+    if UserSettings.get_from_user(req.user).plan == plans.PLAN_DEMO:
+        return _pmrender(req, 'dashboard/page_importer_upgrade.html')
+    else:
+        return _pmrender(req, 'dashboard/page_importer.html')
 
 
 @require_POST
 @login_required
 @json_response
+@restrict_minimum_plan(plans.FEATURE_MIN_IMPORTER)
 @importer_lib.handle_format_exceptions
 def importer_lookup(req):
     data = req.POST.get('feed')
@@ -53,6 +60,7 @@ def importer_lookup(req):
 
 @login_required
 @json_response
+@restrict_minimum_plan(plans.FEATURE_MIN_IMPORTER)
 def start_import(req):
     try:
         parsed_items = json.loads(req.POST.get('items'))
@@ -154,6 +162,7 @@ def start_import(req):
 
 @login_required
 @json_response
+@restrict_minimum_plan(plans.FEATURE_MIN_IMPORTER)
 def import_progress(req, podcast_slug):
     p = get_object_or_404(Podcast, slug=podcast_slug, owner=req.user)
     ids = req.GET.get('ids')
@@ -164,6 +173,7 @@ def import_progress(req, podcast_slug):
 
 @login_required
 @json_response
+@restrict_minimum_plan(plans.FEATURE_MIN_IMPORTER)
 def get_request_token(req):
     return {'token': signer.sign(str(uuid.uuid4()))}
 
@@ -180,6 +190,7 @@ def check_request_token(req):
 @csrf_exempt
 @require_POST
 @json_response
+@restrict_minimum_plan(plans.FEATURE_MIN_IMPORTER)
 def import_result(req):
     p = get_object_or_404(AssetImportRequest,
                           access_token=req.POST.get('token'),

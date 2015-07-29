@@ -1,7 +1,7 @@
 {% extends 'dashboard_base.html' %}
 {% block dashboard_body %}
 <header>
-  {{ breadcrumb(podcast.name, url('podcast_dashboard', kwargs={'podcast_slug': podcast.slug})) }}
+  {{ breadcrumb(podcast.name, url('podcast_dashboard', podcast_slug=podcast.slug)) }}
 
   <menu class="toolbar toolbar-right">
     <li><a class="btn" href="{{ url('edit_podcast_episode', kwargs={'podcast_slug': podcast.slug, 'episode_id': str(episode.id)}) }}">{{ _('Edit Episode') }}</a></li>
@@ -129,7 +129,18 @@
 
   <div class="card-block card">
     <strong>{{ _('Embed Code') }}</strong>
-    <textarea readonly class="embed-textarea"><iframe src="https://host.podmaster.io/player/{{ str(episode.id) }}" seamless height="60" style="border:0" class="podmaster-embed"></iframe></textarea>
+    {% if minimum_plan(podcast.owner, PLANS.FEATURE_MIN_PLAYER) %}
+      <textarea readonly class="embed-textarea"><iframe src="https://host.podmaster.io/player/{{ str(episode.id) }}" seamless height="60" style="border:0" class="podmaster-embed"></iframe></textarea>
+    {% else %}
+      <div class="upgrade-empty-state empty-state">
+        {% if podcast.owner == user %}
+          {{ _('Upgrade your account to a paid plan to be able to embed the player on other websites.') }}<br>
+          <a class="btn" href="/accounts/upgrade">{{ _('Upgrade Now') }}</a>
+        {% else %}
+          {{ _('The embeddable player is only available to podcasts owned by paid users.') }}
+        {% endif %}
+      </div>
+    {% endif %}
   </div>
   
   <div class="card-block card">

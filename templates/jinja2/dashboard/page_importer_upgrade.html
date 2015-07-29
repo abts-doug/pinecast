@@ -1,0 +1,16 @@
+{% extends 'dashboard_base.html' %}
+{% block dashboard_body %}
+
+<header>
+  <h1>{{ _('Podcast Importer') }}</h1>
+</header>
+
+<div class="upgrade-empty-state empty-state">
+  {% trans %}
+    The podcast migration tool is only available to paid customers. Upgrading your account to any paid plan will give you access.
+  {% endtrans %}
+  <br>
+  <a class="btn" href="/accounts/upgrade">{{ _('Upgrade Now') }}</a>
+</div>
+
+{% endblock %}
