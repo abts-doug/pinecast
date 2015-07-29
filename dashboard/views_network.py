@@ -56,14 +56,14 @@ def network_add_member(req, network_id):
 
     net.members.add(user)
     net.save()
-    podmaster.send_notification_email(
+    podmaster.email.send_notification_email(
         user,
         ugettext('[PodMaster] You have been added to "%s"') % net.name,
         ugettext('''
-        We are emailing you to let you know that you were added to the network
-        "%s". No action is required on your part. If you log in to PodMaster,
-        you will now have read and write access to all of the podcasts in the
-        network, and will be able to add your own podcasts to the network.
+We are emailing you to let you know that you were added to the network
+"%s". No action is required on your part. If you log in to PodMaster,
+you will now have read and write access to all of the podcasts in the
+network, and will be able to add your own podcasts to the network.
         ''') % net.name
     )
 

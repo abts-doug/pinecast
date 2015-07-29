@@ -14,10 +14,11 @@ CONFIRMATION_PARAM = '__ctx'
 def _send_mail(to, subject, body, email_format='text'):
     conn = ses.connect_to_region(
         'us-east-1',
-        aws_access_id=settings.SES_ACCESS_ID,
+        aws_access_key_id=settings.SES_ACCESS_ID,
         aws_secret_access_key=settings.SES_SECRET_KEY)
+    print 'Sending email to %s' % to
     conn.send_email(
-        source='noreply@podmaster.io',
+        source='mattbasta@gmail.com',
         subject=subject,
         body=body,
         to_addresses=to,
