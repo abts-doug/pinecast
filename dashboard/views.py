@@ -88,13 +88,15 @@ def podcast_dashboard(req, podcast_slug):
     pod = get_podcast(req, podcast_slug)
 
     total_listens = analytics_query.total_listens(pod)
+    total_listens_this_week = analytics_query.total_listens_this_week(pod)
+    subscribers = analytics_query.total_subscribers(pod)
     data = {
         'podcast': pod,
         'episodes': pod.podcastepisode_set.order_by('-publish'),
         'analytics': {
             'total_listens': total_listens,
-            'total_listens_this_week': analytics_query.total_listens_this_week(pod),
-            'subscribers': analytics_query.total_subscribers(pod),
+            'total_listens_this_week': total_listens_this_week,
+            'subscribers': subscribers,
         },
         'next_milestone': next(x for x in MILESTONES if x > total_listens),
     }

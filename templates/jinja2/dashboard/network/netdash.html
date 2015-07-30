@@ -13,6 +13,17 @@
   <h1>{{ network.name }}</h1>
 </header>
 
+{% if len(net_podcasts) %}
+  <div class="card-block card">
+    <div class="chart-placeholder"
+      data-type="network-listen-history"
+      data-extra="network_id={{ network.id }}"
+      data-title="{{ _('Listen history') }}"
+      data-chart-type="line"
+      data-has-legend="true"></div>
+  </div>
+{% endif %}
+
 <menu class="tabs dynamic">
   <li class="selected"><a data-tab=".tab-podcasts" href="">{{ _('Podcasts') }}</a></li>
   <li><a data-tab=".tab-members" href="">{{ _('Members') }}</a></li>
@@ -20,7 +31,7 @@
 
 <div class="tab-podcasts">
   <ul class="dashboard-podcasts">
-    {% for p in network.podcast_set.all() %}
+    {% for p in net_podcasts %}
       <li class="card">
         <strong><a href="{{ url('podcast_dashboard', podcast_slug=p.slug) }}">{{ p.name }}</a></strong>
         <img src="{{ p.cover_image|https }}" alt="">
@@ -102,5 +113,8 @@
 {% endblock %}
 
 {% block after_content %}
+<script src="https://fb.me/react-0.13.3.js"></script>
+<script src="/static/js/chartjs-1.0.2.min.js"></script>
+<script src="/static/js/ui-chart.js"></script>
 <script src="/static/js/tabs.js"></script>
 {% endblock %}

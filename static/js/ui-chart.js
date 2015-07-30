@@ -12,10 +12,17 @@ Chart.defaults.global.maintainAspectRatio = false;
 var ChartComponent = React.createClass({
 
     getInitialState: function() {
+        var c = document.createElement('canvas');
+        c.height = 200;
+        c.setAttribute('data-fixed-height', 200);
+        c.addEventListener('click', this.startLoadingData);
+
         return {
             loadingData: true,
             data: null,
 
+            canvas: c,
+            legend: null,
             chart: null,
         };
     },
@@ -29,15 +36,10 @@ var ChartComponent = React.createClass({
                 },
             },
             (this.props.title ? React.createElement('strong', {className: 'chart-title', title: this.props.title}, this.props.title) : null),
-            React.createElement(
-                'canvas',
-                {
-                    ref: 'surface',
-                    height: 200,
-                    'data-fixed-height': 200,
-                    onClick: this.startLoadingData,
-                }
-            )
+            this.state.legend ? React.createElement('div', {
+                dangerouslySetInnerHTML: {__html: this.state.legend}
+            }) : null,
+            React.createElement('div', {ref: 'surface'})
         );
     },
 
@@ -52,12 +54,16 @@ var ChartComponent = React.createClass({
             this.startLoadingData();
             return;
         }
-        var ctx = this.refs.surface.getDOMNode().getContext('2d');
+        this.refs.surface.getDOMNode().appendChild(this.state.canvas);
+        var ctx = this.state.canvas.getContext('2d');
         var c = new Chart(ctx)[chartTypes[this.props.chartType]](this.state.data);
-        this.setState({chart: c});
+        this.setState({
+            legend: c.generateLegend(),
+        });
     },
 
     startLoadingData: function() {
+        this.setState({loadingData: true});
         var req = new XMLHttpRequest();
         req.onload = function() {
             var parsed = JSON.parse(req.responseText);
@@ -79,7 +85,8 @@ var ChartComponent = React.createClass({
     },
 
     shouldComponentUpdate: function(_, nextState) {
-        return nextState.loadingData !== this.state.loadingData;
+        return nextState.loadingData !== this.state.loadingData ||
+               nextState.legend !== this.state.legend;
     },
 
 });
@@ -95,6 +102,7 @@ Array.prototype.slice.call(placeholders).forEach(function(placeholder) {
             type: placeholder.getAttribute('data-type'),
             extra: placeholder.getAttribute('data-extra'),
             title: placeholder.getAttribute('data-title'),
+            hasLegend: placeholder.getAttribute('data-has-legend') == 'true',
 
             origElement: placeholder,
         }),

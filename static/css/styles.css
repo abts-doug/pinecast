@@ -825,3 +825,21 @@ li.user-card span.name {
     padding: 50px;
     text-align: center;
 }
+
+.chart-placeholder .line-legend {
+    line-height: 30px;
+    list-style: none;
+    padding: 0;
+}
+.chart-placeholder .line-legend li {
+    display: inline-block;
+    margin-right: 5px;
+}
+.chart-placeholder .line-legend li span {
+    border-radius: 5px;
+    color: #fff;
+    display: inline-block;
+    font-weight: bold;
+    line-height: 15px;
+    padding: 5px;
+}

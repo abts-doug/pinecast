@@ -7,7 +7,7 @@ from django.utils.translation import ugettext, ugettext_lazy
 
 import accounts.payment_plans as plans
 from . import query
-from accounts.models import UserSettings
+from accounts.models import Network, UserSettings
 from dashboard.views import get_podcast
 from podcasts.models import Podcast, PodcastEpisode
 from podmaster.helpers import json_response
@@ -272,3 +272,51 @@ def episode_listen_breakdown(req):
             zip(out['labels'], out['dataset'])]
 
     return list(query.rotating_colors(out))
+
+
+@login_required
+@json_response
+def network_listen_history(req):
+    net = get_object_or_404(Network, id=req.GET.get('network_id'), members__in=[req.user])
+
+    pods = net.podcast_set.all()
+    async_queries = []
+    for pod in pods:
+        res = query.query_async(
+            'listen',
+            {'select': {'podcast': 'count'},
+             'timeframe': 'this_month',
+             'interval': 'daily',
+             'filter': {'podcast': {'eq': unicode(pod.id)}},
+             'timezone': int(req.GET.get('timezone', 0))})
+        async_queries.append(res)
+
+    query_results = query.query_async_resolve(async_queries)
+
+    labels, datasets = query.process_intervals_bulk(
+        query_results,
+        datetime.timedelta(days=1),
+        lambda d: d.strftime('%x'),
+        pick='podcast'
+    )
+
+    formatted_datasets = []
+    for i, dataset in enumerate(datasets):
+        pod = pods[i]
+        formatted_datasets.append({
+            'label': pod.name,
+            'data': dataset,
+            'fillColor': 'transparent',
+            'strokeColor': '#2980b9',
+            'pointColor': '#3498db',
+            'pointStrokeColor': '#fff',
+        })
+
+    return {
+        'labels': labels,
+        'datasets': list(
+            query.rotating_colors(formatted_datasets,
+                                  key='strokeColor',
+                                  highlight_key='pointColor')
+        ),
+    }

@@ -3,6 +3,7 @@ import datetime
 import json
 import re
 
+import grequests
 import requests
 from django.conf import settings
 
@@ -10,15 +11,30 @@ from django.conf import settings
 TIMZONE_KILLA = re.compile(r'(\d\d\d\d\-\d\d\-\d\dT\d\d:\d\d:\d\d)[+\-]\d\d:\d\d')
 
 
-def query(collection, q):
+def _query(collection, q, _handler):
     if 'timeframe' not in q and 'timezone' in q:
         del q['timezone']
-    req = requests.get(
+    return _handler.get(
         'https://api.getconnect.io/events/%s' % collection,
         params={'query': json.dumps(q)},
         headers={'X-Project-Id': settings.GETCONNECT_IO_PID,
                  'X-Api-Key': settings.GETCONNECT_IO_QUERY_KEY})
-    return req.json()
+
+def query(*args):
+    return _query(*args, _handler=requests).json()
+
+def query_async(*args):
+    return _query(*args, _handler=grequests)
+
+def query_async_resolve(async_queries):
+    if isinstance(async_queries, list):
+        return [x.json() for x in grequests.map(async_queries)]
+    elif isinstance(async_queries, dict):
+        items = async_queries.items()
+        results = [x.json() for x in grequests.map([v for k, v in items])]
+        return {k: results[i] for i, (k, v) in enumerate(items)}
+    else:
+        raise Exception('Unknown type passed to query_async_resolve')
 
 
 def total_listens(podcast, episode_id=None):
@@ -96,6 +112,45 @@ def process_intervals(intvs, interval_duration, label_maker, pick=None):
         values = [(x.payload.get(pick, 0) if x else 0) for x in values]
     
     return {'labels': labels, 'dataset': values}
+
+def process_intervals_bulk(bulk_results, interval_duration, label_maker, pick=None):
+    if not bulk_results: return [], []
+
+    # print bulk_results
+    processed = [[Interval(x) for x in results['results']] for results in bulk_results]
+    cursor_start = min(x[0].start for x in processed if x)
+    cursor_end = max(x[-1].end for x in processed if x)
+
+    # Process the labels first
+    label_cursor = cursor_start
+    labels = []
+    while label_cursor <= cursor_end:
+        labels.append(label_maker(label_cursor))
+        label_cursor += interval_duration
+
+    datasets = []
+    for results in processed:
+        # If there are no results for this dataset, fille it with zeroed values
+        if not results:
+            datasets.append([0 for x in labels])
+            continue
+
+        values = []
+        cursor = cursor_start
+        # Set zeroed values for all data points before 
+        while cursor <= cursor_end:
+            if not results:
+                values.append(0)
+            elif results[0].start <= cursor <= results[-1].end:
+                intv = results.pop(0)
+                values.append(intv.payload.get(pick, 0))
+            else:
+                values.append(0)
+            cursor += interval_duration
+
+        datasets.append(values)
+
+    return labels, datasets
 
 
 def process_groups(groups, label_mapping=None, label_key=None, pick=None):

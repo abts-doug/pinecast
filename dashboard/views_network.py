@@ -20,9 +20,11 @@ def network_dashboard(req, network_id):
 
     ame = ugettext('No user with that email address was found') if req.GET.get('add_member_error') == 'dne' else None
     added_member = req.GET.get('added_member', 'false') == 'true'
+    podcasts = net.podcast_set.all()
     return _pmrender(req,
                      'dashboard/network/netdash.html',
                      {'network': net,
+                      'net_podcasts': podcasts,
                       'add_member_error': ame,
                       'add_member_success': added_member})
 

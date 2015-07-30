@@ -24,6 +24,7 @@ def environment(**options):
     env = Environment(**options)
     env.globals.update({
         'static': staticfiles_storage.url,
+        'len': len,
         'str': str,
         'url': helpers.reverse,
         'plural': plural,  # DEPRECATED!

@@ -130,7 +130,7 @@
   <div class="card-block card">
     <strong>{{ _('Embed Code') }}</strong>
     {% if minimum_plan(podcast.owner, PLANS.FEATURE_MIN_PLAYER) %}
-      <textarea readonly class="embed-textarea"><iframe src="https://host.podmaster.io/player/{{ str(episode.id) }}" seamless height="60" style="border:0" class="podmaster-embed"></iframe></textarea>
+      <textarea readonly class="embed-textarea"><iframe src="https://host.podmaster.io/player/{{ str(episode.id) }}" seamless height="60" style="border:0" class="podmaster-embed" frameborder="0"></iframe></textarea>
     {% else %}
       <div class="upgrade-empty-state empty-state">
         {% if podcast.owner == user %}
