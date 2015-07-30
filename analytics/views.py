@@ -58,8 +58,6 @@ def podcast_listener_locations(req):
 @json_response
 def podcast_subscriber_history(req):
     pod = get_podcast(req, req.GET.get('podcast'))
-    if not UserSettings.user_meets_plan(pod.owner, plans.PLAN_STARTER):
-        raise Http404()
 
     res = query.query(
         'subscribe',
@@ -180,8 +178,6 @@ SOURCE_MAP = {
 @json_response(safe=False)
 def podcast_listen_breakdown(req):
     pod = get_podcast(req, req.GET.get('podcast'))
-    if not UserSettings.user_meets_plan(pod.owner, plans.PLAN_STARTER):
-        raise Http404()
 
     res = query.query(
         'listen',
