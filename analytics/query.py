@@ -37,40 +37,74 @@ def query_async_resolve(async_queries):
         raise Exception('Unknown type passed to query_async_resolve')
 
 
-def total_listens(podcast, episode_id=None):
+def _query_async_switch(async):
+    return query_async if async else query
+
+
+class AsyncContext(object):
+    def __init__(self):
+        self.pending = []
+        self.resolved = None
+
+    def add(self, item, processor):
+        self.pending.append(item)
+        idx = len(self.pending) - 1
+
+        return lambda: processor(self.resolve()[idx])
+
+    def resolve(self):
+        if self.resolved:
+            return self.resolved
+        self.resolved = [x.json() for x in grequests.map(self.pending)]
+        return self.resolved
+
+
+def total_listens(podcast, episode_id=None, async=False):
     q = {'select': {'episode': 'count'},
          'filter': {'podcast': {'eq': unicode(podcast.id)}}}
     if episode_id:
         q['filter']['episode'] = {'eq': episode_id}
-    data = query('listen', q)
-    return data['results'][0]['episode'] + podcast.stats_base_listens
+    data = _query_async_switch(async)('listen', q)
+    if not async:
+        return data['results'][0]['episode'] + podcast.stats_base_listens
+    else:
+        return async.add(data, lambda d: d['results'][0]['episode'] + podcast.stats_base_listens)
 
 
-def total_listens_this_week(podcast):
-    data = query(
+def total_listens_this_week(podcast, async=False):
+    data = _query_async_switch(async)(
         'listen',
         {'select': {'episode': 'count'},
          'timeframe': 'this_week',
          'filter': {'podcast': {'eq': unicode(podcast.id)}}})
-    return data['results'][0]['episode']
+    if not async:
+        return data['results'][0]['episode']
+    else:
+        return async.add(data, lambda d: d['results'][0]['episode'])
 
 
-def total_subscribers(podcast):
-    data = query(
+def total_subscribers(podcast, async=False):
+    data = _query_async_switch(async)(
         'subscribe',
         {'select': {'podcast': 'count'},
          'timeframe': 'today',
          'filter': {'podcast': {'eq': unicode(podcast.id)}}})
-    return data['results'][0]['podcast']
+    if not async:
+        return data['results'][0]['podcast']
+    else:
+        return async.add(data, lambda d: d['results'][0]['podcast'])
 
 
-def get_top_episodes(podcast_id):
-    data = query(
+def get_top_episodes(podcast_id, async=False):
+    data = _query_async_switch(async)(
         'listen',
         {'select': {'podcast': 'count'},
          'groupBy': 'episode',
          'filter': {'podcast': {'eq': podcast_id}}})
-    return data['results']
+    if not async:
+        return data['results']
+    else:
+        return async.add(data, lambda d: d['results'])
 
 
 
