@@ -3,6 +3,7 @@ import hashlib
 import json
 
 import gfm
+import pytz
 from django.contrib.auth.models import User
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.utils.translation import ugettext, ungettext
@@ -37,13 +38,14 @@ def environment(**options):
         'minimum_plan': minimum_plan,
         'PLAN_NAMES': payment_plans.PLANS_MAP,
         'PLANS': payment_plans.PLANS_RAW,
+        'timezones': pytz.common_timezones,
+        'tz_offset': helpers.tz_offset,
     })
     env.filters['https'] = lambda s: ('https:%s' % s[5:]) if s.startswith('http:') else s
     env.filters['json'] = json.dumps
     env.filters['markdown'] = gfm.markdown
     env.filters['pretty_date'] = pretty_date
     return env
-
 
 def minimum_plan(user_settings, plan):
     if isinstance(user_settings, User):

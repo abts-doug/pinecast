@@ -1,6 +1,7 @@
 from functools import wraps
 
 import django.core.urlresolvers
+import pytz
 from django.core.urlresolvers import reverse as reverse_django
 from django.http import JsonResponse
 
@@ -24,3 +25,8 @@ def reverse(viewname, kwargs=None, **kw):
         kwargs = {}
     kwargs.update(kw)
     return reverse_django(viewname, kwargs=kwargs)
+
+
+def tz_offset(tz_name):
+    offset = pytz.timezone(tz_name)._utcoffset
+    return offset.seconds // 3600 + offset.days * 24

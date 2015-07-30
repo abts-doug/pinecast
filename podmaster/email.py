@@ -30,7 +30,8 @@ def _send_mail(to, subject, body, email_format='text'):
 signer = itsdangerous.TimestampSigner(settings.SECRET_KEY)
 
 
-def send_confirmation_email(user, subject, description, url):
+def send_confirmation_email(user, subject, description, url, email=None):
+    email = email or user.email
     if not url.startswith('/'):
         url = '/%s' % url
     if '?' in url:
@@ -46,11 +47,12 @@ def send_confirmation_email(user, subject, description, url):
 To confirm this request, visit the link below.
 
 https://host.podmaster.io{url}
-''').format(username=user.username, description=description)
-    return send_notification_email(user, subject, body)
+''').format(username=user.username, description=description, url=signed_url)
+    return send_notification_email(user, subject, body, email)
 
 
-def send_notification_email(user, subject, description):
+def send_notification_email(user, subject, description, email=None):
+    email = email or user.email
     body = ugettext('''Hello {username},
 
 {description}
@@ -58,7 +60,7 @@ def send_notification_email(user, subject, description):
 Thanks,
 Podmaster Host
     ''').format(username=user.username, description=description)
-    return _send_mail(user.email, subject, body)
+    return _send_mail(email, subject, body)
 
 
 def validate_confirmation(req, max_age=settings.EMAIL_CONFIRMATION_MAX_AGE):

@@ -705,7 +705,7 @@ dl dt {
 dl dd {
     display: inline-block;
     margin: 0;
-    width: 85%;
+    width: 84%;
 }
 
 @media (max-width: 1280px) {
@@ -842,4 +842,14 @@ li.user-card span.name {
     font-weight: bold;
     line-height: 15px;
     padding: 5px;
+}
+
+.user-detail {
+    padding-left: 60px;
+}
+
+.user-detail > img {
+    border-radius: 60px;
+    float: left;
+    margin: 5px 0 0 -60px;
 }

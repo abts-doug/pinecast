@@ -39,5 +39,15 @@ PLANS_RAW = {
     'FEATURE_MIN_IMPORTER': FEATURE_MIN_IMPORTER,
 }
 
+
+_MB = 1024 * 1024;
+MAX_FILE_SIZE = {
+    PLAN_DEMO: 48 * _MB,
+    PLAN_STARTER: 64 * _MB,
+    PLAN_COMMUNITY: 64 * _MB,
+    PLAN_PRO: 128 * _MB,
+    PLAN_ULTIMATE: 256 * _MB,
+}
+
 def minimum(plan_to_compare, minimum_plan):
     return PLAN_RANKS[plan_to_compare] >= PLAN_RANKS[minimum_plan]

@@ -1,0 +1,87 @@
+{% extends 'dashboard_base.html' %}
+{% block dashboard_body %}
+
+<header>
+  <h1>{{ _('Account Settings') }}</h1>
+</header>
+
+<div class="card card-block">
+  <strong>{{ _('Account') }}</strong>
+
+  <div class="user-detail">
+    <img src="{{ gravatar(user.email) }}" alt="">
+
+    <dl class="user-detail-list">
+      <dt>{{ _('Username') }}</dt>
+      <dd>{{ user.username }}</dd>
+
+      <dt>{{ _('Email') }}</dt>
+      <dd>{{ user.email }}</dd>
+
+      <dt>{{ _('Account Created') }}</dt>
+      <dd><abbr title="{{ user.date_joined }}">{{ user.date_joined|pretty_date }}</abbr></dd>
+
+    </dl>
+  </div>
+</div>
+
+{% if success == 'tz' %}
+  <div class="success">
+    {{ _('Your timezone was updated successfully.') }}
+  </div>
+{% elif success == 'em' %}
+  <div class="success">
+    {{ _('We have sent the confirmation email. Please check your inbox.') }}
+  </div>
+{% elif success == 'emf' %}
+  <div class="success">
+    {{ _('Your email address has been updated') }}
+  </div>
+{% endif %}
+
+<div class="card card-block">
+  <strong>{{ _('Timezone') }}</strong>
+
+  <form action="{{ url('user_settings_save_tz') }}" method="post">
+    
+    <label>
+      <span>{{ _('Selected Timezone') }}</span>
+      <select name="timezone">
+        {% for tz in timezones %}
+          <option{{ ' selected' if user_settings.tz_offset == tz_offset(tz) else '' }}>{{ tz }}</option>
+        {% endfor %}
+      </select>
+    </label>
+
+    <menu class="toolbar">
+      <button type="submit">{{ _('Save Timezone') }}</button>
+    </menu>
+
+    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+  </form>
+</div>
+
+<div class="card card-block">
+  <strong>{{ _('Change Email') }}</strong>
+
+  <form action="{{ url('user_settings_change_email') }}" method="post">
+    
+    <p>
+      {% trans %}To change your email, enter your new email address. We will send you a confirmation message containing a link that will finalize the process.{% endtrans %}
+    </p>
+
+    <label>
+      <span>{{ _('New Email') }}</span>
+      <input type="email" name="new_email" placeholder="me@podmaster.io">
+    </label>
+
+    <menu class="toolbar">
+      <button type="submit">{{ _('Change Email') }}</button>
+    </menu>
+
+    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+  </form>
+</div>
+
+
+{% endblock %}
