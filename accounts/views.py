@@ -62,7 +62,8 @@ def private_beta_signup(req):
 
 @login_required
 def user_settings_page(req):
-    return _pmrender(req, 'account/settings.html', {'success': req.GET.get('success')})
+    return _pmrender(req, 'account/settings.html',
+                     {'success': req.GET.get('success'), 'error': req.GET.get('error')})
 
 @login_required
 @require_POST
@@ -75,6 +76,8 @@ def user_settings_page_savetz(req):
 @login_required
 @require_POST
 def user_settings_page_changeemail(req):
+    if User.objects.filter(email=req.POST.get('new_email')).count():
+        return redirect(reverse('user_settings') + '?error=eae')
     send_confirmation_email(
         req.user,
         ugettext('[PodMaster] Email change confirmation'),

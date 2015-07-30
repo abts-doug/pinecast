@@ -23,6 +23,8 @@
 
     </dl>
   </div>
+
+  <p>{{ _('To change your avatar, please visit {startlink}Gravatar{endlink}.').format(startlink='<a href="https://gravatar.com/">', endlink='</a>')|safe }}</p>
 </div>
 
 {% if success == 'tz' %}
@@ -36,6 +38,12 @@
 {% elif success == 'emf' %}
   <div class="success">
     {{ _('Your email address has been updated') }}
+  </div>
+{% endif %}
+
+{% if error == 'eae' %}
+  <div class="error">
+    {{ _('That email address is already in use.') }}
   </div>
 {% endif %}
 
