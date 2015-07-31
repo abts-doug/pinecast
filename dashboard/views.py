@@ -356,25 +356,31 @@ def get_upload_url(req, podcast_slug, type):
     expires = int(time.time() + 60 * 60 * 24)
     amz_headers = 'x-amz-acl:public-read'
 
+    uset = UserSettings.get_from_user(req.user)
+    use_premium_cdn = payment_plans.minimum(uset.plan, payment_plans.FEATURE_MIN_CDN)
+    if uset.force_disable_cdn: use_premium_cdn = False
+    elif uset.force_enable_cdn: use_premium_cdn = True
+    bucket = settings.S3_PREMIUM_BUCKET if use_premium_cdn else settings.S3_BUCKET
+
     user_plan = UserSettings.get_from_user(req.user).plan
-    max_size = 1024 * 1024 * 2 if type == 'image' else payment_plans.MAX_FILE_SIZE[user_plan]]
+    max_size = 1024 * 1024 * 2 if type == 'image' else payment_plans.MAX_FILE_SIZE[user_plan]
     policy = {
         # hours=6 so users around midnight don't get screwed.
         'expiration': (datetime.datetime.now() + datetime.timedelta(days=1, hours=6)).strftime('%Y-%m-%dT00:00:00.000Z'),
         'conditions': [
-            {'bucket': settings.S3_BUCKET}, 
+            {'bucket': bucket}, 
             ['starts-with', '$key', basepath],
             {'acl': 'public-read'},
             {'Content-Type': mime_type},
-            ['content-length-range', 0, max_size,
+            ['content-length-range', 0, max_size],
         ],
     }
     encoded_policy = base64.b64encode(json.dumps(policy))
 
-    destination_url = 'http://%s.s3.amazonaws.com/%s' % (settings.S3_BUCKET, path)
+    destination_url = 'http://%s.s3.amazonaws.com/%s' % (bucket, path)
     signed_dest_url = signer.sign(destination_url)
     return {
-        'url': 'http://%s.s3.amazonaws.com/' % settings.S3_BUCKET,
+        'url': 'http://%s.s3.amazonaws.com/' % bucket,
         'method': 'post',
         'headers': {},
         'fields': {

@@ -18,9 +18,15 @@ class Command(BaseCommand):
             help='Actually runs the command instead of doing a dry run')
 
     def handle(self, *args, **options):
-        self.stdout.write('Downloading S3 manifest...')
         conn = S3Connection(settings.S3_ACCESS_ID, settings.S3_SECRET_KEY)
-        bucket = conn.get_bucket(settings.S3_BUCKET)
+
+        self.clean_bucket(conn, settings.S3_BUCKET, options)
+        self.clean_bucket(conn, settings.S3_PREMIUM_BUCKET, options)
+
+    def clean_bucket(conn, bucket_name, options):
+        self.stdout.write('Processing bucket: %s' % bucket_name)
+        self.stdout.write('Downloading S3 manifest...')
+        bucket = conn.get_bucket(bucket_name)
         files = bucket.list()
 
         to_delete = []

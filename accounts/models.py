@@ -26,11 +26,18 @@ class UserSettings(models.Model):
     plan = models.PositiveIntegerField(default=0, choices=payment_plans.PLANS)
     tz_offset = models.SmallIntegerField(default=0)  # Default to UTC
 
+    # CDN controls
+    force_disable_cdn = models.BooleanField(default=False)
+    force_enable_cdn = models.BooleanField(default=False)
+
     plan_podcast_limit_override = models.PositiveIntegerField(default=0)  # Podcast limit = max(pplo, plan.max)
 
     def clean(self):
         if self.tz_offset < -12 or self.tz_offset > 14:
             raise ValidationError('Timezone offset must be between -12 and 14, inclusive')
+
+        if self.force_enable_cdn and self.force_disable_cdn:
+            raise ValidationError('CDN cannot be both force disabled and enabled')
 
     @classmethod
     def get_from_user(cls, user):

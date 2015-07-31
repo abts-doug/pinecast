@@ -4,6 +4,7 @@ from email.Utils import formatdate
 from xml.sax.saxutils import escape, quoteattr
 
 import gfm
+from django.conf import settings
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
@@ -12,6 +13,14 @@ import analytics.analyze as analyze
 import analytics.log as analytics_log
 from .models import Podcast, PodcastEpisode
 from accounts.models import UserSettings
+
+
+PREMIUM_S3_PREFIX = 'http://%s.s3.amazonaws.com/' % settings.S3_PREMIUM_BUCKET
+S3_PREFIX_REPLACEMENT = 'http://asset-cdn-cf.podmaster.io/'
+def _asset(url):
+    if url.startswith(PREMIUM_S3_PREFIX):
+        url = url.replace(PREMIUM_S3_PREFIX, S3_PREFIX_REPLACEMENT, 1)
+    return url
 
 
 def listen(req, episode_id):
@@ -31,7 +40,7 @@ def listen(req, episode_id):
             },
         }, req=req)
 
-    return redirect(ep.audio_url)
+    return redirect(_asset(ep.audio_url))
 
 
 def feed(req, podcast_slug):
@@ -49,7 +58,7 @@ def feed(req, podcast_slug):
 
     for ep in episodes:
         duration = datetime.timedelta(seconds=ep.duration)
-        ep_url = ep.audio_url + '?x-source=rss&x-episode=%s' % str(ep.id)
+        ep_url = _asset(ep.audio_url + '?x-source=rss&x-episode=%s' % str(ep.id))
 
         md_desc = gfm.markdown(ep.description)
         if is_demo:
@@ -66,7 +75,7 @@ def feed(req, podcast_slug):
                 '<itunes:author>%s</itunes:author>' % escape(pod.author_name),
                 '<itunes:subtitle>%s</itunes:subtitle>' % escape(ep.subtitle),
                 '<itunes:summary><![CDATA[%s]]></itunes:summary>' % md_desc,
-                '<itunes:image href=%s />' % quoteattr(ep.image_url),
+                '<itunes:image href=%s />' % quoteattr(_asset(ep.image_url)),
                 '<itunes:duration>%s</itunes:duration>' % escape(str(duration)),
                 '<enclosure url=%s length=%s type=%s />' % (
                     quoteattr(ep_url), quoteattr(str(ep.audio_size)), quoteattr(ep.audio_type)),
@@ -113,7 +122,7 @@ def feed(req, podcast_slug):
                 '<itunes:email>%s</itunes:email>' % escape(pod.owner.email),
             '</itunes:owner>',
             '<itunes:explicit>%s</itunes:explicit>' % ('yes' if pod.is_explicit else 'no'),
-            '<itunes:image href=%s />' % quoteattr(pod.cover_image),
+            '<itunes:image href=%s />' % quoteattr(_asset(pod.cover_image)),
             '\n'.join(render_cat(category_map)),
             ('<dc:copyright>%s</dc:copyright>' % escape(pod.copyright)) if pod.copyright else None,
             '\n'.join(items),
