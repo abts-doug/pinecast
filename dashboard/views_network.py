@@ -138,19 +138,18 @@ def network_remove_podcast(req, network_id, podcast_slug):
 
 
 @login_required
-@restrict_minimum_plan(plans.PLAN_STARTER)
 def network_remove_member(req, network_id, member_id):
     net = get_object_or_404(Network, deactivated=False, id=network_id, members__in=[req.user])
     user = get_object_or_404(User, id=member_id)
 
     if not net.members.filter(username=user.username).count():
         raise Http404()
-
-    pods = Podcast.objects.filter(owner=user, networks__in=[net])
     
     # We don't need to confirm if the user is the owner.
     if net.owner == user:
         return redirect('network_dashboard', network_id=net.id)
+
+    pods = Podcast.objects.filter(owner=user, networks__in=[net])
 
     if not req.POST:
         return _pmrender(req, 'dashboard/network/remove_member.html', {'network': net, 'member': user, 'pods': pods})

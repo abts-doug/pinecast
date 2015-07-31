@@ -2,24 +2,25 @@
 {% block dashboard_body %}
 
 <header>
-  <h1>{{ _('Podcast Importer') }}</h1>
+  <h1>{{ _('New Podcast') }}</h1>
 </header>
 
 <div class="upgrade-empty-state empty-state">
-  {% if reached_limit %}
+  {% if user_settings.plan == PLAN.PLAN_DEMO %}
+    {% trans %}
+      With a free account, you can only create one podcast. If you're
+      interested in creating another, you can upgrade to a paid account now.
+    {% endtrans %}
+  {% elif user_settings.plan == PLAN.PLAN_COMMUNITY %}
     {% trans %}
       You currently have a community account which can host up to three
       podcasts. If you'd like to start another, please upgrade to a paid plan
       or contact our support team.
     {% endtrans %}
-  {% else %}
-    {% trans %}
-      The podcast migration tool is only available to paid customers. Upgrading
-      your account to any paid plan will give you access.
-    {% endtrans %}
   {% endif %}
   <br>
   <a class="btn" href="/accounts/upgrade">{{ _('Upgrade Now') }}</a>
+
 </div>
 
 {% endblock %}

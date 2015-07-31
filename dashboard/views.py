@@ -151,10 +151,14 @@ def podcast_top_episodes(req, podcast_slug):
 
 @login_required
 def new_podcast(req):
+    uset = UserSettings.get_from_user(req.user)
+    if payment_plans.has_reached_podcast_limit(uset):
+        return _pmrender(req, 'dashboard/podcast/page_new_upgrade.html')
+
     ctx = {'PODCAST_CATEGORIES': json.dumps(list(CATEGORIES))}
 
     if not req.POST:
-        return _pmrender(req, 'dashboard/new_podcast.html', ctx)
+        return _pmrender(req, 'dashboard/podcast/page_new.html', ctx)
 
     try:
         pod = Podcast(
@@ -175,7 +179,7 @@ def new_podcast(req):
         pod.set_category_list(req.POST.get('categories'))
     except Exception as e:
         ctx.update(default=req.POST, error=True)
-        return _pmrender(req, 'dashboard/new_podcast.html', ctx)
+        return _pmrender(req, 'dashboard/podcast/page_new.html', ctx)
     return redirect('podcast_dashboard', podcast_slug=pod.slug)
 
 
@@ -237,7 +241,7 @@ def podcast_new_ep(req, podcast_slug):
     pod = get_podcast(req, podcast_slug)
 
     if not req.POST:
-        return _pmrender(req, 'dashboard/new_episode.html', {'podcast': pod})
+        return _pmrender(req, 'dashboard/episode/page_new.html', {'podcast': pod})
 
     try:
         naive_publish = datetime.datetime.strptime(req.POST.get('publish'), '%Y-%m-%dT%H:%M') # 2015-07-09T12:00
@@ -261,7 +265,7 @@ def podcast_new_ep(req, podcast_slug):
             license=req.POST.get('license'))
         ep.save()
     except Exception as e:
-        return  _pmrender(req, 'dashboard/new_episode.html', {'podcast': pod, 'default': req.POST, 'error': True})
+        return  _pmrender(req, 'dashboard/episode/page_new.html', {'podcast': pod, 'default': req.POST, 'error': True})
     return redirect('podcast_dashboard', podcast_slug=pod.slug)
 
 
@@ -353,6 +357,7 @@ def get_upload_url(req, podcast_slug, type):
     amz_headers = 'x-amz-acl:public-read'
 
     user_plan = UserSettings.get_from_user(req.user).plan
+    max_size = 1024 * 1024 * 2 if type == 'image' else payment_plans.MAX_FILE_SIZE[user_plan]]
     policy = {
         # hours=6 so users around midnight don't get screwed.
         'expiration': (datetime.datetime.now() + datetime.timedelta(days=1, hours=6)).strftime('%Y-%m-%dT00:00:00.000Z'),
@@ -361,7 +366,7 @@ def get_upload_url(req, podcast_slug, type):
             ['starts-with', '$key', basepath],
             {'acl': 'public-read'},
             {'Content-Type': mime_type},
-            ['content-length-range', 0, payment_plans.MAX_FILE_SIZE[user_plan]],
+            ['content-length-range', 0, max_size,
         ],
     }
     encoded_policy = base64.b64encode(json.dumps(policy))

@@ -49,5 +49,19 @@ MAX_FILE_SIZE = {
     PLAN_ULTIMATE: 256 * _MB,
 }
 
+PLAN_PODCAST_LIMITS = {
+    PLAN_DEMO: 1,
+    PLAN_COMMUNITY: 3,
+}
+
 def minimum(plan_to_compare, minimum_plan):
     return PLAN_RANKS[plan_to_compare] >= PLAN_RANKS[minimum_plan]
+
+def has_reached_podcast_limit(user_settings):
+    plan = user_settings.plan
+    if plan not in PLAN_PODCAST_LIMITS:
+        return False
+
+    pod_count = user_settings.user.podcast_set.count()
+    limit = max(PLAN_PODCAST_LIMITS[plan], plan.plan_podcast_limit_override)
+    return pod_count >= limit

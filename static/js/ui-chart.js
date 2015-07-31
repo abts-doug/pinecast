@@ -57,9 +57,11 @@ var ChartComponent = React.createClass({
         this.refs.surface.getDOMNode().appendChild(this.state.canvas);
         var ctx = this.state.canvas.getContext('2d');
         var c = new Chart(ctx)[chartTypes[this.props.chartType]](this.state.data);
-        this.setState({
-            legend: c.generateLegend(),
-        });
+        if (this.props.hasLegend) {
+            this.setState({
+                legend: c.generateLegend(),
+            });
+        }
     },
 
     startLoadingData: function() {

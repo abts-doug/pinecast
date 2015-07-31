@@ -26,6 +26,8 @@ class UserSettings(models.Model):
     plan = models.PositiveIntegerField(default=0, choices=payment_plans.PLANS)
     tz_offset = models.SmallIntegerField(default=0)  # Default to UTC
 
+    plan_podcast_limit_override = models.PositiveIntegerField(default=0)  # Podcast limit = max(pplo, plan.max)
+
     def clean(self):
         if self.tz_offset < -12 or self.tz_offset > 14:
             raise ValidationError('Timezone offset must be between -12 and 14, inclusive')

@@ -29,8 +29,11 @@ signer = itsdangerous.TimestampSigner(settings.SECRET_KEY)
 
 @login_required
 def importer(req):
-    if UserSettings.get_from_user(req.user).plan == plans.PLAN_DEMO:
-        return _pmrender(req, 'dashboard/page_importer_upgrade.html')
+    uset = UserSettings.get_from_user(req.user)
+    if uset.plan == plans.PLAN_DEMO:
+        return _pmrender(req, 'dashboard/page_importer_upgrade.html', {'reached_limit': False})
+    elif plans.has_reached_podcast_limit(uset):
+        return _pmrender(req, 'dashboard/page_importer_upgrade.html', {'reached_limit': True})
     else:
         return _pmrender(req, 'dashboard/page_importer.html')
 

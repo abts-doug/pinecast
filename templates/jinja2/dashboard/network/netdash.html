@@ -96,7 +96,7 @@
     <ul class="network-members">
       {% for m in network.members.all() %}
         <li class="user-card">
-          {% if m != network.owner and minimum_plan(user, PLANS.PLAN_STARTER) %}
+          {% if m != network.owner or m == user and m != network.owner %}
             <menu class="toolbar toolbar-right">
               <li><a class="btn btn-danger" href="{{ url('network_remove_member', network_id=network.id, member_id=m.id) }}">{{ _('Remove') }}</a></li>
             </menu>
