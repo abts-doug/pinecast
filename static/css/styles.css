@@ -229,6 +229,7 @@ body > header h1 {
 
 body > header .user-card {
     display: block;
+    float: right;
     font-weight: bold;
     padding-right: 10px;
     text-align: right;

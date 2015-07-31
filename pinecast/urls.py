@@ -7,6 +7,7 @@ from django.views.i18n import javascript_catalog
 import analytics.urls
 import dashboard.urls
 import feedback.urls
+import sites.urls
 from . import views
 from accounts.urls import urlpatterns as account_urlpatterns
 from podcasts.urls import urlpatterns as podcast_urlpatterns
@@ -27,6 +28,7 @@ urlpatterns = (
         url(r'^analytics/', include(analytics.urls)),
         url(r'^dashboard/', include(dashboard.urls)),
         url(r'^feedback/', include(feedback.urls)),
+        url(r'^sites/', include(sites.urls)),
         url(r'^admin/', include(admin.site.urls)),
 
         url(r'^services/deploy_complete$', views.deploy_complete),

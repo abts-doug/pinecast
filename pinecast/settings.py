@@ -48,6 +48,7 @@ INSTALLED_APPS = (
     'dashboard',
     'feedback',
     'podcasts',
+    'sites',
 )
 
 MIDDLEWARE_CLASSES = (

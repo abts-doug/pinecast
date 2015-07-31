@@ -1,0 +1,70 @@
+@import url(//fonts.googleapis.com/css?family=Lato);
+@import url(//fonts.googleapis.com/css?family=Lobster);
+
+html, body {
+    background: #34495e;
+    font-family: Lato, sans-serif;
+    font-size: 12px;
+}
+
+header, main, footer {
+    margin: 0 auto;
+    width: 960px;
+}
+
+h1 {
+    font-family: Lobster;
+}
+
+header {
+    color: #fff;
+    margin-top: 40px;
+    padding: 100px 0;
+    text-align: center;
+}
+
+header h1 {
+    font-size: 40px;
+}
+header h2 {
+    font-size: 20px;
+}
+
+main {
+    background: #ecf0f1;
+}
+
+footer {
+    background: #111921;
+    color: #fff;
+}
+.footer-row {
+    display: flex;
+}
+.footer-col {
+    flex: 1 1;
+    padding: 20px 0;
+}
+.footer-col strong {
+    display: block;
+    font-family: Lobster;
+    font-size: 2em;
+    text-align: center;
+}
+.footer-col ul {
+    list-style: none;
+    padding: 40px;
+}
+.footer-col li {
+    font-size: 14px;
+    margin: 0;
+}
+.footer-col li + li {
+    border-top: 1px solid rgba(255, 255, 255, 0.5);
+}
+.footer-col li a {
+    color: #fff;
+}
+.footer-col li a:visited {
+    color: #eee;
+}
