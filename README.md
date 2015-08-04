@@ -1,6 +1,6 @@
-# PodMaster Hosting
+# Pinecast
 
-A basic podcast hosting service
+A premium podcast hosting service
 
 
 ## Installation
@@ -17,7 +17,7 @@ In a production environment, the following dependencies are also required:
 
 ### Production
 
-Pushing to Heroku as-is should work. [The wiki](https://github.com/AlmostBetterNetwork/podmaster-host/wiki/Configuration) contains information on environment variables that should be set in order to make the installation functional.
+Pushing to Heroku as-is should work. [The wiki](https://github.com/AlmostBetterNetwork/pinecast/wiki/Configuration) contains information on environment variables that should be set in order to make the installation functional.
 
 
 ### Local Development

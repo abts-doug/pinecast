@@ -22,7 +22,7 @@ exports.handler = function(event, context) {
         var handler = parsed.protocol === 'https:' ? https : http;
 
         parsed.method = 'GET';
-        parsed.headers = {'agent': 'PodMaster/Importer 1.0'};
+        parsed.headers = {'agent': 'Pinecast/Importer 1.0'};
 
         var req = handler.request(parsed, responseHandler);
         req.on('error', function(e) {

@@ -262,7 +262,7 @@ var PodcastImporter = React.createClass({
             'div',
             {className: 'card card-block'},
             React.createElement('strong', {}, gettext('Import Complete')),
-            React.createElement('p', {}, gettext('We\'ve finished importing your podcast. Thanks for choosing PodMaster!')),
+            React.createElement('p', {}, gettext('We\'ve finished importing your podcast. Thanks for choosing Pinecast!')),
             React.createElement(
                 'a',
                 {
@@ -287,7 +287,7 @@ var PodcastImporter = React.createClass({
         }.bind(this), function() {
             this.setState({
                 step: 1,
-                step1error: gettext('Unable to get an access token from PodMaster'),
+                step1error: gettext('Unable to get an access token from Pinecast'),
             });
         }.bind(this));
 
@@ -309,7 +309,7 @@ var PodcastImporter = React.createClass({
                 function() {
                     this.setState({
                         step: 1,
-                        step1error: gettext('Could not connect to the PodMaster import server'),
+                        step1error: gettext('Could not connect to the Pinecast import server'),
                     });
                 }.bind(this)
             );
@@ -346,7 +346,7 @@ var PodcastImporter = React.createClass({
                 function() {
                     this.setState({
                         step: 1,
-                        step1error: gettext('Could not connect to PodMaster'),
+                        step1error: gettext('Could not connect to Pinecast'),
                     })
                 }.bind(this)
             );
@@ -551,7 +551,7 @@ var PodcastImporter = React.createClass({
         this.setState({step3interval: interval});
     },
     importError: function() {
-        this.setState({step: 2, step2error: gettext('There was an error while connecting to PodMaster')});
+        this.setState({step: 2, step2error: gettext('There was an error while connecting to Pinecast')});
     },
 
     getStep3Progress: function() {
@@ -569,7 +569,7 @@ var PodcastImporter = React.createClass({
         var text = 'Working...';
         switch (this.state.step3process) {
             case 'submitting':
-                text = gettext('Submitting podcast import request to Podmaster...');
+                text = gettext('Submitting podcast import request to Pinecast...');
                 break;
             case 'importing':
                 text = gettext('Waiting for assets to import...');
