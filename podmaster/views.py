@@ -21,11 +21,11 @@ def deploy_complete(req):
 
     payload = {
         'text': '''
-            Hey guys! I'm PodMaster Host version %s. I was just born! :hatching_chick:
+            Hey guys! I'm Pinecast version %s. I was just born! :hatching_chick:
 You have %s to thank for pushing %s to production.
-To learn about what's new, check out #podmaster-hosting :two_hearts:
+To learn about what's new, check out #pinecast :two_hearts:
         '''.strip() % (req.POST.get('release'), req.POST.get('user'), commit),
-        'username': 'newborn-podmaster-host',
+        'username': 'newborn-pinecast',
         'icon_emoji': ':cat2:',
     }
 

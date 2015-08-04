@@ -62,7 +62,7 @@ def feed(req, podcast_slug):
 
         md_desc = gfm.markdown(ep.description)
         if is_demo:
-            md_desc += '<p>This podcast is powered by <a href="https://host.podmaster.io/">PodMaster.io</a></p>'
+            md_desc += '<p>This podcast is powered by <a href="https://host.podmaster.io/">Pinecast</a></p>'
 
         ep_copy = ep.copyright or pod.copyright
         items.append('\n'.join([

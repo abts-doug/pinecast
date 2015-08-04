@@ -80,9 +80,9 @@ def user_settings_page_changeemail(req):
         return redirect(reverse('user_settings') + '?error=eae')
     send_confirmation_email(
         req.user,
-        ugettext('[PodMaster] Email change confirmation'),
+        ugettext('[Pinecast] Email change confirmation'),
         ugettext('''
-Someone requested a change to your email address on PodMaster.io. This email is
+Someone requested a change to your email address on Pinecast. This email is
 to verify that you own the email address provided.
 '''),
         reverse('user_settings_change_email_finalize') + '?user=%s&email=%s' % (

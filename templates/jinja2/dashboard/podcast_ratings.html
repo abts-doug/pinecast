@@ -15,7 +15,7 @@
 {% if not service %}
   <div class="card-block card">
     <strong>{{ _('Connected Services') }}</strong>
-    <p>{{ _('In order to fetch ratings and reviews from third party services, you need to link those services to your PodMaster podcast.') }}</p>
+    <p>{{ _('In order to fetch ratings and reviews from third party services, you need to link those services to your podcast.') }}</p>
 
     <ul class="connected-services">
       <li class="connected-service-stitcher">
@@ -33,7 +33,7 @@
     <strong>{{ PRA.SERVICES_MAP[service] }}</strong>
 
     {% if not service_obj %}
-      <p>{{ _('This service is not yet connected to PodMaster.') }}</p>
+      <p>{{ _('This service is not yet connected to your podcast.') }}</p>
       <form method="POST">
         <label>
           <span>{% trans service=PRA.SERVICES_MAP[service] %}URL of podcast on {{ service }}{% endtrans %}</span>

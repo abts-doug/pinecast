@@ -28,7 +28,7 @@ DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 if DEBUG:
     ALLOWED_HOSTS = ['*']
 else:
-    ALLOWED_HOSTS = ['host.podmaster.io']
+    ALLOWED_HOSTS = ['host.podmaster.io', 'pinecast.com', 'pinecast.co']
 
 
 import mimetypes

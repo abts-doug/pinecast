@@ -58,7 +58,7 @@ def send_notification_email(user, subject, description, email=None):
 {description}
 
 Thanks,
-Podmaster Host
+Pinecast
     ''').format(username=user.username, description=description)
     return _send_mail(email, subject, body)
 
