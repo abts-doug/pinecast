@@ -75,6 +75,7 @@ exports.handler = function(event, context) {
                 source: /x-source=(\w+)/.exec(matches[9])[1],
                 episode: /x-episode=([\w-]+)/.exec(matches[9])[1],
                 ts: matches[3],
+                cdn: false,
             });
         });
 
@@ -145,6 +146,7 @@ exports.handler = function(event, context) {
                 source: /x-source=(\w+)/.exec(matches[12])[1],
                 episode: /x-episode=([\w-]+)/.exec(matches[12])[1],
                 ts: formatCFDate(matches[1], matches[2]),
+                cdn: true,
             });
         });
 

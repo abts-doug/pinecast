@@ -86,6 +86,7 @@ def log(req):
                 'device': device,
                 'os': os,
             },
+            'from_cdn': blob.get('cdn', False),
 
             'timestamp': ts.isoformat(),
         })
