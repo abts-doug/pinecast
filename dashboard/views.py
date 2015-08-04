@@ -20,9 +20,9 @@ import analytics.query as analytics_query
 from accounts.decorators import restrict_minimum_plan
 from accounts.models import Network, UserSettings
 from feedback.models import Feedback
+from pinecast.helpers import json_response
 from podcasts.models import (CATEGORIES, Podcast, PodcastCategory,
                              PodcastEpisode, PodcastReviewAssociation)
-from podmaster.helpers import json_response
 
 
 signer = itsdangerous.Signer(settings.SECRET_KEY)

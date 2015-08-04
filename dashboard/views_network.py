@@ -6,11 +6,11 @@ from django.utils.translation import ugettext, ugettext_lazy
 from django.views.decorators.http import require_POST
 
 import accounts.payment_plans as plans
-import podmaster.email
+import pinecast.email
 from accounts.decorators import restrict_minimum_plan
 from accounts.models import Network, UserSettings
+from pinecast.helpers import reverse
 from podcasts.models import Podcast
-from podmaster.helpers import reverse
 from views import _pmrender, signer
 
 
@@ -61,7 +61,7 @@ def network_add_member(req, network_id):
 
     net.members.add(user)
     net.save()
-    podmaster.email.send_notification_email(
+    pinecast.email.send_notification_email(
         user,
         ugettext('[Pinecast] You have been added to "%s"') % net.name,
         ugettext('''

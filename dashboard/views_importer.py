@@ -20,8 +20,8 @@ from .models import AssetImportRequest
 from .views import _pmrender
 from accounts.decorators import restrict_minimum_plan
 from accounts.models import UserSettings
+from pinecast.helpers import json_response
 from podcasts.models import Podcast, PodcastEpisode
-from podmaster.helpers import json_response
 
 
 signer = itsdangerous.TimestampSigner(settings.SECRET_KEY)

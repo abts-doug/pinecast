@@ -8,8 +8,8 @@ from django.views.decorators.http import require_POST
 
 from .models import BetaRequest, UserSettings
 from dashboard.views import _pmrender
-from podmaster.email import request_must_be_confirmed, send_confirmation_email
-from podmaster.helpers import reverse, tz_offset
+from pinecast.email import request_must_be_confirmed, send_confirmation_email
+from pinecast.helpers import reverse, tz_offset
 
 
 def home(req):

@@ -9,8 +9,8 @@ import accounts.payment_plans as plans
 from . import query
 from accounts.models import Network, UserSettings
 from dashboard.views import get_podcast
+from pinecast.helpers import json_response
 from podcasts.models import Podcast, PodcastEpisode
-from podmaster.helpers import json_response
 
 
 @login_required
