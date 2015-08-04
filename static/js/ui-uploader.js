@@ -210,7 +210,7 @@ var Uploader = React.createClass({
             if (this.state.fileObj !== fileObj) return;
             var i = new Image();
             i.src = fr.result;
-            if (i.width < 1440 || i.height < 1440) {
+            if (i.width < 1400 || i.height < 1400) {
                 this.setState({
                     error: 'min_size',
                 });
@@ -280,7 +280,7 @@ var Uploader = React.createClass({
                 return React.createElement(
                     'div',
                     {className: 'warning'},
-                    gettext('Warning! The image does not meet the iTunes minimum size of 1440x1440px.')
+                    gettext('Warning! The image does not meet the iTunes minimum size of 1400x1400px.')
                 );
             case 'not_square':
                 return React.createElement(
