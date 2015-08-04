@@ -34,6 +34,8 @@ var Uploader = React.createClass({
             dragging: 0,
 
             finalContentURL: hasDef ? this.props.defURL : null,
+
+            maxUploadSize: document.querySelector('main').getAttribute('data-max-upload-size') | 0,
         };
     },
 
@@ -148,6 +150,7 @@ var Uploader = React.createClass({
                 'data-text-choose': gettext('Choose a file to upload'),
                 'data-text-drop': gettext('or Drop files to upload'),
             }),
+            this.getError(),
             React.createElement(
                 'input',
                 {
@@ -165,10 +168,19 @@ var Uploader = React.createClass({
     },
 
     setNewFile: function(fileObj) {
+        if (fileObj.size > this.state.maxUploadSize) {
+            this.setState({dragging: 0, error: 'file_too_big'});
+            return;
+        }
+        if (this.props.type && fileObj.size > 1024 * 1024 * 2) {
+            this.setState({dragging: 0, error: 'image_too_big'});
+            return;
+        }
         this.setState({
             dragging: 0,
             fileObj: fileObj,
             uploading: true,
+            error: null,
         });
 
         this.detectSize(fileObj);
@@ -287,6 +299,18 @@ var Uploader = React.createClass({
                     'div',
                     {className: 'warning'},
                     gettext('Warning! The image is not square. This may cause distortion on some devices.')
+                );
+            case 'file_too_big':
+                return React.createElement(
+                    'div',
+                    {className: 'warning'},
+                    gettext('The file you are trying to upload is too large for your plan.')
+                );
+            case 'image_too_big':
+                return React.createElement(
+                    'div',
+                    {className: 'warning'},
+                    gettext('Images are limited to 2MB. Please select an image file with a smaller file size.')
                 );
         }
         return null;

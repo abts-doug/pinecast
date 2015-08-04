@@ -55,6 +55,7 @@ def _pmrender(req, template, data=None):
 
         uset = UserSettings.get_from_user(req.user)
         data.setdefault('user_settings', uset)
+        data.setdefault('max_upload_size', payment_plans.MAX_FILE_SIZE[uset.plan])
 
     return render(req, template, data)
 
