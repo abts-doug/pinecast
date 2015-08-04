@@ -172,7 +172,7 @@ var Uploader = React.createClass({
             this.setState({dragging: 0, error: 'file_too_big'});
             return;
         }
-        if (this.props.type && fileObj.size > 1024 * 1024 * 2) {
+        if (this.props.type === 'image' && fileObj.size > 1024 * 1024 * 2) {
             this.setState({dragging: 0, error: 'image_too_big'});
             return;
         }
@@ -206,17 +206,21 @@ var Uploader = React.createClass({
     },
 
     detectSize: function(fileObj) {
-        if (this.props.noiTunesSizeCheck) return;
-        if (!window.FileReader) return;
         switch (fileObj.type) {
             case 'image/jpeg':
             case 'image/jpg':
             case 'image/png':
-                break;
-            default:
-                return;
+                return this.detectImageSize(fileObj);
+            case 'audio/mp3':
+            case 'audio/m4a':
+            case 'audio/wav':
+                return this.detectAudioSize(fileObj);
         }
+    },
 
+    detectImageSize: function(fileObj) {
+        if (this.props.noiTunesSizeCheck) return;
+        if (!window.FileReader) return;
         var fr = new FileReader();
         fr.onload = function() {
             if (this.state.fileObj !== fileObj) return;
@@ -233,6 +237,27 @@ var Uploader = React.createClass({
             }
         }.bind(this);
         fr.readAsDataURL(fileObj);
+    },
+
+    detectAudioSize: function(fileObj) {
+        if (!this.props.audioDurationSelector) {
+            return;
+        }
+        try {
+            var blobURL = (window.URL || window.webkitURL || window.mozURL).createObjectURL(fileObj);
+            var audio = new Audio(blobURL);
+            audio.addEventListener('loadedmetadata', function() {
+                var dur = audio.duration | 0;
+                var durLab = document.querySelector(this.props.audioDurationSelector);
+                var durHours = durLab.querySelector('[name="duration-hours"]');
+                var durMinutes = durLab.querySelector('[name="duration-minutes"]');
+                var durSeconds = durLab.querySelector('[name="duration-seconds"]');
+
+                durHours.value = dur / 3600 | 0;
+                durMinutes.value = dur % 3600 / 60 | 0;
+                durSeconds.value = dur % 60 | 0;
+            }.bind(this));
+        } catch (e) {}
     },
 
     startUploading: function(fields) {
@@ -333,6 +358,7 @@ Array.prototype.slice.call(fields).forEach(function(field) {
             defSize: field.getAttribute('data-default-size'),
             defType: field.getAttribute('data-default-type'),
             noiTunesSizeCheck: field.getAttribute('data-no-itunes-size-check') == 'true',
+            audioDurationSelector: field.getAttribute('data-audio-duration-selector'),
         }),
         field
     );
