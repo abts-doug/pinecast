@@ -163,6 +163,7 @@ GETCONNECT_IO_PUSH_KEY = os.environ.get('GETCONNECT_IO_PUSH_KEY')
 
 S3_BUCKET = os.environ.get('S3_BUCKET')
 S3_PREMIUM_BUCKET = os.environ.get('S3_PREMIUM_BUCKET')
+CDN_HOSTNAME = os.environ.get('CDN_HOSTNAME')
 S3_ACCESS_ID = os.environ.get('S3_ACCESS_ID')
 S3_SECRET_KEY = os.environ.get('S3_SECRET_KEY')
 SQS_ACCESS_ID = os.environ.get('SQS_ACCESS_ID')

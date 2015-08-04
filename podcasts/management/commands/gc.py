@@ -20,8 +20,19 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         conn = S3Connection(settings.S3_ACCESS_ID, settings.S3_SECRET_KEY)
 
+        self.to_delete = []
+
         self.clean_bucket(conn, settings.S3_BUCKET, options)
         self.clean_bucket(conn, settings.S3_PREMIUM_BUCKET, options)
+
+        self.stdout.write('Completed analysis')
+        self.stdout.write('%d files to remove' % len(self.to_delete))
+        if options['run']:
+            for f in self.to_delete:
+                f.delete()
+            self.stdout.write('Completed removal')
+        else:
+            self.stdout.write('No files were removed. Use --run to actually GC')
 
     def clean_bucket(conn, bucket_name, options):
         self.stdout.write('Processing bucket: %s' % bucket_name)
@@ -29,35 +40,29 @@ class Command(BaseCommand):
         bucket = conn.get_bucket(bucket_name)
         files = bucket.list()
 
-        to_delete = []
-
         self.stdout.write('Analyzing bucket contents...')
         for f in files:
             canon_url = 'http://%s.s3.amazonaws.com/%s' % (settings.S3_BUCKET, f.key)
+            https_canon_url = 'https://%s.s3.amazonaws.com/%s' % (settings.S3_BUCKET, f.key)
             self.stdout.write(' - %s' % canon_url)
 
             if (f.key.startswith('networks/covers/') and
-                Network.objects.filter(image_url=canon_url).count()):
+                Network.objects.filter(
+                    Q(image_url=canon_url) | Q(image_url=https_canon_url)).count()):
                 self.stdout.write('     Still in use by Network')
                 continue
 
-            if (f.key.startswith('podcasts/covers/') and
-                Podcast.objects.filter(cover_image=canon_url).count()):
+            elif (f.key.startswith('podcasts/covers/') and
+                Podcast.objects.filter(
+                    Q(image_url=canon_url) | Q(image_url=https_canon_url)).count()):
                 self.stdout.write('     Still in use by Podcast')
                 continue
 
             if PodcastEpisode.objects.filter(
-                Q(audio_url=canon_url) | Q(image_url=canon_url)).count():
+                Q(audio_url=canon_url) | Q(image_url=canon_url) |
+                Q(audio_url=https_canon_url) | Q(image_url=https_canon_url)).count():
                 self.stdout.write('     Still in use by PodcastEpisode')
                 continue
 
-            to_delete.append(f)
+            self.to_delete.append(f)
 
-        self.stdout.write('Completed analysis')
-        self.stdout.write('%d files to remove' % len(to_delete))
-        if options['run']:
-            for f in to_delete:
-                f.delete()
-            self.stdout.write('Completed removal')
-        else:
-            self.stdout.write('No files were removed. Use --run to actually GC')

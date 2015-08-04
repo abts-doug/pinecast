@@ -15,8 +15,8 @@ from .models import Podcast, PodcastEpisode
 from accounts.models import UserSettings
 
 
-PREMIUM_S3_PREFIX = 'http://%s.s3.amazonaws.com/' % settings.S3_PREMIUM_BUCKET
-S3_PREFIX_REPLACEMENT = 'http://asset-cdn-cf.podmaster.io/'
+PREMIUM_S3_PREFIX = 'https://%s.s3.amazonaws.com/' % settings.S3_PREMIUM_BUCKET
+S3_PREFIX_REPLACEMENT = '%s/' % settings.CDN_HOSTNAME
 def _asset(url):
     if url.startswith(PREMIUM_S3_PREFIX):
         url = url.replace(PREMIUM_S3_PREFIX, S3_PREFIX_REPLACEMENT, 1)
