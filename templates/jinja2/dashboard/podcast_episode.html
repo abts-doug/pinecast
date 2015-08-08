@@ -79,7 +79,7 @@
     <input type="url"
       title="{{ _('Comment Box') }}"
       readonly
-      value="https://host.podmaster.io{{ url('ep_comment_box', kwargs={'podcast_slug': podcast.slug, 'episode_id': str(episode.id)}) }}"
+      value="https://pinecast.com{{ url('ep_comment_box', kwargs={'podcast_slug': podcast.slug, 'episode_id': str(episode.id)}) }}"
       class="width-full">
   </div>
   {% for f in feedback %}
@@ -130,7 +130,7 @@
   <div class="card-block card">
     <strong>{{ _('Embed Code') }}</strong>
     {% if minimum_plan(podcast.owner, PLANS.FEATURE_MIN_PLAYER) %}
-      <textarea readonly class="embed-textarea"><iframe src="https://host.podmaster.io/player/{{ str(episode.id) }}" seamless height="60" style="border:0" class="pinecast-embed" frameborder="0"></iframe></textarea>
+      <textarea readonly class="embed-textarea"><iframe src="https://pintcast.com/player/{{ str(episode.id) }}" seamless height="60" style="border:0" class="pinecast-embed" frameborder="0"></iframe></textarea>
     {% else %}
       <div class="upgrade-empty-state empty-state">
         {% if podcast.owner == user %}
@@ -147,7 +147,7 @@
     <strong>{{ _('Audio URL') }}</strong>
     <input type="url"
       readonly
-      value="https://host.podmaster.io{{ url('listen', kwargs={'episode_id': str(episode.id)}) }}"
+      value="https://pinecast.com{{ url('listen', kwargs={'episode_id': str(episode.id)}) }}"
       class="width-full">
   </div>
 

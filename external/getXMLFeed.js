@@ -11,7 +11,7 @@ exports.handler = function(event, context) {
     var token = event.token;
     var feedURL = event.url;
 
-    http.get('http://host.podmaster.io/dashboard/services/check_request_token?token=' + encodeURIComponent(token), function(res) {
+    https.get('https://pinecast.com/dashboard/services/check_request_token?token=' + encodeURIComponent(token), function(res) {
         var content = '';
         res.on('data', function(d) {
             content += d.toString();

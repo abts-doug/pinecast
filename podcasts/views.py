@@ -62,7 +62,7 @@ def feed(req, podcast_slug):
 
         md_desc = gfm.markdown(ep.description)
         if is_demo:
-            md_desc += '<p>This podcast is powered by <a href="https://host.podmaster.io/">Pinecast</a></p>'
+            md_desc += '<p>This podcast is powered by <a href="https://pinecast.com/">Pinecast</a></p>'
 
         ep_copy = ep.copyright or pod.copyright
         items.append('\n'.join([
@@ -70,7 +70,7 @@ def feed(req, podcast_slug):
                 '<title>%s</title>' % escape(ep.title),
                 '<description><![CDATA[%s]]></description>' % md_desc,
                 '<link>%s</link>' % escape(ep_url),
-                '<guid isPermaLink="false">https://host.podmaster.io/guid/%s</guid>' % escape(str(ep.id)),
+                '<guid isPermaLink="false">https://pinecast.com/guid/%s</guid>' % escape(str(ep.id)),
                 '<pubDate>%s</pubDate>' % formatdate(time.mktime(ep.publish.timetuple())),
                 '<itunes:author>%s</itunes:author>' % escape(pod.author_name),
                 '<itunes:subtitle>%s</itunes:subtitle>' % escape(ep.subtitle),

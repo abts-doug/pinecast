@@ -201,7 +201,7 @@ exports.handler = function(event, context) {
             console.log(postData);
             var req = https.request(
                 {
-                    hostname: 'host.podmaster.io',
+                    hostname: 'pinecast.com',
                     path: '/services/log?access=KEY_HERE',
                     method: 'POST',
                     headers: {

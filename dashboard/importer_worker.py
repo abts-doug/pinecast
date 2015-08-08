@@ -22,5 +22,5 @@ def prep_payloads(payloads):
         if settings.DEBUG:
             p['cb_url'] = None
         else:
-            p['cb_url'] = 'https://host.podmaster.io/dashboard/services/import_result'
+            p['cb_url'] = 'https://pinecast.com/dashboard/services/import_result'
         yield p

@@ -46,7 +46,7 @@ def send_confirmation_email(user, subject, description, url, email=None):
 
 To confirm this request, visit the link below.
 
-https://host.podmaster.io{url}
+https://pinecast.com{url}
 ''').format(username=user.username, description=description, url=signed_url)
     return send_notification_email(user, subject, body, email)
 
