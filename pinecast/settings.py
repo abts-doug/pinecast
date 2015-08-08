@@ -59,6 +59,8 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+
+    'pinecast.middleware.hnredirect.HostnameRedirect',
 )
 
 ROOT_URLCONF = 'pinecast.urls'
