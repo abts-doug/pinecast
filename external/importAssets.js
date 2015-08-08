@@ -18,6 +18,7 @@ exports.handler = function(event, context) {
     var redirects = 0;
 
     function getAsset(assetUrl) {
+        console.log('Importing: ' + assetUrl);
         var parsed = url.parse(assetUrl);
         var handler = parsed.protocol === 'https:' ? https : http;
 
@@ -42,6 +43,7 @@ exports.handler = function(event, context) {
                 postFailure('Too many redirects');
                 return;
             }
+            console.log('Redirected to: ' + res.headers.location);
             getAsset(res.headers.location);
             return;
         }

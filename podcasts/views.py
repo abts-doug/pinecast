@@ -79,8 +79,8 @@ def feed(req, podcast_slug):
                 '<itunes:duration>%s</itunes:duration>' % escape(str(duration)),
                 '<enclosure url=%s length=%s type=%s />' % (
                     quoteattr(ep_url), quoteattr(str(ep.audio_size)), quoteattr(ep.audio_type)),
-                ('<dc:copyright>%s</dc:copyright>' % escape(ep_copy)) if ep_copy else None,
-                ('<dc:rights>%s</dc:rights>' % escape(ep.license)) if ep.license else None,
+                ('<dc:copyright>%s</dc:copyright>' % escape(ep_copy)) if ep_copy else '',
+                ('<dc:rights>%s</dc:rights>' % escape(ep.license)) if ep.license else '',
             '</item>',
         ]))
 
@@ -113,7 +113,7 @@ def feed(req, podcast_slug):
             '<link>%s</link>' % escape(pod.homepage),
             '<language>%s</language>' % escape(pod.language),
             '<copyright>%s</copyright>' % escape(pod.copyright),
-            ('<itunes:subtitle>%s</itunes:subtitle>' % escape(pod.subtitle)) if pod.subtitle else None,
+            ('<itunes:subtitle>%s</itunes:subtitle>' % escape(pod.subtitle)) if pod.subtitle else '',
             '<itunes:author>%s</itunes:author>' % escape(pod.author_name),
             '<itunes:summary><![CDATA[%s]]></itunes:summary>' % md_pod_desc,
             '<description><![CDATA[%s]]></description>' % md_pod_desc,
@@ -124,7 +124,7 @@ def feed(req, podcast_slug):
             '<itunes:explicit>%s</itunes:explicit>' % ('yes' if pod.is_explicit else 'no'),
             '<itunes:image href=%s />' % quoteattr(_asset(pod.cover_image)),
             '\n'.join(render_cat(category_map)),
-            ('<dc:copyright>%s</dc:copyright>' % escape(pod.copyright)) if pod.copyright else None,
+            ('<dc:copyright>%s</dc:copyright>' % escape(pod.copyright)) if pod.copyright else '',
             '\n'.join(items),
         '</channel>',
         '</rss>',
