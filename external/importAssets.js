@@ -113,7 +113,7 @@ exports.handler = function(event, context) {
         }
         var postData = getPOSTData({url: newUrl});
         var parsed = getCBUrl(postData);
-        var req = http.request(parsed, function() {
+        var req = https.request(parsed, function() {
             context.succeed(newUrl);
         });
         req.on('error', function(e) {

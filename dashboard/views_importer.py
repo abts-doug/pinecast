@@ -193,7 +193,6 @@ def check_request_token(req):
 @csrf_exempt
 @require_POST
 @json_response
-@restrict_minimum_plan(plans.FEATURE_MIN_IMPORTER)
 def import_result(req):
     p = get_object_or_404(AssetImportRequest,
                           access_token=req.POST.get('token'),

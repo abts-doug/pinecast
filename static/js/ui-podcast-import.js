@@ -135,11 +135,14 @@ var PodcastImporter = React.createClass({
     },
 
     getStep1: function() {
+        if (this.state.step !== 1) {
+            return null;
+        }
         return React.createElement(
             'div',
             {className: 'card card-block'},
             React.createElement('strong', {}, gettext('Step One')),
-            this.state.step !== 1 ? null : React.createElement('p', {}, gettext('Enter the feed URL of your existing podcast')),
+            React.createElement('p', {}, gettext('Enter the feed URL of your existing podcast')),
             React.createElement(
                 'label',
                 {},
@@ -156,7 +159,7 @@ var PodcastImporter = React.createClass({
                     }
                 )
             ),
-            this.state.step !== 1 ? null : React.createElement(
+            React.createElement(
                 'button',
                 {
                     onClick: this.downloadFeed,
@@ -166,7 +169,7 @@ var PodcastImporter = React.createClass({
         );
     },
     getStep2: function() {
-        if (this.state.step < 2) {
+        if (this.state.step !== 2) {
             return null;
         }
 
@@ -183,15 +186,14 @@ var PodcastImporter = React.createClass({
             'div',
             {className: 'card card-block'},
             React.createElement('strong', {}, gettext('Step Two')),
-            this.state.step !== 2 ? null : React.createElement('p', {}, gettext('Review the feed information below')),
+            React.createElement('p', {}, gettext('Review the feed information below')),
             this.renderPodcastData(),
             React.createElement('hr'),
             !this.state.step2error ? null : React.createElement('div', {className: 'error'}, this.state.step2error),
-            this.state.step !== 2 ? null : React.createElement('p', {}, gettext('Please choose a slug for the podcast.')),
+            React.createElement('p', {}, gettext('Please choose a slug for the podcast.')),
             React.createElement(
                 SlugField,
                 {
-                    readonly: this.state.step !== 2,
                     validityCB: function(valid) {
                         this.setState({slugValid: valid});
                     }.bind(this),
@@ -200,7 +202,7 @@ var PodcastImporter = React.createClass({
                     }.bind(this),
                 }
             ),
-            this.state.step !== 2 ? null : React.createElement(
+            React.createElement(
                 'menu',
                 {className: 'toolbar'},
                 React.createElement(
@@ -236,7 +238,7 @@ var PodcastImporter = React.createClass({
         );
     },
     getStep3: function() {
-        if (this.state.step < 3) {
+        if (this.state.step !== 3) {
             return null;
         }
 
@@ -254,7 +256,7 @@ var PodcastImporter = React.createClass({
         );
     },
     getStep4: function() {
-        if (this.state.step < 4) {
+        if (this.state.step !== 4) {
             return null;
         }
 
@@ -572,7 +574,7 @@ var PodcastImporter = React.createClass({
                 text = gettext('Submitting podcast import request to Pinecast...');
                 break;
             case 'importing':
-                text = gettext('Waiting for assets to import...');
+                text = gettext('Waiting for assets to import. Please be patient, this may take a few minutes to complete.');
                 break;
             case 'done':
                 text = gettext('Import completed');
