@@ -129,6 +129,7 @@ var PodcastImporter = React.createClass({
             ),
             this.getStep1(),
             this.getStep2(),
+            this.getStep2_5(),
             this.getStep3(),
             this.getStep4()
         );
@@ -187,10 +188,53 @@ var PodcastImporter = React.createClass({
             {className: 'card card-block'},
             React.createElement('strong', {}, gettext('Step Two')),
             React.createElement('p', {}, gettext('Review the feed information below')),
-            this.renderPodcastData(),
-            React.createElement('hr'),
             !this.state.step2error ? null : React.createElement('div', {className: 'error'}, this.state.step2error),
-            React.createElement('p', {}, gettext('Please choose a slug for the podcast.')),
+            this.renderPodcastData(),
+            React.createElement(
+                'menu',
+                {className: 'toolbar'},
+                React.createElement(
+                    'li',
+                    {},
+                    React.createElement(
+                        'button',
+                        {
+                            onClick: this.goToStep2_5,
+                        },
+                        gettext('Continue')
+                    )
+                ),
+                React.createElement(
+                    'li',
+                    {},
+                    React.createElement(
+                        'button',
+                        {
+                            className: 'btn-neutral',
+                            onClick: function() {
+                                this.setState({
+                                    step: 1,
+                                    step1error: null,
+                                    step2loaded: false,
+                                });
+                            }.bind(this),
+                        },
+                        gettext('Change Feed')
+                    )
+                )
+            )
+        );
+    },
+    getStep2_5: function() {
+        if (this.state.step !== 2.5) {
+            return null;
+        }
+        return React.createElement(
+            'div',
+            {className: 'card card-block'},
+            React.createElement('strong', {}, gettext('Step Two')),
+            React.createElement('p', {}, gettext('Please choose a slug to use for this podcast.')),
+            !this.state.step2error ? null : React.createElement('div', {className: 'error'}, this.state.step2error),
             React.createElement(
                 SlugField,
                 {
@@ -214,24 +258,6 @@ var PodcastImporter = React.createClass({
                             onClick: this.beginImport,
                         },
                         gettext('Continue')
-                    )
-                ),
-                React.createElement(
-                    'li',
-                    {},
-                    React.createElement(
-                        'button',
-                        {
-                            className: 'btn-neutral',
-                            onClick: function() {
-                                this.setState({
-                                    step: 1,
-                                    step1error: null,
-                                    step2loaded: false,
-                                });
-                            }.bind(this),
-                        },
-                        gettext('Try Again')
                     )
                 )
             )
@@ -353,7 +379,6 @@ var PodcastImporter = React.createClass({
                 }.bind(this)
             );
         }
-
     },
 
     renderPodcastData: function() {
@@ -496,6 +521,10 @@ var PodcastImporter = React.createClass({
             // TODO: Show a warning if any of the files are too big for the user's account
 
         );
+    },
+
+    goToStep2_5: function() {
+        this.setState({step: 2.5, step2error: null});
     },
 
     beginImport: function() {

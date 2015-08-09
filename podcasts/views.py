@@ -57,7 +57,6 @@ def feed(req, podcast_slug):
     is_demo = UserSettings.get_from_user(pod.owner).plan == plans.PLAN_DEMO
 
     for ep in episodes:
-        duration = datetime.timedelta(seconds=ep.duration)
         ep_url = _asset(ep.audio_url + '?x-source=rss&x-episode=%s' % str(ep.id))
 
         md_desc = gfm.markdown(ep.description)
@@ -76,7 +75,7 @@ def feed(req, podcast_slug):
                 '<itunes:subtitle>%s</itunes:subtitle>' % escape(ep.subtitle),
                 '<itunes:summary><![CDATA[%s]]></itunes:summary>' % md_desc,
                 '<itunes:image href=%s />' % quoteattr(_asset(ep.image_url)),
-                '<itunes:duration>%s</itunes:duration>' % escape(format_duration(duration)),
+                '<itunes:duration>%s</itunes:duration>' % escape(ep.formatted_duration()),
                 '<enclosure url=%s length=%s type=%s />' % (
                     quoteattr(ep_url), quoteattr(str(ep.audio_size)), quoteattr(ep.audio_type)),
                 ('<dc:copyright>%s</dc:copyright>' % escape(ep_copy)) if ep_copy else '',
@@ -162,8 +161,3 @@ def player(req, episode_id):
     if UserSettings.user_meets_plan(ep.podcast.owner, plans.FEATURE_MIN_PLAYER):
         resp.xframe_options_exempt = True
     return resp
-
-
-def format_duration(td):
-    seconds = td.seconds
-    return '%02d:%02d:%02d' % (seconds // 3600, seconds % 3600 // 60, seconds % 60)

@@ -79,6 +79,10 @@ class PodcastEpisode(models.Model):
     awaiting_import = models.BooleanField(default=False)
 
 
+    def formatted_duration(self):
+        seconds = self.duration
+        return '%02d:%02d:%02d' % (seconds // 3600, seconds % 3600 // 60, seconds % 60)
+
     def is_published(self):
         return not self.awaiting_import and self.publish <= datetime.datetime.now()
 
