@@ -4,21 +4,33 @@
   <title>{{ episode.title }}</title>
   <style type="text/css">
   html, body {
-    background: #eee;
+    background: transparent;
     font-family: Helvetica, Arial, sans-serif;
     margin: 0;
     padding: 0;
   }
   .info-card {
     font-size: 15px;
-    line-height: 20px;
-    padding: 10px;
+    padding: 0;
   }
   .info-card > * {
     display: block;
+    height: 1.2em;
+    line-height: 1.2em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .info-card span {
+    color: #999;
+    font-size: 13px;
   }
   .main-body {
-    padding-right: 70px;
+    background: #fff;
+    border: 1px solid #fafafa;
+    border-radius: 3px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+    margin: 2px;
+    padding: 10px 30px 10px 60px;
     position: relative;
   }
   .main-body > * {
@@ -37,19 +49,31 @@
     -moz-appearance: none;
     -ms-appearance: none;
     -webkit-appearance: none;
-    background: #2ecc71;
+    background: #eee;
+    border: 1px solid #aaa;
+    border-radius: 40px;
     bottom: 0;
-    border: 0;
+    color: #aaa;
+    height: 40px;
+    left: 10px;
+    margin: auto;
+    padding: 0;
     position: absolute;
-    right: 0;
     top: 0;
-    width: 70px;
+    width: 40px;
   }
   .play-button:hover {
-    background: #27ae60;
+    background: #fff;
+    color: #999;
   }
   .play-button:active {
-    background: #16a085;
+    background: #fff;
+    color: #333;
+  }
+  .download-button {
+    position: absolute;
+    right: 5px;
+    top: 5px;
   }
   </style>
 </head>
@@ -57,9 +81,18 @@
 <div class="main-body">
   <div class="info-card">
     <b>{{ episode.title }}</b>
-    <span>{% trans author=episode.podcast.author_name %}by {{ author }}{% endtrans %}</span>
+    <span>
+      {% trans author=episode.podcast.author_name %}by {{ author }}{% endtrans %}
+      &bull;
+      {{ episode.formatted_duration() }}
+      &bull;
+      {{ episode.audio_size|filesizeformat }}
+    </span>
   </div>
-  <button class="play-button">{{ _('Play') }}</button>
+  <button class="play-button">&#9654;</button>
+  <a class="download-button" href="/listen/{{ str(episode.id) }}" title="{{ _('Download File') }}" download target="_blank">
+    <img src="/static/img/download.svg" alt="Download" height="20" width="20">
+  </a>
   <i class="seek-bar"></i>
 </div>
 <script>
@@ -72,11 +105,11 @@
     audio = new Audio('/listen/{{ str(episode.id) }}?embed=true');
     audio.addEventListener('pause', function() {
       button.className = 'play-button paused';
-      button.textContent = button.innerText = '{{ _('Play') }}';
+      button.innerHTML = '&#9654;';
     });
     audio.addEventListener('playing', function() {
       button.className = 'play-button playing';
-      button.textContent = button.innerText = '{{ _('Pause') }}';
+      button.innerHTML = '&#10074;&#10074;';
     });
     audio.addEventListener('timeupdate', function() {
       bar.style.width = (audio.currentTime / audio.duration * 100) + '%';

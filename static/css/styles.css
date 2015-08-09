@@ -741,8 +741,6 @@ abbr {
 }
 
 .pinecast-embed {
-    border: 1px solid #ccc !important;
-    border-radius: 5px;
     height: 62px;
     margin: 10px;
     width: calc(100% - 20px);
