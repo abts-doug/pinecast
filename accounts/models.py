@@ -53,6 +53,13 @@ class UserSettings(models.Model):
         uset = cls.get_from_user(user)
         return payment_plans.minimum(uset.plan, min_plan)
 
+    def use_cdn(self):
+        if self.force_disable_cdn:
+            return False
+        elif self.force_enable_cdn:
+            return True
+        return payment_plans.minimum(self.plan, payment_plans.FEATURE_MIN_CDN)
+
 
 class Network(models.Model):
     owner = models.ForeignKey(User, related_name='network_ownership')

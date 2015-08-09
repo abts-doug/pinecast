@@ -88,12 +88,14 @@ class AssetImportRequest(models.Model):
                 'image' if self.image_source_url else 'audio')
         key = '%s%s/%s' % (key, str(uuid.uuid4()), clean_source[clean_source.rindex('/') + 1:])
 
+        pod = self.podcast or self.episode.podcast
+
         return {
             'type': 'import_asset',
             'token': self.access_token,
             'id': self.id,
             'url': source,
-            'bucket': settings.S3_BUCKET,
+            'bucket': pod.get_asset_bucket(),
             'key': key,
         }
 

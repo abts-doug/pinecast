@@ -336,6 +336,8 @@ def get_upload_url(req, podcast_slug, type):
     if type not in ['audio', 'image']:
         return Http404('Type not recognized')
 
+    pod = None
+
     # NOTE: When udating the code below, make sure to also update gc.py as well
     # to make sure that the cleanup script continues to work as expected.
     if podcast_slug != '$none' and podcast_slug != '$net':
@@ -357,14 +359,13 @@ def get_upload_url(req, podcast_slug, type):
     expires = int(time.time() + 60 * 60 * 24)
     amz_headers = 'x-amz-acl:public-read'
 
-    uset = UserSettings.get_from_user(req.user)
-    use_premium_cdn = payment_plans.minimum(uset.plan, payment_plans.FEATURE_MIN_CDN)
-    if uset.force_disable_cdn: use_premium_cdn = False
-    elif uset.force_enable_cdn: use_premium_cdn = True
-    bucket = settings.S3_PREMIUM_BUCKET if use_premium_cdn else settings.S3_BUCKET
+    uset = UserSettings.get_from_user(pod.owner if pod is not None else req.user)
+    if pod:
+        bucket = pod.get_asset_bucket()
+    else:
+        bucket = settings.S3_PREMIUM_BUCKET if uset.use_cdn() else settings.S3_BUCKET
 
-    user_plan = UserSettings.get_from_user(req.user).plan
-    max_size = 1024 * 1024 * 2 if type == 'image' else payment_plans.MAX_FILE_SIZE[user_plan]
+    max_size = 1024 * 1024 * 2 if type == 'image' else payment_plans.MAX_FILE_SIZE[uset.plan]
     policy = {
         # hours=6 so users around midnight don't get screwed.
         'expiration': (datetime.datetime.now() + datetime.timedelta(days=1, hours=6)).strftime('%Y-%m-%dT00:00:00.000Z'),

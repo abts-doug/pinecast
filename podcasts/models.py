@@ -3,11 +3,13 @@ import re
 import uuid
 
 import requests
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models
 from django.utils.translation import ugettext, ugettext_lazy
 
-from accounts.models import Network
+import accounts.payment_plans as payment_plans
+from accounts.models import Network, UserSettings
 
 
 class Podcast(models.Model):
@@ -34,6 +36,9 @@ class Podcast(models.Model):
 
     networks = models.ManyToManyField(Network)
 
+    def get_asset_bucket(self):
+        use_premium_cdn = UserSettings.get_from_user(self.owner).use_cdn()
+        return settings.S3_PREMIUM_BUCKET if use_premium_cdn else settings.S3_BUCKET
 
     def get_category_list(self):
         return ','.join(x.category for x in self.podcastcategory_set.all())
