@@ -87,6 +87,7 @@ class AssetImportRequest(models.Model):
                 str(self.episode.podcast.id),
                 'image' if self.image_source_url else 'audio')
         key = '%s%s/%s' % (key, str(uuid.uuid4()), clean_source[clean_source.rindex('/') + 1:])
+
         return {
             'type': 'import_asset',
             'token': self.access_token,

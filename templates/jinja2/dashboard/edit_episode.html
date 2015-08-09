@@ -98,9 +98,8 @@
       <input type="text"
         name="copyright"
         maxlength="1024"
-        value={{ default.get('copyright', episode.copyright) }}
-        placeholder="{{ _('Copyright 2015 Foo Bar Inc.') }}"
-        required>
+        value="{{ default.get('copyright', episode.copyright) }}"
+        placeholder="{{ _('Copyright 2015 Foo Bar Inc.') }}">
     </label>
 
     <label>
@@ -109,7 +108,6 @@
         name="license"
         maxlength="1024"
         placeholder="{{ _('Creative Commons 4.0') }}"
-        required
         value="{{ default.get('license', episode.license) }}">
     </label>
     
