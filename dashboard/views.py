@@ -105,6 +105,7 @@ def podcast_dashboard(req, podcast_slug):
             'subscribers': subscribers(),
         },
         'next_milestone': next(x for x in MILESTONES if x > total_listens()),
+        'is_still_importing': pod.is_still_importing(),
     }
 
     owner_uset = UserSettings.get_from_user(pod.owner)

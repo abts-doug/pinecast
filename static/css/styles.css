@@ -851,3 +851,29 @@ li.user-card span.name {
     float: left;
     margin: 5px 0 0 -60px;
 }
+
+.card[data-still-importing] {
+    opacity: 0.5;
+    position: relative;
+    transition: opacity 0.2s;
+}
+.card[data-still-importing]:hover {
+    opacity: 0.75;
+}
+.card[data-still-importing]:before {
+    background: #8e44ad;
+    border-radius: 4px;
+    bottom: 0;
+    color: #fff;
+    content: attr(data-still-importing);
+    display: block;
+    font-size: 1.2em;
+    left: 20px;
+    height: 1.65em;
+    line-height: 1.65em;
+    margin: auto;
+    position: absolute;
+    right: 20px;
+    text-align: center;
+    top: 0;
+}

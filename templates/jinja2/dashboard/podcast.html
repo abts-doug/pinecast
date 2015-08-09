@@ -10,6 +10,14 @@
   <h1>{{ podcast.name }}</h1>
 </header>
 
+{% if is_still_importing %}
+<div class="warning">
+  {% trans %}
+    This podcast is still importing! Modifying it during this process may cause the import to fail.
+  {% endtrans %}
+</div>
+{% endif %}
+
 <div class="row">
   <div class="card stat-card total-listens">
     <strong>{{ _('Total Listens') }}</strong>

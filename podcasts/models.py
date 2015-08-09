@@ -58,6 +58,10 @@ class Podcast(models.Model):
             o = PodcastCategory.objects.get(podcast=self, category=r)
             o.delete()
 
+    def is_still_importing(self):
+        return bool(
+            self.assetimportrequest_set.filter(failed=False, resolved=False).count())
+
     def __unicode__(self):
         return self.name
 

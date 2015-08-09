@@ -3,7 +3,8 @@
 
 <ul class="dashboard-podcasts">
   {% for p in podcasts %}
-    <li class="card">
+    <li class="card"
+      {% if p.is_still_importing() %}data-still-importing="{{ _('Import in progress...') }}"{% endif %}>
       <strong><a href="{{ url('podcast_dashboard', kwargs={'podcast_slug': p.slug}) }}">{{ p.name }}</a></strong>
       <img src="{{ p.cover_image|https }}" alt="">
     </li>
