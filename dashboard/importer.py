@@ -66,7 +66,7 @@ def get_details(req, parsed):
         elif len(dur_tup) == 2:
             dur_seconds = dur_tup[0] * 60 + dur_tup[1]
         else:
-            dur_seconds = dur_tup[-2] * 3600 + dur_tup[-1] * 60 + dur_tup[0]
+            dur_seconds = dur_tup[-3] * 3600 + dur_tup[-2] * 60 + dur_tup[-1]
         items.append({
             'title': first_tag_text(node, 'title'),
             'description': first_tag_text(node, 'description'),

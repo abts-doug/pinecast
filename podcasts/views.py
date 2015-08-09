@@ -76,7 +76,7 @@ def feed(req, podcast_slug):
                 '<itunes:subtitle>%s</itunes:subtitle>' % escape(ep.subtitle),
                 '<itunes:summary><![CDATA[%s]]></itunes:summary>' % md_desc,
                 '<itunes:image href=%s />' % quoteattr(_asset(ep.image_url)),
-                '<itunes:duration>%s</itunes:duration>' % escape(str(duration)),
+                '<itunes:duration>%s</itunes:duration>' % escape(format_duration(duration)),
                 '<enclosure url=%s length=%s type=%s />' % (
                     quoteattr(ep_url), quoteattr(str(ep.audio_size)), quoteattr(ep.audio_type)),
                 ('<dc:copyright>%s</dc:copyright>' % escape(ep_copy)) if ep_copy else '',
@@ -161,4 +161,9 @@ def player(req, episode_id):
     # If the user is not a demo user, allow the player to be used outside the app.
     if UserSettings.user_meets_plan(ep.podcast.owner, plans.FEATURE_MIN_PLAYER):
         resp.xframe_options_exempt = True
-    return resp    
+    return resp
+
+
+def format_duration(td):
+    seconds = td.seconds
+    return '%02d:%02d:%02d' % (seconds // 3600, seconds % 3600 // 60, seconds % 60)
