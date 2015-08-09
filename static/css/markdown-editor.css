@@ -18,6 +18,7 @@
 }
 .markdown-editor.previewing .markdown-editor-preview {
   display: block;
+  overflow: auto;
 }
 
 .markdown-editor .CodeMirror pre {
