@@ -330,16 +330,21 @@ div.chunky,
 ul .empty-state {
     background: transparent;
     box-shadow: none;
+    display: flex;
     line-height: 2em;
     padding: 0;
     text-align: center;
 }
 ul .empty-state a {
+    align-items: center;
     border: 2px dashed #999;
     border-radius: 10px;
-    display: block;
-    padding: 70px 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0;
     transition: border-color 0.2s, color 0.2s;
+    width: 100%;
 }
 ul .empty-state a:hover {
     border-color: #8e44ad;
@@ -512,6 +517,7 @@ menu.tabs a.selected {
 .dashboard-podcasts > li {
     flex: 1 1;
     margin: 10px;
+    min-height: 250px;
     min-width: 250px;
     max-width: 350px;
     overflow: hidden;
