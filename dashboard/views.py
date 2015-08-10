@@ -55,6 +55,7 @@ def _pmrender(req, template, data=None):
 
         uset = UserSettings.get_from_user(req.user)
         data.setdefault('user_settings', uset)
+        data.setdefault('tz_delta', uset.get_tz_delta())
         data.setdefault('max_upload_size', payment_plans.MAX_FILE_SIZE[uset.plan])
 
     return render(req, template, data)
@@ -247,7 +248,7 @@ def podcast_new_ep(req, podcast_slug):
 
     try:
         naive_publish = datetime.datetime.strptime(req.POST.get('publish'), '%Y-%m-%dT%H:%M') # 2015-07-09T12:00
-        adjusted_publish = naive_publish + datetime.timedelta(hours=UserSettings.get_from_user(req.user).tz_offset)
+        adjusted_publish = naive_publish - UserSettings.get_from_user(req.user).get_tz_delta()
 
         ep = PodcastEpisode(
             podcast=pod,
@@ -281,7 +282,7 @@ def edit_podcast_episode(req, podcast_slug, episode_id):
 
     try:
         naive_publish = datetime.datetime.strptime(req.POST.get('publish'), '%Y-%m-%dT%H:%M') # 2015-07-09T12:00
-        adjusted_publish = naive_publish + datetime.timedelta(hours=UserSettings.get_from_user(req.user).tz_offset)
+        adjusted_publish = naive_publish - UserSettings.get_from_user(req.user).get_tz_delta()
 
         ep.title = req.POST.get('title')
         ep.subtitle = req.POST.get('subtitle')

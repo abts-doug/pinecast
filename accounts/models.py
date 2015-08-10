@@ -1,3 +1,5 @@
+import datetime
+
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -59,6 +61,9 @@ class UserSettings(models.Model):
         elif self.force_enable_cdn:
             return True
         return payment_plans.minimum(self.plan, payment_plans.FEATURE_MIN_CDN)
+
+    def get_tz_delta(self):
+        return datetime.timedelta(hours=self.tz_offset)
 
 
 class Network(models.Model):
