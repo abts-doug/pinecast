@@ -4,9 +4,9 @@
     <a class="btn" href="{{ url('new_episode', podcast_slug=podcast.slug)}}">{{ _('Upload One Now') }}</a>
   </div>
 {% else %}
-  <menu class="toolbar">
+  {#<menu class="toolbar">
     <a href="{{ url('podcast_ratings', podcast_slug=podcast.slug) }}" class="btn">{{ _('Podcast Reviews') }}</a>
-  </menu>
+  </menu>#}
   <div class="card-block card">
     <strong>{{ _('Podcast Comment Box') }}</strong>
     <p>{% trans %}Your listeners can leave questions, comments, and other feedback about your podcast. Direct them to this URL. You can shorten the URL with a service like <a href="https://bitly.com">bit.ly</a>.{% endtrans %}</p>
