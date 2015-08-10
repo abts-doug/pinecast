@@ -154,7 +154,7 @@ def process_intervals_bulk(bulk_results, interval_duration, label_maker, pick=No
     # print bulk_results
     processed = [[Interval(x) for x in results['results']] for results in bulk_results]
     cursor_start = min(x[0].start for x in processed if x)
-    cursor_end = max(x[-1].end for x in processed if x)
+    cursor_end = max(x[-1].start for x in processed if x)
 
     # Process the labels first
     label_cursor = cursor_start
