@@ -247,7 +247,7 @@ def podcast_new_ep(req, podcast_slug):
 
     try:
         naive_publish = datetime.datetime.strptime(req.POST.get('publish'), '%Y-%m-%dT%H:%M') # 2015-07-09T12:00
-        adjusted_publish = naive_publish + datetime.timedelta(hours=int(req.POST.get('timezone')))
+        adjusted_publish = naive_publish + datetime.timedelta(hours=UserSettings.get_from_user(req.user).tz_offset)
 
         ep = PodcastEpisode(
             podcast=pod,
@@ -280,8 +280,8 @@ def edit_podcast_episode(req, podcast_slug, episode_id):
         return _pmrender(req, 'dashboard/edit_episode.html', {'podcast': pod, 'episode': ep})
 
     try:
-        naive_publish = datetime.datetime.strptime(req.POST.get('publish'), '%Y-%m-%dT%H:%M:00.000') # 2015-07-09T12:00
-        adjusted_publish = naive_publish + datetime.timedelta(hours=int(req.POST.get('timezone')))
+        naive_publish = datetime.datetime.strptime(req.POST.get('publish'), '%Y-%m-%dT%H:%M') # 2015-07-09T12:00
+        adjusted_publish = naive_publish + datetime.timedelta(hours=UserSettings.get_from_user(req.user).tz_offset)
 
         ep.title = req.POST.get('title')
         ep.subtitle = req.POST.get('subtitle')

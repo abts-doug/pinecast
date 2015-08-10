@@ -79,7 +79,6 @@ var ChartComponent = React.createClass({
             '/analytics/' + this.props.type +
                 '?podcast=' + encodeURIComponent(this.props.podcast) +
                 (this.props.episode ? '&episode=' + encodeURIComponent(this.props.episode) : '') +
-                '&timezone=' + encodeURIComponent(-new Date().getTimezoneOffset() / 60) +
                 (this.props.extra ? '&' + this.props.extra : ''),
             true
         );
