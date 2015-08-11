@@ -150,6 +150,17 @@
       value="https://pinecast.com{{ url('listen', kwargs={'episode_id': str(episode.id)}) }}"
       class="width-full">
   </div>
+  
+  {% if minimum_plan(podcast.owner, PLANS.FEATURE_MIN_TORRENT) %}
+    <div class="card-block card">
+      <strong>{{ _('Torrent URL') }}</strong>
+      <p>{{ _('Note that downloads via BitTorrent are not counted towards listen stats.') }}</p>
+      <input type="url"
+        readonly
+        value="{{ episode.audio_url }}?torrent"
+        class="width-full">
+    </div>
+  {% endif %}
 
 </div>
 

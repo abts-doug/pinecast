@@ -55,7 +55,9 @@ SECRET_THEMES = set([THEME_ABN])
 
 class Site(models.Model):
     SITE_THEMES = (
+        # Inspired by http://themepathra.tumblr.com/
         ('panther', ugettext_lazy('Panther')),
+        # Inspired by http://demo.themestation.net/podcaster/
         ('podcasty', ugettext_lazy('Podcasty')),
         ('zen', ugettext_lazy('Zen')),
         ('wharf', ugettext_lazy('Wharf')),
