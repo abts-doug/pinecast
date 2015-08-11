@@ -50,10 +50,7 @@ def feed(req, podcast_slug):
         return redirect(pod.rss_redirect, permanent=True)
 
     items = []
-    episodes = pod.podcastepisode_set.filter(publish__lt=datetime.datetime.now()).order_by('-publish')
-    if UserSettings.get_from_user(pod.owner).plan == plans.PLAN_DEMO:
-        episodes = episodes[:10]
-
+    episodes = pod.get_episodes()
     is_demo = UserSettings.get_from_user(pod.owner).plan == plans.PLAN_DEMO
 
     for ep in episodes:

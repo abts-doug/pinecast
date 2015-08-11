@@ -2,40 +2,11 @@
 
 {% block main %}
 
-  {% if not pager.has_previous() and site.siteblogpost_set.count() %}
-    {% set post = site.siteblogpost_set.all().order_by('-publish')[0] %}
+  {% for post in pager %}
     <article class="blog-post">
-      <div class="published right">
-        {{ post.publish|pretty_date }}
-      </div>
       <h1><a href="{{ url('site_post', site_slug=site.slug, post_slug=post.slug) }}">{{ post.title }}</a></h1>
       <div>
         {{ post.body|markdown|safe }}
-      </div>
-    </article>
-  {% endif %}
-
-  {% for episode in pager %}
-    <article class="episode">
-      <hgroup>
-        <h1>{{ episode.title }}</h1>
-        {% if episode.subtitle %}
-          <h2>{{ episode.subtitle }}</h2>
-        {% endif %}
-      </hgroup>
-
-      <div class="published">
-        {{ episode.publish|pretty_date }}
-      </div>
-
-      {% if episode.image_url %}
-        <img src="{{ episode.image_url }}" alt="">
-      {% endif %}
-
-      <iframe src="/player/{{ str(episode.id) }}" seamless height="60" style="border:0" class="pinecast-embed"></iframe>
-
-      <div>
-        {{ episode.description|markdown|safe }}
       </div>
     </article>
   {% else %}

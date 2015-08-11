@@ -10,7 +10,10 @@
 
 {% block body %}
   <header style="{{ site.get_cover_style(bgcolor='#27ae60') }}">
-    <h1>{{ site.podcast.name }}</h1>
+    {% if site.logo_url %}
+      <img src="{{ site.logo_url }}" alt="" class="logo" height="100" width="100">
+    {% endif %}
+    <h1><a href="{{ url('site_home', site_slug=site.slug) }}">{{ site.podcast.name }}</a></h1>
     <h2>{{ site.podcast.subtitle }}</h2>
   </header>
   <main>
@@ -36,7 +39,7 @@
         <strong>{{ _('Subscribe') }}</strong>
         <ul>
           <li>
-            <a href="https://pinecast.com/feed/{{ site.podcast.slug }}">{{ _('RSS Feed') }}</a>
+            <a href="https://pinecast.com{{ url('feed', podcast_slug=site.podcast.slug) }}">{{ _('RSS Feed') }}</a>
           </li>
           {% if site.itunes_url %}
             <li>
@@ -54,9 +57,9 @@
         <div class="footer-col">
           <strong>{{ _('Blog Posts') }}</strong>
             <ul>
-              {% for post in site.siteblogpost_set.all()[5:] %}
+              {% for post in site.siteblogpost_set.all()[:5] %}
                 <li>
-                  <a href="blog/{{ post.slug }}">
+                  <a href="{{ url('site_post', site_slug=site.slug, post_slug=post.slug) }}">
                     {{ post.title }}
                   </a>
                 </li>

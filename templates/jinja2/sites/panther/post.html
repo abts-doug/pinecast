@@ -1,0 +1,17 @@
+{% extends 'sites/panther/base.html' %}
+
+{% block main %}
+
+  <article class="blog-post post-full">
+    <h1>{{ post.title }}</h1>
+
+    <div class="published">
+      {{ post.publish|pretty_date }}
+    </div>
+
+    <div>
+      {{ post.body|markdown|safe }}
+    </div>
+  </article>
+
+{% endblock %}

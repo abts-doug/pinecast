@@ -7,6 +7,10 @@ html, body {
     font-size: 12px;
 }
 
+a {
+    color: #c0392b;
+}
+
 header, main, footer {
     margin: 0 auto;
     width: 960px;
@@ -16,7 +20,13 @@ h1 {
     font-family: Lobster;
 }
 
+p {
+    line-height: 1.5em;
+}
+
 header {
+    background-position: center center;
+    background-size: cover;
     color: #fff;
     margin-top: 40px;
     padding: 100px 0;
@@ -26,17 +36,96 @@ header {
 header h1 {
     font-size: 40px;
 }
+header h1 a {
+    color: inherit;
+    text-decoration: none;
+}
+header h1 a:hover {
+    text-decoration: underline;
+}
 header h2 {
     font-size: 20px;
 }
 
 main {
-    background: #ecf0f1;
+    background: #fcfaff;
+}
+
+.blog-post {
+    padding: 40px;
+}
+.blog-post .published.right {
+    float: right;
+    color: #999;
+    font-family: Lobster;
+    font-size: 13px;
+    padding: 20px 0;
+}
+
+.episode {
+    padding: 40px;
+}
+.episode + .episode,
+.blog-post + .episode {
+    border-top: 1px solid #eee;
+}
+
+.episode hgroup h1 {
+    font-family: Lato;
+    font-size: 2em;
+    font-weight: normal;
+    margin: 0;
+    text-align: center;
+    text-transform: uppercase;
+}
+.episode hgroup h2 {
+    color: #d35400;
+    font-family: Lato;
+    font-size: 1.5em;
+    font-weight: normal;
+    margin: 0;
+    text-align: center;
+    text-transform: uppercase;
+}
+.episode div h1 {
+    font-family: Lato;
+    font-size: 1.2em;
+    font-weight: bold;
+}
+.episode div h2 {
+    font-family: Lato;
+    font-size: 1.2em;
+    font-weight: normal;
+}
+.episode div h3 {
+    font-family: Lato;
+    font-size: 1.1em;
+    font-weight: normal;
+}
+.episode .published,
+.blog-post .published:not(.right) {
+    color: #999;
+    font-family: Lobster;
+    font-size: 16px;
+    padding: 20px 0;
+    text-align: center;
+}
+.episode > img {
+    display: block;
+    height: 250px;
+    margin: 10px 0 20px;
+    object-fit: cover;
+    width: 100%;
+}
+.episode .pinecast-embed {
+    margin: 20px 0;
+    width: 100%;
 }
 
 footer {
     background: #111921;
     color: #fff;
+    margin-bottom: 50px;
 }
 .footer-row {
     display: flex;
@@ -53,18 +142,43 @@ footer {
 }
 .footer-col ul {
     list-style: none;
-    padding: 40px;
+    padding: 20px 40px 40px;
 }
 .footer-col li {
     font-size: 14px;
     margin: 0;
+    padding: 10px 0;
+    text-align: center;
 }
 .footer-col li + li {
-    border-top: 1px solid rgba(255, 255, 255, 0.5);
+    border-top: 1px solid rgba(255, 255, 255, 0.125);
 }
 .footer-col li a {
     color: #fff;
 }
 .footer-col li a:visited {
     color: #eee;
+}
+
+.pagination {
+    font-size: 1.2em;
+    font-weight: bold;
+    padding: 30px;
+    text-align: center;
+}
+
+.empty-state {
+    font-style: italic;
+    padding: 150px;
+    text-align: center;
+}
+
+.post-full h1 {
+    color: #2c3e50;
+    font-size: 2.5em;
+    margin-bottom: 1em;
+    text-align: center;
+}
+.post-full .published {
+    margin-bottom: 2em;
 }

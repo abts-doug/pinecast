@@ -62,6 +62,14 @@ class Podcast(models.Model):
         return bool(
             self.assetimportrequest_set.filter(failed=False, resolved=False).count())
 
+    def get_episodes(self):
+        episodes = self.podcastepisode_set.filter(
+            publish__lt=datetime.datetime.now(),
+            awaiting_import=False).order_by('-publish')
+        if UserSettings.get_from_user(self.owner).plan == payment_plans.PLAN_DEMO:
+            episodes = episodes[:10]
+        return episodes
+
     def __unicode__(self):
         return self.name
 

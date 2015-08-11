@@ -85,6 +85,9 @@ class Site(models.Model):
         else:
             return 'background-color: #666'
 
+    def __unicode__(self):
+        return '%s: %s' % (self.slug, self.podcast.name)
+
 
 class SiteLink(models.Model):
     site = models.ForeignKey(Site)
@@ -99,6 +102,9 @@ class SiteBlogPost(models.Model):
     created = models.DateTimeField(auto_now=True)
     publish = models.DateTimeField()
     body = models.TextField()
+
+    def __unicode__(self):
+        return '%s on %s' % (self.slug, self.site.slug)
 
     class Meta:
         unique_together = (('site', 'slug'), )
