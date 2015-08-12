@@ -1,14 +1,15 @@
-{% extends 'sites/panther/base.html' %}
+{% extends 'sites/podcasty/base.html' %}
 
 {% block main %}
 
   {% if not pager.has_previous() and site.siteblogpost_set.count() %}
     {% set post = site.siteblogpost_set.all().order_by('-publish')[0] %}
     <article class="blog-post">
+      <h1 class="teaser">{{ _('From the blog') }}</h1>
       <div class="published right">
         {{ post.publish|pretty_date }}
       </div>
-      <h1><a href="{{ url('site_post', site_slug=site.slug, post_slug=post.slug) }}">{{ post.title }}</a></h1>
+      <h2><a href="{{ url('site_post', site_slug=site.slug, post_slug=post.slug) }}">{{ post.title }}</a></h2>
       <div>
         {{ post.body|markdown|safe }}
       </div>

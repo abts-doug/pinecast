@@ -54,6 +54,13 @@ main {
 .blog-post {
     padding: 40px;
 }
+.blog-post .teaser {
+    color: #222;
+    font-family: Lato;
+    font-size: 18px;
+    text-align: center;
+    text-transform: uppercase;
+}
 .blog-post .published.right {
     float: right;
     color: #999;
@@ -94,7 +101,7 @@ main {
 }
 .episode div h2 {
     font-family: Lato;
-    font-size: 1.2em;
+    font-size: 18px;
     font-weight: normal;
 }
 .episode div h3 {

@@ -1,0 +1,76 @@
+{% extends 'sites/podcasty/base.html' %}
+
+{% block main %}
+  {% set is_first_page = pager.number == 1 and len(pager) %}
+
+  {% if is_first_page %}
+    {% set episode = pager[0] %}
+    <article class="episode hero">
+      <b style="{{ site.get_cover_style(bgcolor='#27ae60') }}"></b>
+      <div>
+        <hgroup>
+          <strong>{{ _('Latest Episode') }}</strong>
+          <h1>{{ episode.title }}</h1>
+        </hgroup>
+
+        <iframe src="/player/{{ str(episode.id) }}" seamless height="60" style="border:0" class="pinecast-embed"></iframe>
+
+        <div class="subscribe">
+          <strong>{{ _('Subscribe to keep up') }}</strong>
+          <a class="btn" href="https://pinecast.com{{ url('feed', podcast_slug=site.podcast.slug) }}">
+            {{ _('Subscribe with RSS') }}
+          </a>
+          {%- if site.itunes_url -%}
+            <a class="btn" href="{{ site.itunes_url }}">
+              {{ _('Subscribe on iTunes') }}
+            </a>
+          {%- endif -%}
+          {%- if site.stitcher_url -%}
+            <a class="btn" href="{{ site.stitcher_url }}">
+              {{ _('Subscribe on Stitcher') }}
+            </a>
+          {%- endif -%}
+        </div>
+
+      </div>
+    </article>
+  {% endif %}
+
+  {% for episode in pager[1 if is_first_page else 0:] %}
+    <article class="episode">
+      <div>
+        <img src="{{ episode.image_url }}" alt="" height="300" width="300">
+        <hgroup>
+          <h1>{{ episode.title }}</h1>
+          {% if episode.subtitle %}
+            <h2>{{ episode.subtitle }}</h2>
+          {% endif %}
+        </hgroup>
+
+        <div class="description">
+          {{ episode.description|markdown|safe }}
+        </div>
+
+        <iframe src="/player/{{ str(episode.id) }}" seamless height="60" style="border:0" class="pinecast-embed"></iframe>
+
+      </div>
+    </article>
+  {% else %}
+    <div class="empty-state">
+      {{ _('There is nothing here yet.') }}
+    </div>
+  {% endfor %}
+
+  {% if pager.has_other_pages() %}
+    <div class="pagination">
+      {% if pager.has_next() %}
+        <a class="btn" href="{{ url('site_home', site_slug=site.slug) }}?page={{ pager.next_page_number() }}">{{ _('Back in time') }}</a>
+      {% endif %}
+      {% if pager.has_next() and pager.has_previous() %}&bull;{% endif %}
+      {% if pager.has_previous() %}
+        <a class="btn" href="{{ url('site_home', site_slug=site.slug) }}?page={{ pager.previous_page_number() }}">{{ _('Onwards to the future') }}</a>
+      {% endif %}
+    </div>
+  {% endif %}
+
+{% endblock %}
