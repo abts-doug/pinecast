@@ -6,7 +6,7 @@
     <article class="blog-post">
       <h1><a href="{{ url('site_post', site_slug=site.slug, post_slug=post.slug) }}">{{ post.title }}</a></h1>
       <div>
-        {{ post.body|markdown|safe }}
+        {{ post.body|markdown|sanitize|safe }}
       </div>
     </article>
   {% else %}

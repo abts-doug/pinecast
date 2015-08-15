@@ -10,7 +10,7 @@
     </div>
 
     <div>
-      {{ post.body|markdown|safe }}
+      {{ post.body|markdown|sanitize|safe }}
     </div>
   </article>
 

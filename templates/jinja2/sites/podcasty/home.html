@@ -48,7 +48,7 @@
         </hgroup>
 
         <div class="description">
-          {{ episode.description|markdown|safe }}
+          {{ episode.description|markdown|sanitize|safe }}
         </div>
 
         <iframe src="https://pinecast.com/player/{{ str(episode.id) }}" seamless height="60" style="border:0" class="pinecast-embed"></iframe>

@@ -11,7 +11,7 @@
       </div>
       <h2><a href="{{ url('site_post', site_slug=site.slug, post_slug=post.slug) }}">{{ post.title }}</a></h2>
       <div>
-        {{ post.body|markdown|safe }}
+        {{ post.body|markdown|sanitize|safe }}
       </div>
     </article>
   {% endif %}
@@ -36,7 +36,7 @@
       <iframe src="https://pinecast.com/player/{{ str(episode.id) }}" seamless height="60" style="border:0" class="pinecast-embed"></iframe>
 
       <div>
-        {{ episode.description|markdown|safe }}
+        {{ episode.description|markdown|sanitize|safe }}
       </div>
     </article>
   {% else %}
