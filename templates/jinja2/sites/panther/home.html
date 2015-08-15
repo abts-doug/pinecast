@@ -33,7 +33,7 @@
         <img src="{{ episode.image_url }}" alt="">
       {% endif %}
 
-      <iframe src="/player/{{ str(episode.id) }}" seamless height="60" style="border:0" class="pinecast-embed"></iframe>
+      <iframe src="https://pinecast.com/player/{{ str(episode.id) }}" seamless height="60" style="border:0" class="pinecast-embed"></iframe>
 
       <div>
         {{ episode.description|markdown|safe }}
