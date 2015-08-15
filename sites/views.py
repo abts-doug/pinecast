@@ -12,8 +12,16 @@ SITE_EPISODES_PER_PAGE = 5
 
 
 def _srender(req, site, template, data=None):
+    def _subdomain_reverse(*args, **kwargs):
+        if 'site_slug' in kwargs:
+            del kwargs['site_slug']
+        import urls_internal
+        return reverse(urlconf=urls_internal, *args, **kwargs)
+
     data = data or {}
     data.setdefault('site', site)
+    if 'site_hostname' in req.META:
+        data['url'] = _subdomain_reverse
     return render(req, 'sites/%s/%s' % (site.theme, template), data)
 
 

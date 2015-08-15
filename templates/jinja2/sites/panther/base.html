@@ -39,7 +39,7 @@
         <strong>{{ _('Subscribe') }}</strong>
         <ul>
           <li>
-            <a href="https://pinecast.com{{ url('feed', podcast_slug=site.podcast.slug) }}">{{ _('RSS Feed') }}</a>
+            <a href="https://pinecast.com/feed/{{ site.podcast.slug }}">{{ _('RSS Feed') }}</a>
           </li>
           {% if site.itunes_url %}
             <li>

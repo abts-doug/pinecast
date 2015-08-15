@@ -61,6 +61,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
 
+    'sites.middleware.subdomains.SubdomainMiddleware',
     'pinecast.middleware.hnredirect.HostnameRedirect',
 )
 

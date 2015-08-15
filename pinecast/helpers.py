@@ -24,7 +24,11 @@ def reverse(viewname, kwargs=None, **kw):
     if kwargs is None:
         kwargs = {}
     kwargs.update(kw)
-    return reverse_django(viewname, kwargs=kwargs)
+    other_kw = {}
+    if 'urlconf' in kwargs:
+        other_kw['urlconf'] = kwargs['urlconf']
+        del kwargs['urlconf']
+    return reverse_django(viewname, kwargs=kwargs, **other_kw)
 
 
 def tz_offset(tz_name):
