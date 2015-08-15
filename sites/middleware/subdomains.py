@@ -30,6 +30,7 @@ class SubdomainMiddleware(object):
         except Site.DoesNotExist:
             return None
 
-        func, args, kwargs = resolve(path, urls_internal)
+        path_to_resolve = path if '?' not in path else path[:path.index('?')]
+        func, args, kwargs = resolve(path_to_resolve, urls_internal)
         req.META['site_hostname'] = True
         return func(req, site_slug=pieces[0], *args, **kwargs)
