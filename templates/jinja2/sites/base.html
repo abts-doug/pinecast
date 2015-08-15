@@ -3,6 +3,7 @@
   <head>
     <title>{% block title %}{% endblock %}</title>
     {% block head %}{% endblock %}
+    <link rel="alternate" type="application/rss+xml" title="{{ _('Blog RSS Feed') }}" href="{{ url('blog_rss', site_slug=site.slug) }}">
   </head>
   <body>
     {% block body %}{% endblock %}
