@@ -30,7 +30,7 @@
     border-radius: 3px;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
     margin: 2px;
-    padding: 10px 30px 10px 60px;
+    padding: 10px 45px 10px 60px;
     position: relative;
   }
   .main-body > * {
@@ -71,9 +71,19 @@
     color: #333;
   }
   .download-button {
+    margin-top: -2px;
     position: absolute;
     right: 5px;
     top: 5px;
+  }
+  .feedback-button {
+    position: absolute;
+    right: 30px;
+    top: 5px;
+  }
+  .download-button:active,
+  .feedback-button:active {
+    top: 7px;
   }
   </style>
 </head>
@@ -90,8 +100,13 @@
     </span>
   </div>
   <button class="play-button">&#9654;</button>
+  {% if minimum_plan(episode.podcast.owner, PLANS.FEATURE_MIN_COMMENT_BOX) %}
+    <a class="feedback-button" href="{{ url('ep_comment_box', podcast_slug=episode.podcast.slug, episode_id=str(episode.id)) }}" title="{{ _('Leave a Comment') }}" target="_blank">
+      <img src="/static/img/comment.svg" alt="{{ _('Leave a Comment') }}" height="20" width="20">
+    </a>
+  {% endif %}
   <a class="download-button" href="/listen/{{ str(episode.id) }}" title="{{ _('Download File') }}" download target="_blank">
-    <img src="/static/img/download.svg" alt="Download" height="20" width="20">
+    <img src="/static/img/download.svg" alt="{{ _('Download') }}" height="20" width="20">
   </a>
   <i class="seek-bar"></i>
 </div>
