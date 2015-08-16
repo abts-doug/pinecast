@@ -26,7 +26,6 @@ body {
 h1, h2, h3 {
     font-family: Titillium Web, sans-serif;
     margin: 0;
-    padding-left: 10px;
 }
 
 a {
@@ -136,7 +135,7 @@ button:disabled, .btn:disabled {
 }
 
 .btn-danger {
-    background: #e74c3c;
+    background: #FF5252;
 }
 
 .btn-neutral {
@@ -200,7 +199,7 @@ button:disabled, .btn:disabled {
 
 .ticket {
     background: #fff;
-    border: 1px solid #ccc;
+    border: 1px solid #B6B6B6;
     border-radius: 3px;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
     font-family: Titillium Web;
@@ -219,19 +218,24 @@ button:disabled, .btn:disabled {
 }
 
 .ticket .ticket-details {
-    border-top: 1px solid #ccc;
-    color: #666;
+    border-top: 1px solid #B6B6B6;
+    color: #607D8B;
     font-family: Lato;
     font-size: 0.80em;
     height: 25px;
     line-height: 25px;
     padding: 0;
+    opacity: 0.7;
     overflow: hidden;
     text-overflow: ellipsis;
+    transition: opacity 0.2s;
     white-space: nowrap;
 }
+.ticket:hover .ticket-details {
+    opacity: 1;
+}
 .ticket .ticket-details span {
-    border-right: 1px solid #ccc;
+    border-right: 1px solid #B6B6B6;
     display: inline-block;
     line-height: 25px;
     max-width: 30%;
@@ -399,18 +403,8 @@ main > header > hgroup > h2 {
 }
 
 .main-container {
-    min-height: 100%;
-    padding: 50px 0 50px 200px;
-    position: relative;
+    padding: 50px 10%;
     z-index: 5;
-}
-.main-container > nav {
-    background: #009688;
-    bottom: 0;
-    left: 0;
-    position: fixed;
-    top: 50px;
-    width: 200px;
 }
 
 .main-container main {
@@ -529,7 +523,13 @@ menu.toolbar li {
     margin-right: 20px;
 }
 menu.toolbar-right {
-    float: right;
+    bottom: 0;
+    height: 2em;
+    line-height: 2em;
+    margin: auto;
+    position: absolute;
+    right: 0;
+    top: 0;
 }
 menu.toolbar-right li {
     margin: 0 0 0 10px;
@@ -642,6 +642,31 @@ menu.tabs a.selected {
     clear: left;
     display: inline-block;
     float: left;
+}
+
+.dashboard-networks {
+    list-style: none;
+    padding: 0;
+    text-align: center;
+}
+.dashboard-networks li {
+    background: #fff;
+    border: 1px solid #ccc;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    display: inline-block;
+    margin: 0 15px 15px 0;
+    width: 350px;
+}
+.dashboard-networks li > a {
+    display: block;
+    font-family: Titillium Web;
+    font-size: 18px;
+    font-weight: bold;
+    padding: 15px;
+}
+.dashboard-networks li .stat {
+    border-top: 1px solid #ccc;
+    padding: 10px 15px;
 }
 
 .dashboard-podcasts {
@@ -874,13 +899,43 @@ abbr {
 }
 
 
-.breadcrumb {
-    line-height: 1em;
-    margin-bottom: -20px;
-    padding: 10px 10px 20px;
+main > header {
+    padding: 20px 0;
+    position: relative;
 }
-.breadcrumb a {
-    color: #95a5a6;
+main > header h1,
+main > header h2 {
+    text-align: center;
+}
+
+
+.breadcrumb {
+    bottom: 0;
+    color: #607D8B;
+    font-family: Titillium Web;
+    font-size: 14px;
+    display: block;
+    height: 2em;
+    left: 0;
+    line-height: 2em;
+    margin: auto;
+    padding-left: 25px;
+    position: absolute;
+    top: 0;
+}
+.breadcrumb svg {
+    bottom: 0;
+    display: block;
+    height: 20px;
+    left: 0;
+    margin: auto -25px auto 0;
+    max-width: 25%;
+    overflow: hidden;
+    position: absolute;
+    text-overflow: ellipsis;
+    top: 0;
+    white-space: nowrap;
+    width: 20px;
 }
 
 address.user-card {

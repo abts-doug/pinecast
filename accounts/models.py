@@ -6,6 +6,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy
 
 import payment_plans
+from pinecast.helpers import cached_method
 
 
 class BetaRequest(models.Model):
@@ -55,6 +56,7 @@ class UserSettings(models.Model):
         uset = cls.get_from_user(user)
         return payment_plans.minimum(uset.plan, min_plan)
 
+    @cached_method
     def use_cdn(self):
         if self.force_disable_cdn:
             return False
@@ -62,6 +64,7 @@ class UserSettings(models.Model):
             return True
         return payment_plans.minimum(self.plan, payment_plans.FEATURE_MIN_CDN)
 
+    @cached_method
     def get_tz_delta(self):
         return datetime.timedelta(hours=self.tz_offset)
 
@@ -78,3 +81,11 @@ class Network(models.Model):
 
     def __unicode__(self):
         return self.name
+
+    @cached_method
+    def get_member_count(self):
+        return self.members.count()
+
+    @cached_method
+    def get_podcast_count(self):
+        return self.podcast_set.count()

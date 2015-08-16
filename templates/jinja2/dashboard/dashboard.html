@@ -1,6 +1,34 @@
 {% extends 'dashboard/base.html' %}
 {% block dashboard_body %}
 
+<header>
+  <h1>{{ _('Your Dashboard') }}</h1>
+</header>
+
+{% if networks %}
+  <ul class="dashboard-networks">
+    {% for n in networks %}
+      <li>
+        <a href="{{ url('network_dashboard', network_id=str(n.id)) }}">{{ n.name }}</a>
+        <div class="stat">
+          {% trans n=n.get_podcast_count() %}
+            {{ n }} show
+          {% pluralize %}
+            {{ n }} shows
+          {% endtrans %}
+        </div>
+        <div class="stat">
+          {% trans n=n.get_member_count() %}
+            {{ n }} member
+          {% pluralize %}
+            {{ n }} members
+          {% endtrans %}
+        </div>
+      </li>
+    {% endfor %}
+  </ul>
+{% endif %}
+
 <ul class="dashboard-podcasts">
   {% for p in podcasts %}
     <li class="ticket{{ ' owned-external' if p.owner != user else '' }}"

@@ -2,6 +2,8 @@
 {% block dashboard_body %}
 
 <header>
+  {{ breadcrumb(_('Dashboard'), url('dashboard')) }}
+
   <menu class="toolbar toolbar-right">
     <li><a class="btn" href="{{ url('new_episode', podcast_slug=podcast.slug) }}">{{ _('New Episode') }}</a></li>
     <li><a class="btn btn-neutral" href="{{ url('edit_podcast', podcast_slug=podcast.slug) }}">{{ _('Edit') }}</a></li>

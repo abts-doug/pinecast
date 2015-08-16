@@ -32,19 +32,19 @@
 <div class="tab-podcasts">
   <ul class="dashboard-podcasts">
     {% for p in net_podcasts %}
-      <li class="card">
-        <strong><a href="{{ url('podcast_dashboard', podcast_slug=p.slug) }}">{{ p.name }}</a></strong>
-        <img src="{{ p.cover_image|https }}" alt="">
+      <li class="ticket">
+        <a href="{{ url('podcast_dashboard', podcast_slug=p.slug) }}">{{ p.name }}</a>
         {% if user == network.owner or p.owner == user %}
-          <menu class="toolbar">
-            <a class="btn btn-neutral" href="{{ url('network_remove_podcast', network_id=network.id, podcast_slug=p.slug) }}">{{ _('Remove from Network') }}</a>
-          </menu>
+          <div class="ticket-details">
+            <span>
+              <a class="b" href="{{ url('network_remove_podcast', network_id=network.id, podcast_slug=p.slug) }}">{{ _('Remove from Network') }}</a>
+            </span>
+          </div>
         {% endif %}
       </li>
     {% endfor %}
-    <li class="empty-state">
+    <li class="ticket option">
       <a href="{{ url('network_add_show', network_id=network.id) }}">
-        <i>&plus;</i>
         <span>
           {% if network.podcast_set.count() %}
             {{ _('Add another podcast to the network') }}
