@@ -22,6 +22,7 @@ def _srender(req, site, template, data=None):
     data.setdefault('site', site)
     if 'site_hostname' in req.META:
         data['url'] = _subdomain_reverse
+        data['url_global'] = reverse
     return render(req, 'sites/%s/%s' % (site.theme, template), data)
 
 

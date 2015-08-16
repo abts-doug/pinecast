@@ -13,11 +13,11 @@
           <h1>{{ episode.title }}</h1>
         </hgroup>
 
-        <iframe src="https://pinecast.com/player/{{ str(episode.id) }}" seamless height="60" style="border:0" class="pinecast-embed"></iframe>
+        <iframe src="https://pinecast.com{{ url_global('player', episode_id=str(episode.id)) }}" seamless height="60" style="border:0" class="pinecast-embed"></iframe>
 
         <div class="subscribe">
           <strong>{{ _('Subscribe to keep up') }}</strong>
-          <a class="btn" href="https://pinecast.com/feed/{{ site.podcast.slug }}">
+          <a class="btn" href="https://pinecast.com{{ url_global('feed', podcast_slug=site.podcast.slug) }}">
             {{ _('Subscribe with RSS') }}
           </a>
           {%- if site.itunes_url -%}
@@ -51,7 +51,7 @@
           {{ episode.description|markdown|sanitize|safe }}
         </div>
 
-        <iframe src="https://pinecast.com/player/{{ str(episode.id) }}" seamless height="60" style="border:0" class="pinecast-embed"></iframe>
+        <iframe src="https://pinecast.com{{ url_global('player', episode_id=str(episode.id)) }}" seamless height="60" style="border:0" class="pinecast-embed"></iframe>
 
       </div>
     </article>

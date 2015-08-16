@@ -23,7 +23,7 @@
     <div class="footer-row">
       {% if site.sitelink_set.count() %}
         <div class="footer-col"> 
-          <strong>{{ _('Links') }}</strong>
+          <strong>{{ _('Links') }}</strong> 
           <ul>
             {% for link in site.sitelink_set.all() %}
               <li>
@@ -39,7 +39,7 @@
         <strong>{{ _('Subscribe') }}</strong>
         <ul>
           <li>
-            <a href="https://pinecast.com/feed/{{ site.podcast.slug }}">{{ _('RSS Feed') }}</a>
+            <a href="https://pinecast.com{{ url_global('feed', podcast_slug=site.podcast.slug) }}">{{ _('RSS Feed') }}</a>
           </li>
           {% if site.itunes_url %}
             <li>

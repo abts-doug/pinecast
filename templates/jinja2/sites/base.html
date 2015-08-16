@@ -6,6 +6,46 @@
     <link rel="alternate" type="application/rss+xml" title="{{ _('Blog RSS Feed') }}" href="{{ url('blog_rss', site_slug=site.slug) }}">
   </head>
   <body>
+    {% if minimum_plan(site.podcast.owner, PLANS.FEATURE_MIN_COMMENT_BOX) %}
+      <aside class="leave-feedback">
+        <a href="https://pinecast.com{{ url_global('podcast_comment_box', podcast_slug=site.podcast.slug) }}">
+          {{ _('Leave a note in the comment box') }}
+        </a>
+      </aside>
+      <style>
+      .leave-feedback {
+        bottom: 0;
+        padding: 0 15px 15px 0;
+        position: fixed;
+        right: 0;
+      }
+      .leave-feedback a {
+        background: #fafafa url(/static/img/comment.svg) no-repeat 10px center;
+        border-radius: 3px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        display: block;
+        font-size: 1.5em;
+        padding: 15px;
+        padding-left: 50px;
+        position: relative;
+        top: 0;
+        transition: box-shadow 0.2s, top 0.2s;
+        width: 150px;
+      }
+      .leave-feedback a:hover {
+        box-shadow: 0 5px 5px rgba(0, 0, 0, 0.5);
+      }
+      .leave-feedback a:active {
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+        top: 3px;
+      }
+      @media (max-width: 700px) {
+        .leave-feedback {
+          position: static;
+        }
+      }
+      </style>
+    {% endif %}
     {% block body %}{% endblock %}
   </body>
 </html>
