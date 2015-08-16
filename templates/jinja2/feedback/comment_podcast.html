@@ -21,6 +21,8 @@
       <textarea name="message" required>{{ default.get('message') }}</textarea>
     </label>
 
+    <div class="g-recaptcha" data-sitekey="{{ RECAPTCHA_KEY }}"></div>
+
     <menu class="buttons">
       <button>{{ _('Submit Feedback') }}</button>
     </menu>

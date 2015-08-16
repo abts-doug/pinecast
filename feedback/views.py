@@ -1,3 +1,5 @@
+import requests
+from django.conf import settings
 from django.http import Http404
 from django.shortcuts import get_object_or_404, render
 
@@ -18,6 +20,9 @@ def podcast_comment_box(req, podcast_slug):
         return _pmrender(req, 'feedback/comment_podcast.html', {'podcast': pod})
 
     try:
+        if not _validate_recaptcha(req):
+            raise Exception('Invalid ReCAPTCHA')
+
         ip = analyze.get_request_ip(req)
         f = Feedback(
             podcast=pod,
@@ -52,6 +57,9 @@ def ep_comment_box(req, podcast_slug, episode_id):
         return _pmrender(req, 'feedback/comment_episode.html', {'podcast': pod, 'episode': ep})
 
     try:
+        if not _validate_recaptcha(req):
+            raise Exception('Invalid ReCAPTCHA')
+
         ip = analyze.get_request_ip(req)
         f = Feedback(
             podcast=pod,
@@ -76,3 +84,23 @@ def ep_comment_box(req, podcast_slug, episode_id):
                          {'podcast': pod, 'episode': ep, 'error': True, 'default': req.POST})
 
     return _pmrender(req, 'feedback/thanks.html', {'podcast': pod})
+
+
+def _validate_recaptcha(req):
+    response = req.POST.get('g-recaptcha-response')
+    ip = analyze.get_request_ip(req)
+
+    result = requests.post(
+        'https://www.google.com/recaptcha/api/siteverify',
+        data={'response': response,
+              'secret': settings.RECAPTCHA_SECRET,
+              'remoteip': ip})
+    try:
+        parsed = result.json()
+    except Exception:
+        return False
+
+    if parsed.get('error-codes'):
+        print parsed.get('error-codes')
+
+    return parsed['success']

@@ -41,6 +41,7 @@ def environment(**options):
         'PLAN_NAMES': payment_plans.PLANS_MAP,
         'PLANS': payment_plans.PLANS_RAW,
         'SUPPORT_URL': settings.SUPPORT_URL,
+        'RECAPTCHA_KEY': settings.RECAPTCHA_KEY,
         'timezones': pytz.common_timezones,
         'tz_offset': helpers.tz_offset,
     })

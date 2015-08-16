@@ -150,3 +150,7 @@ select {
 menu {
     padding: 0;
 }
+
+.g-recaptcha div[style] {
+    margin: auto;
+}

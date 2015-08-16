@@ -178,6 +178,9 @@ SES_SECRET_KEY = os.environ.get('SES_SECRET_KEY')
 SQS_IMPORT_QUEUE = 'import_work'
 SNS_IMPORT_BUS = 'arn:aws:sns:us-east-1:575938143306:import_notify'
 
+RECAPTCHA_KEY = os.environ.get('RECAPTCHA_KEY')
+RECAPTCHA_SECRET = os.environ.get('RECAPTCHA_SECRET')
+
 LAMBDA_ACCESS_SECRET = os.environ.get('LAMBDA_ACCESS_SECRET')
 RSS_FETCH_ENDPOINT = os.environ.get('RSS_FETCH_ENDPOINT')
 
