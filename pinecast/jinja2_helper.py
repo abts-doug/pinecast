@@ -82,7 +82,30 @@ def pretty_date(time=False):
     day_diff = diff.days
 
     if day_diff < 0:
-        return ugettext('the future')
+        day_diff *= -1
+        second_diff *= -1
+        if day_diff < 1:
+            if second_diff < 10:
+                return ugettext('imminently')
+            if second_diff < 60:
+                return ungettext('{n} second from now', '{n} seconds from now', second_diff).format(n=second_diff)
+            if second_diff < 120:
+                return  ugettext('in a minute')
+            if second_diff < 3600:
+                return ungettext('{n} minute from now', '{n} minutes from now', second_diff / 60).format(n=second_diff / 60)
+            if second_diff < 7200:
+                return ugettext('in an hour')
+            if second_diff < 86400:
+                return ungettext('{n} hour from now', '{n} hours from now', second_diff / 3600).format(n=second_diff / 3600)
+        if day_diff == 1:
+            return ugettext('tomorrow')
+        if day_diff < 7:
+            return ungettext('{n} day from now', '{n} days from now', day_diff).format(n=day_diff)
+        if day_diff < 31:
+            return ungettext('{n} week from now', '{n} weeks from now', day_diff / 7).format(n=day_diff / 7)
+        if day_diff < 365:
+            return ungettext('{n} month from now', '{n} months from now', day_diff / 30).format(n=day_diff / 30)
+        return ungettext('{n} year from now', '{n} years from now', day_diff / 365).format(n=day_diff / 365)
 
     if day_diff == 0:
         if second_diff < 10:
@@ -90,15 +113,15 @@ def pretty_date(time=False):
         if second_diff < 60:
             return ungettext('{n} second ago', '{n} seconds ago', second_diff).format(n=second_diff)
         if second_diff < 120:
-            return  "a minute ago"
+            return  ugettext('a minute ago')
         if second_diff < 3600:
             return ungettext('{n} minute ago', '{n} minutes ago', second_diff / 60).format(n=second_diff / 60)
         if second_diff < 7200:
-            return "an hour ago"
+            return ugettext('an hour ago')
         if second_diff < 86400:
             return ungettext('{n} hour ago', '{n} hours ago', second_diff / 3600).format(n=second_diff / 3600)
     if day_diff == 1:
-        return "Yesterday"
+        return ugettext('yesterday')
     if day_diff < 7:
         return ungettext('{n} day ago', '{n} days ago', day_diff).format(n=day_diff)
     if day_diff < 31:

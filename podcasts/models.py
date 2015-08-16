@@ -83,7 +83,7 @@ class Podcast(models.Model):
     def get_most_recent_publish_date(self):
         if not self.podcastepisode_set.count():
             return None
-        return self.podcastepisode_set.filter(publish__gt=datetime.datetime.now()).count()
+        return self.get_episodes()[0].publish
 
     def __unicode__(self):
         return self.name

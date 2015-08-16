@@ -30,6 +30,15 @@
             </b>
           </span>
         {%- endif -%}
+        {%- if p.get_most_recent_publish_date() -%}
+          <span>
+            <b>
+              {% trans timestamp=p.get_most_recent_publish_date()|pretty_date %}
+                Last published {{ timestamp }}
+              {% endtrans %}
+            </b>
+          </span>
+        {%- endif -%}
       </div>
     </li>
   {% endfor %}
