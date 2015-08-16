@@ -208,6 +208,13 @@ def rotating_colors(sequence, key='color', highlight_key='highlight'):
 
 def _colors_forever():
     while 1:
+        yield '#7C4DFF'
+        yield '#4CAF50'
+        yield '#E040FB'
+        yield '#2196F3'
+        yield '#FF9800'
+        yield '#FF4081'
+
         yield '#1abc9c'
         yield '#2ecc71'
         yield '#3498db'

@@ -15,14 +15,15 @@
     <img src="{{ gravatar(user.email) }}" alt="">
     <span>{{ user.username }}</span>
   </a>
+  <menu>
+    <li><a href="{{ url('user_settings') }}">{{ _('Settings') }}</a></li>
+    <li><a href="{{ url('dashboard') }}">{{ _('Dashboard') }}</a></li>
+    <li><a href="{{ url('logout') }}">{{ _('Sign Out') }}</a></li>
+  </menu>
 </header>
 <div class="main-container">
   <nav class="sidebar">
     {% block sidebar %}
-      <ul>
-        <li><a href="{{ url('logout') }}">{{ _('Sign Out') }}</a></li>
-        <li><a href="{{ url('dashboard') }}">{{ _('All Podcasts') }}</a></li>
-      </ul>
       {% if podcasts %}
         <ul>
           {% for p in podcasts %}

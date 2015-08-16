@@ -78,8 +78,8 @@ def podcast_subscriber_history(req):
                 {'label': pod.name,
                  'data': out['dataset'],
                  'fillColor': 'transparent',
-                 'strokeColor': '#2980b9',
-                 'pointColor': '#3498db',
+                 'strokeColor': '#303F9F',
+                 'pointColor': '#3F51B5',
                  'pointStrokeColor': '#fff'}
             ]}
 
@@ -109,8 +109,8 @@ def podcast_listen_history(req):
                 {'label': pod.name,
                  'data': [],
                  'fillColor': 'transparent',
-                 'strokeColor': '#2980b9',
-                 'pointColor': '#3498db',
+                 'strokeColor': '#303F9F',
+                 'pointColor': '#3F51B5',
                  'pointStrokeColor': '#fff'}
             ]}
 
@@ -119,8 +119,8 @@ def podcast_listen_history(req):
                 {'label': pod.name,
                  'data': out['dataset'],
                  'fillColor': 'transparent',
-                 'strokeColor': '#2980b9',
-                 'pointColor': '#3498db',
+                 'strokeColor': '#303F9F',
+                 'pointColor': '#3F51B5',
                  'pointStrokeColor': '#fff'}
             ]}
 
@@ -151,8 +151,8 @@ def episode_listen_history(req):
                 {'label': ep.title,
                  'data': [],
                  'fillColor': 'transparent',
-                 'strokeColor': '#2980b9',
-                 'pointColor': '#3498db',
+                 'strokeColor': '#303F9F',
+                 'pointColor': '#3F51B5',
                  'pointStrokeColor': '#fff'}
             ]}
 
@@ -161,8 +161,8 @@ def episode_listen_history(req):
                 {'label': ep.title,
                  'data': out['dataset'],
                  'fillColor': 'transparent',
-                 'strokeColor': '#2980b9',
-                 'pointColor': '#3498db',
+                 'strokeColor': '#303F9F',
+                 'pointColor': '#3F51B5',
                  'pointStrokeColor': '#fff'}
             ]}
 
@@ -303,8 +303,8 @@ def network_listen_history(req):
             'label': pod.name,
             'data': dataset,
             'fillColor': 'transparent',
-            'strokeColor': '#2980b9',
-            'pointColor': '#3498db',
+            'strokeColor': '#303F9F',
+            'pointColor': '#3F51B5',
             'pointStrokeColor': '#fff',
         })
 

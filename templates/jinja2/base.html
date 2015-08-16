@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>{{ _('Pinecast') }}</title>
+  <title>{% block title %}{{ _('Pinecast') }}{% endblock %}</title>
   {% block css %}
   <link type="text/css" rel="stylesheet" href="/static/css/styles.css">
   {% endblock %}

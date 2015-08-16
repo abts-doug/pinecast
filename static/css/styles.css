@@ -311,6 +311,7 @@ body > header .user-card {
     float: right;
     font-weight: bold;
     padding-right: 10px;
+    position: relative;
     text-align: right;
 }
 .user-card:hover {
@@ -323,6 +324,61 @@ body > header .user-card {
     vertical-align: middle;
     width: 20px;
 }
+
+.user-card + menu {
+    background: #fff;
+    border-radius: 3px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    display: none;
+    line-height: 35px;
+    margin: 0;
+    padding: 10px 0;
+    position: fixed;
+    right: 5px;
+    top: 55px;
+    width: 150px;
+}
+.user-card:hover + menu,
+.user-card + menu:hover {
+    display: block;
+}
+.user-card + menu li {
+    display: block;
+}
+.user-card + menu li a {
+    color: #212121;
+    display: block;
+    padding: 0 10px;
+}
+.user-card + menu li a:hover,
+.user-card + menu li a:focus {
+    background: #eee;
+    text-decoration: none;
+}
+.user-card + menu:before {
+    content: "";
+    display: block;
+    height: 5px;
+    left: 0;
+    position: absolute;
+    top: -5px;
+    width: 100%;
+}
+.user-card + menu:after {
+    border: 5px solid transparent;
+    border-top-width: 0;
+    border-bottom: 5px solid #fff;
+    content: "";
+    display: block;
+    height: 0;
+    left: 0;
+    margin: auto;
+    position: absolute;
+    right: 0;
+    top: -5px;
+    width: 0;
+}
+
 
 main > header {
     line-height: 70px;
@@ -466,7 +522,8 @@ menu {
     margin: 10px 0;
     padding: 0 10px;
 }
-menu li {
+menu.tabs li,
+menu.toolbar li {
     display: inline-block;
     list-style: none;
     margin-right: 20px;
