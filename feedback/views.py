@@ -2,6 +2,7 @@ import requests
 from django.conf import settings
 from django.http import Http404
 from django.shortcuts import get_object_or_404, render
+from django.utils.translation import ugettext
 
 import accounts.payment_plans as plans
 import analytics.analyze as analyze
@@ -9,6 +10,8 @@ import analytics.log as analytics_log
 from .models import Feedback
 from accounts.models import UserSettings
 from dashboard.views import _pmrender
+from pinecast.email import send_notification_email
+from pinecast.helpers import reverse
 from podcasts.models import Podcast, PodcastEpisode
 
 
@@ -41,6 +44,14 @@ def podcast_comment_box(req, podcast_slug):
                 'ua': req.META.get('HTTP_USER_AGENT'),
             },
         }, req=req)
+        send_notification_email(
+            pod.owner,
+            ugettext('[Pinecast] You got some feedback!'),
+            'Go check the Feedback page of your podcast, %s, to see what was written.\n\n'
+            'https://pinecast.com%s' %
+                (pod.name,
+                 reverse('podcast_dashboard', podcast_slug=pod.slug, tab='tab-feedback'))
+        )
     except Exception:
         return _pmrender(req, 'feedback/comment_podcast.html',
                          {'podcast': pod, 'error': True, 'default': req.POST})
@@ -79,6 +90,15 @@ def ep_comment_box(req, podcast_slug, episode_id):
                 'ua': req.META.get('HTTP_USER_AGENT'),
             },
         }, req=req)
+        send_notification_email(
+            pod.owner,
+            ugettext('[Pinecast] You got some feedback!'),
+            'Go check the Feedback page of %s--an episode on %s--to see what was written.\n\n'
+            'https://pinecast.com%s' %
+                (ep.title,
+                 pod.name,
+                 reverse('podcast_episode', podcast_slug=pod.slug, episode_id=str(ep.id), tab='tab-feedback'))
+        )
     except Exception:
         return _pmrender(req, 'feedback/comment_episode.html',
                          {'podcast': pod, 'episode': ep, 'error': True, 'default': req.POST})

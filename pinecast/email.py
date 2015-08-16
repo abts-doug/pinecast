@@ -23,7 +23,8 @@ def _send_mail(to, subject, body, email_format='text'):
         body=body,
         to_addresses=to,
         format=email_format,
-        return_path=settings.ADMINS[0][1]
+        return_path=settings.ADMINS[0][1],
+        reply_addresses=settings.SUPPORT_EMAIL
     )
 
 
