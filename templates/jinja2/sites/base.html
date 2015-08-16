@@ -3,7 +3,7 @@
   <head>
     <title>{% block title %}{% endblock %}</title>
     {% block head %}{% endblock %}
-    <link rel="alternate" type="application/rss+xml" title="{{ _('Podcast Feed') }}" href="https://pinecast.com{{ url_global('feed', podcast_slug=podcast.slug) }}">
+    <link rel="alternate" type="application/rss+xml" title="{{ _('Podcast Feed') }}" href="https://pinecast.com{{ url_global('feed', podcast_slug=site.podcast.slug) }}">
     {% if site.siteblogpost_set.all().count() %}
       <link rel="alternate" type="application/rss+xml" title="{{ _('Blog RSS Feed') }}" href="{{ url('blog_rss', site_slug=site.slug) }}">
     {% endif %}
@@ -23,7 +23,8 @@
         right: 0;
       }
       .leave-feedback a {
-        background: #fafafa url(/static/img/comment.svg) no-repeat 10px center;
+        background: #fafafa url(/static/img/bubble.svg) no-repeat 10px center;
+        background-size: 36px 36px;
         border-radius: 3px;
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
         display: block;

@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 width="32px" height="32px" viewBox="0 0 32 32" enable-background="new 0 0 32 32" xml:space="preserve">
-<g>
-	
-		<line fill="none" stroke="#777" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="16.012" y1="19.082" x2="10.454" y2="13.549"/>
-	
-		<line fill="none" stroke="#777" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="16.023" y1="19.082" x2="21.546" y2="13.549"/>
-	
-		<line fill="none" stroke="#777" stroke-width="2" stroke-linecap="round" stroke-miterlimit="10" x1="16.035" y1="1" x2="16.035" y2="19.082"/>
-	<path fill="none" stroke="#777" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
-		M22,5h8c0.553,0,1,0.488,1,1.041v24C31,30.594,30.553,31,30,31H2c-0.553,0-1-0.406-1-0.959v-24C1,5.488,1.447,5,2,5h8"/>
-</g>
+	 width="100px" height="100px" viewBox="0 0 100 100" enable-background="new 0 0 100 100" xml:space="preserve">
+<path fill="#777" d="M49.917,72.625L28.03,50.648c-1.504-1.504-3.701-1.504-5.208,0c-1.504,1.503-1.382,3.944,0.122,5.447l24.89,24.824
+	c0.723,0.723,1.734,1.128,2.754,1.128c1.022,0,2.016-0.405,2.738-1.128L78.16,56.09c1.504-1.505,1.508-3.946,0.003-5.446
+	c-1.504-1.505-4.423-1.505-5.929,0L50.958,72.667"/>
+<path fill="#777" d="M54.148,75.891V5.852C54.148,3.724,52.422,2,50.297,2c-2.126,0-3.852,1.726-3.852,3.852v69.795"/>
+<path fill="#777" d="M93.667,90.58V78.396c0-2.125-1.727-3.852-3.852-3.852c-2.126,0-3.853,1.727-3.853,3.852V90.58
+	c0,0.614,0.888,0.564,0.817,0.564H17.09c-0.659,0-2.386-0.053-2.386-0.564V78.396c0-2.125-1.726-3.852-3.852-3.852
+	C8.726,74.545,7,76.271,7,78.396V90.58c0,4.797,5.227,8.269,10.09,8.269h70.005C90.845,98.849,93.667,96.798,93.667,90.58z"/>
 </svg>
