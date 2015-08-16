@@ -5,6 +5,7 @@ import json
 import bleach
 import gfm
 import pytz
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.utils.translation import ugettext, ungettext
@@ -39,6 +40,7 @@ def environment(**options):
         'minimum_plan': minimum_plan,
         'PLAN_NAMES': payment_plans.PLANS_MAP,
         'PLANS': payment_plans.PLANS_RAW,
+        'SUPPORT_URL': settings.SUPPORT_URL,
         'timezones': pytz.common_timezones,
         'tz_offset': helpers.tz_offset,
     })

@@ -186,6 +186,8 @@ DEPLOY_SLACKBOT_URL = os.environ.get('DEPLOY_SLACKBOT_URL')
 MAX_FILE_SIZE = 1024 * 1024 * 256
 EMAIL_CONFIRMATION_MAX_AGE = 3600 * 24 * 2  # Two days
 
+SUPPORT_URL = 'https://pinecast.zendesk.com'
+
 try:
     from settings_local import *
 except ImportError:
