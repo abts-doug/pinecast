@@ -6,7 +6,8 @@
 }
 
 html, body {
-    background: #f9f9f9;
+    background: #f0f0f0;
+    color: #212121;
     margin: 0;
     padding: 0;
 }
@@ -23,14 +24,13 @@ body {
 }
 
 h1, h2, h3 {
-    color: #34495e;
     font-family: Titillium Web, sans-serif;
     margin: 0;
     padding-left: 10px;
 }
 
 a {
-    color: #34495e;
+    color: #00796B;
     text-decoration: none;
 }
 a:hover {
@@ -194,6 +194,81 @@ button:disabled, .btn:disabled {
     opacity: 1;
 }
 
+.ticket {
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    font-family: Titillium Web;
+    font-size: 14px;
+    margin-bottom: 10px;
+    padding: 0;
+    transition: box-shadow 0.2s;
+}
+.ticket > a {
+    display: block;
+    font-weight: bold;
+    padding: 10px;
+}
+.ticket:hover {
+    box-shadow: 0 3px 4px rgba(0, 0, 0, 0.1);
+}
+
+.ticket .ticket-details {
+    border-top: 1px solid #ccc;
+    color: #666;
+    font-family: Lato;
+    font-size: 0.85em;
+    height: 2em;
+    line-height: 2em;
+    padding: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.ticket .ticket-details span {
+    border-right: 1px solid #ccc;
+    display: inline-block;
+    line-height: inherit;
+    max-width: 30%;
+    overflow: hidden;
+    padding: 0 10px;
+    text-overflow: ellipsis;
+    vertical-align: top;
+}
+.ticket .ticket-details span b,
+.ticket .ticket-details span .b {
+    display: inline-block;
+    font-weight: bold;
+    line-height: 25px;
+    vertical-align: top;
+}
+.ticket .ticket-details span.icon-clock:before {
+    background: url(/static/img/clock.svg) no-repeat center center/0.95em 0.95em;
+    content: "";
+    display: inline-block;
+    height: 1em;
+    vertical-align: middle;
+    width: 1em;
+}
+
+.ticket.option {
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    text-align: center;
+}
+.ticket.option a {
+    border: 1px dashed rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+    padding: 10px;
+    transition: border-color 0.2s;
+
+}
+.ticket.option a:hover {
+    border-color: rgba(0, 0, 0, 0.5);
+}
+
 
 .login-container {
     margin: 200px auto;
@@ -272,8 +347,7 @@ main > header > hgroup > h2 {
     z-index: 5;
 }
 .main-container > nav {
-    /*background: linear-gradient(to right, #ccc 95%, #c5c5c5 100%);*/
-    background: #34495e;
+    background: #009688;
     bottom: 0;
     left: 0;
     position: fixed;
@@ -282,7 +356,7 @@ main > header > hgroup > h2 {
 }
 
 .main-container main {
-    padding-top: 10px;
+    padding: 10px;
 }
 
 .sidebar {
@@ -299,15 +373,15 @@ main > header > hgroup > h2 {
     /*border-top: 1px solid rgba(0, 0, 0, 0.2);*/
 }
 .sidebar ul li a {
-    color: #bdc3c7;
+    color: #fff;
     display: block;
     line-height: 20px;
     padding: 5px 10px;
     transition: background-color 0.15s;
 }
 .sidebar ul li a.selected {
-    background: #2980b9;
-    color: #fff;
+    background: #B2DFDB;
+    color: #212121;
 }
 .sidebar ul li a.selected:hover {
     text-decoration: none;
@@ -508,33 +582,13 @@ menu.tabs a.selected {
     float: left;
 }
 
-
 .dashboard-podcasts {
-    display: flex;
-    flex-wrap: wrap;
     list-style: none;
     padding: 0;
 }
-.dashboard-podcasts > li {
-    flex: 1 1;
-    margin: 10px;
-    min-height: 250px;
-    min-width: 250px;
-    max-width: 350px;
-    overflow: hidden;
-    position: relative;
+.dashboard-podcasts .owned-external > a {
+    color: #512DA8;
 }
-.dashboard-podcasts > li > img {
-    width: 100%;
-}
-.dashboard-podcasts > li > .toolbar {
-    opacity: 0.35;
-    transition: opacity 0.2s;
-}
-.dashboard-podcasts > li:hover > .toolbar {
-    opacity: 1;
-}
-
 
 .error {
     background: #e74c3c;
@@ -596,7 +650,7 @@ menu.tabs a.selected {
     opacity: 0.2;
     padding: 5px 8px;
     position: absolute;
-    right: 20px;
+    right: 15px;
     top: 10px;
     transform: translate(0, 0);
     transition: transform 0.15s, opacity 0.15s;

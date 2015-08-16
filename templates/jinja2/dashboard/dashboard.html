@@ -1,32 +1,50 @@
-{% extends 'dashboard_base.html' %}
+{% extends 'dashboard/base.html' %}
 {% block dashboard_body %}
 
 <ul class="dashboard-podcasts">
   {% for p in podcasts %}
-    <li class="card"
+    <li class="ticket{{ ' owned-external' if p.owner != user else '' }}"
       {% if p.is_still_importing() %}data-still-importing="{{ _('Import in progress...') }}"{% endif %}>
-      <strong><a href="{{ url('podcast_dashboard', kwargs={'podcast_slug': p.slug}) }}">{{ p.name }}</a></strong>
-      <img src="{{ p.cover_image|https }}" alt="">
+      <a href="{{ url('podcast_dashboard', kwargs={'podcast_slug': p.slug}) }}">
+        {{ p.name }}
+      </a>
+      <div class="ticket-details">
+        {%- if p.subtitle %}<span>{{ p.subtitle }}</span>{% endif -%}
+        {%- if p.get_unpublished_count() -%}
+          <span class="icon-clock">
+            <a href="{{ url('podcast_dashboard', podcast_slug=p.slug, tab='tab-episodes') }}" class="b">
+              {% trans count=p.get_unpublished_count() %}
+                {{ count }} pending episode
+              {% pluralize %}
+                {{ count }} pending episodes
+              {% endtrans %}
+            </a>
+          </span>
+        {%- endif -%}
+        {%- if p.owner != user -%}
+          <span>
+            <b>
+              {% trans owner=p.owner %}
+                Owned by {{ owner }}
+              {% endtrans %}
+            </b>
+          </span>
+        {%- endif -%}
+      </div>
     </li>
   {% endfor %}
-  <li class="empty-state">
+  <li class="ticket option">
     <a href="{{ url('new_podcast') }}">
-      <i>&plus;</i>
-      <span>
-        {% if podcasts %}
-          {{ _('Create a new podcast') }}
-        {% else %}
-          {{ _('Create your first podcast') }}
-        {% endif %}
-      </span>
+      {% if podcasts %}
+        {{ _('Create a new podcast') }}
+      {% else %}
+        {{ _('Create your first podcast') }}
+      {% endif %}
     </a>
   </li>
-  <li class="empty-state empty-state-import">
+  <li class="ticket option">
     <a href="{{ url('importer') }}">
-      <i>&#8595;</i>
-      <span>
-        {{ _('Import Existing Podcast') }}
-      </span>
+      {{ _('Import Existing Podcast') }}
     </a>
   </li>
 </ul>

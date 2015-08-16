@@ -1,3 +1,5 @@
+import datetime
+
 import gfm
 from django.contrib.syndication.views import Feed
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
@@ -28,7 +30,7 @@ def _srender(req, site, template, data=None):
 
 def site_home(req, site_slug):
     site = get_object_or_404(models.Site, slug=site_slug)
-    episodes = site.podcast.podcastepisode_set.all().order_by('-publish')
+    episodes = site.podcast.get_episodes()
     paginator = Paginator(episodes, SITE_EPISODES_PER_PAGE)
     try:
         pager = paginator.page(req.GET.get('page'))
@@ -41,7 +43,8 @@ def site_home(req, site_slug):
 
 def site_blog(req, site_slug):
     site = get_object_or_404(models.Site, slug=site_slug)
-    posts = site.siteblogpost_set.all().order_by('-publish')
+    posts = site.siteblogpost_set.filter(
+        publish__lt=datetime.datetime.now()).order_by('-publish')
     paginator = Paginator(posts, 5)
     try:
         pager = paginator.page(req.GET.get('page'))

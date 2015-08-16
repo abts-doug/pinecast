@@ -10,6 +10,7 @@ from django.utils.translation import ugettext, ugettext_lazy
 
 import accounts.payment_plans as payment_plans
 from accounts.models import Network, UserSettings
+from pinecast.helpers import cached_method
 
 
 class Podcast(models.Model):
@@ -36,10 +37,12 @@ class Podcast(models.Model):
 
     networks = models.ManyToManyField(Network)
 
+    @cached_method
     def get_asset_bucket(self):
         use_premium_cdn = UserSettings.get_from_user(self.owner).use_cdn()
         return settings.S3_PREMIUM_BUCKET if use_premium_cdn else settings.S3_BUCKET
 
+    @cached_method
     def get_category_list(self):
         return ','.join(x.category for x in self.podcastcategory_set.all())
 
@@ -58,10 +61,12 @@ class Podcast(models.Model):
             o = PodcastCategory.objects.get(podcast=self, category=r)
             o.delete()
 
+    @cached_method
     def is_still_importing(self):
         return bool(
             self.assetimportrequest_set.filter(failed=False, resolved=False).count())
 
+    @cached_method
     def get_episodes(self):
         episodes = self.podcastepisode_set.filter(
             publish__lt=datetime.datetime.now(),
@@ -69,6 +74,16 @@ class Podcast(models.Model):
         if UserSettings.get_from_user(self.owner).plan == payment_plans.PLAN_DEMO:
             episodes = episodes[:10]
         return episodes
+
+    @cached_method
+    def get_unpublished_count(self):
+        return self.podcastepisode_set.filter(publish__gt=datetime.datetime.now()).count()
+
+    @cached_method
+    def get_most_recent_publish_date(self):
+        if not self.podcastepisode_set.count():
+            return None
+        return self.podcastepisode_set.filter(publish__gt=datetime.datetime.now()).count()
 
     def __unicode__(self):
         return self.name
@@ -95,11 +110,12 @@ class PodcastEpisode(models.Model):
 
     awaiting_import = models.BooleanField(default=False)
 
-
+    @cached_method
     def formatted_duration(self):
         seconds = self.duration
         return '%02d:%02d:%02d' % (seconds // 3600, seconds % 3600 // 60, seconds % 60)
 
+    @cached_method
     def is_published(self):
         return not self.awaiting_import and self.publish <= datetime.datetime.now()
 

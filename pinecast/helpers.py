@@ -34,3 +34,13 @@ def reverse(viewname, kwargs=None, **kw):
 def tz_offset(tz_name):
     offset = pytz.timezone(tz_name)._utcoffset
     return offset.seconds // 3600 + offset.days * 24
+
+
+def cached_method(func):
+    cache = {}
+    @wraps(func)
+    def memoized(*args):
+        if args not in cache:
+            cache[args] = func(*args)
+        return cache[args]
+    return memoized
