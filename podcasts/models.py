@@ -81,7 +81,7 @@ class Podcast(models.Model):
 
     @cached_method
     def get_most_recent_publish_date(self):
-        if not self.podcastepisode_set.count():
+        if not self.get_episodes().count():
             return None
         return self.get_episodes()[0].publish
 
