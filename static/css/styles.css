@@ -654,7 +654,7 @@ menu.tabs a.selected {
     border: 1px solid #ccc;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
     display: inline-block;
-    margin: 0 15px 15px 0;
+    margin: 0 10px 20px ;
     width: 350px;
 }
 .dashboard-networks li > a {
