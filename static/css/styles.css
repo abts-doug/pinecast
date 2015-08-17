@@ -975,6 +975,7 @@ li.user-card {
     font-size: 13px;
     font-style: normal;
     padding: 15px 0 15px 40px;
+    position: relative;
 }
 
 li.user-card img {
