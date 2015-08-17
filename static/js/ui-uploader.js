@@ -72,17 +72,17 @@ var Uploader = React.createClass({
                     React.createElement(
                         'dl',
                         null,
-                        React.createElement('dt', null, gettext('Size:')),
-                        React.createElement('dd', null, this.state.fileObj.size || gettext('Unknown')),
-                        React.createElement('dt', null, gettext('Name:')),
-                        React.createElement('dd', null, this.state.fileObj.name || gettext('Unknown')),
-                        React.createElement('dt', null, gettext('Type:')),
-                        React.createElement('dd', null, this.state.fileObj.type || gettext('Unknown'))
+                        this.state.fileObj.size ? React.createElement('dt', null, gettext('Size:')) : null,
+                        this.state.fileObj.size ? React.createElement('dd', null, this.state.fileObj.size) : null,
+                        this.state.fileObj.name ? React.createElement('dt', null, gettext('Name:')) : null,
+                        this.state.fileObj.name ? React.createElement('dd', null, this.state.fileObj.name) : null,
+                        this.state.fileObj.type ? React.createElement('dt', null, gettext('Type:')) : null,
+                        this.state.fileObj.type ? React.createElement('dd', null, this.state.fileObj.type) : null
                     ) : null),
                 React.createElement(
                     'button',
                     {
-                        className: 'btn-warn',
+                        className: 'btn-danger uploader-btn',
                         onClick: this.clearFile,
                     },
                     gettext('Clear File')

@@ -3,7 +3,7 @@
 
 <header>
   {{ breadcrumb(podcast.name, url('podcast_dashboard', podcast_slug=podcast.slug)) }}
-  <h1>{% trans name=podcast.name %}New Episode: {{ name }}{% endtrans %}</h1>
+  <h1>{{ _('New Episode') }}</h1>
 </header>
 
 {% if error %}
@@ -96,8 +96,9 @@
       <input type="text"
         name="copyright"
         maxlength="1024"
-        value="{{ default.get('copyright', podcast.copyright) }}"
-        placeholder="{{ _('Copyright 2015 Foo Bar Inc.') }}">
+        value="{{ default.get('copyright') }}"
+        placeholder="{{ podcast.copyright }}">
+      <small>{{ _('Leave blank to use the copyright from the podcast') }}</small>
     </label>
 
     <label>

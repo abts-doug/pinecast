@@ -63,7 +63,14 @@
       <dd>{{ episode.audio_type }}</dd>
       
       <dt>{{ _('Copyright') }}</dt> {#- -#}
-      <dd>{{ episode.copyright }}</dd>
+      <dd>
+        {% if episode.copyright %}
+          {{ episode.copyright }}
+        {% elif podcast.copyright %}
+          {{ podcast.copyright }}<br>
+          <small>{{ _('(inherited copyright from podcast)') }}</small>
+        {% endif %}
+      </dd>
       
       <dt>{{ _('License') }}</dt> {#- -#}
       <dd>{{ episode.license }}</dd>

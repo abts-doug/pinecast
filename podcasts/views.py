@@ -43,6 +43,16 @@ def listen(req, episode_id):
     return redirect(_asset(ep.audio_url))
 
 
+def _itunes_summary(blob, default):
+    lines = [line.strip() for line in blob.split('\n') if line.strip()]
+    if not lines:
+        return default
+    for line in lines:
+        if '<' in line or '>' in line:
+            continue
+        return line
+    return default
+
 def feed(req, podcast_slug):
     pod = get_object_or_404(Podcast, slug=podcast_slug)
 
@@ -70,7 +80,7 @@ def feed(req, podcast_slug):
                 '<pubDate>%s</pubDate>' % formatdate(time.mktime(ep.publish.timetuple())),
                 '<itunes:author>%s</itunes:author>' % escape(pod.author_name),
                 '<itunes:subtitle>%s</itunes:subtitle>' % escape(ep.subtitle),
-                '<itunes:summary><![CDATA[%s]]></itunes:summary>' % md_desc,
+                '<itunes:summary><![CDATA[%s]]></itunes:summary>' % _itunes_summary(ep.description, ep.subtitle or ep.title),
                 '<itunes:image href=%s />' % quoteattr(_asset(ep.image_url)),
                 '<itunes:duration>%s</itunes:duration>' % escape(ep.formatted_duration()),
                 '<enclosure url=%s length=%s type=%s />' % (
@@ -111,7 +121,7 @@ def feed(req, podcast_slug):
             '<copyright>%s</copyright>' % escape(pod.copyright),
             ('<itunes:subtitle>%s</itunes:subtitle>' % escape(pod.subtitle)) if pod.subtitle else '',
             '<itunes:author>%s</itunes:author>' % escape(pod.author_name),
-            '<itunes:summary><![CDATA[%s]]></itunes:summary>' % md_pod_desc,
+            '<itunes:summary><![CDATA[%s]]></itunes:summary>' % _itunes_summary(pod.description, pod.name),
             '<description><![CDATA[%s]]></description>' % md_pod_desc,
             '<itunes:owner>',
                 '<itunes:name>%s</itunes:name>' % escape(pod.author_name),

@@ -75,6 +75,14 @@ textarea {
     transition: box-shadow 0.2s;
     width: 300px;
 }
+input[type="text"],
+input[type="email"],
+input[type="url"],
+input[type="password"],
+input[type="datetime-local"],
+textarea {
+    display: block;
+}
 
 input[type="text"]:focus,
 input[type="email"]:focus,
@@ -150,6 +158,7 @@ button:disabled, .btn:disabled {
     border-radius: 3px;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
     padding: 20px;
+    position: relative;
 }
 .card > strong:first-child,
 .card .chart-title,
@@ -203,7 +212,7 @@ button:disabled, .btn:disabled {
     border-radius: 3px;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
     font-family: Titillium Web;
-    font-size: 14px;
+    font-size: 16px;
     margin-bottom: 20px;
     padding: 0;
     transition: box-shadow 0.2s;
@@ -211,7 +220,7 @@ button:disabled, .btn:disabled {
 .ticket > a {
     display: block;
     font-weight: bold;
-    padding: 10px;
+    padding: 12px;
 }
 .ticket:hover {
     box-shadow: 0 3px 4px rgba(0, 0, 0, 0.1);
@@ -240,7 +249,7 @@ button:disabled, .btn:disabled {
     line-height: 25px;
     max-width: 30%;
     overflow: hidden;
-    padding: 0 10px;
+    padding: 0 12px;
     text-overflow: ellipsis;
     vertical-align: top;
 }
@@ -409,6 +418,12 @@ main > header > hgroup > h2 {
 
 .main-container main {
     padding: 10px;
+}
+
+@media (max-width: 900px) {
+    .main-container {
+        padding: 50px 0 0;
+    }
 }
 
 .sidebar {
@@ -603,10 +618,14 @@ menu.tabs a.selected {
     font-family: Titillium Web;
     text-align: center;
     transform: scale(1);
-    transition: background-color 0.2s, transform 0.2s;
+    transition: background-color 0.2s, transform 0.2s, border-color 0.2s;
+}
+.upload-dd-label:not(.is-dragging):hover {
+    border-color: #009688;
 }
 .upload-dd-label.is-dragging {
-    background-color: #CEEBFF;
+    background-color: #B2DFDB;
+    border-color: #00796B;
     transform: scale(1.1);
 }
 .upload-dd-label i:before {
@@ -627,6 +646,12 @@ menu.tabs a.selected {
 .upload-dd-label input {
     height: 0;
     visibility: hidden;
+}
+
+.uploader-btn {
+    position: absolute;
+    right: 10px;
+    top: 8px;
 }
 
 
@@ -655,6 +680,7 @@ menu.tabs a.selected {
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
     display: inline-block;
     margin: 0 10px 20px ;
+    vertical-align: top;
     width: 350px;
 }
 .dashboard-networks li > a {
@@ -715,6 +741,9 @@ menu.tabs a.selected {
     display: block;
 }
 
+.markdwon-editor-small .markdown-editor {
+    height: 170px;
+}
 .markdown-editor div.CodeMirror-scroll {
     padding: 10px;
 }
@@ -848,6 +877,7 @@ dl dt {
     display: inline-block;
     font-weight: bold;
     margin: 0;
+    vertical-align: top;
     width: 15%;
 }
 dl dd {
@@ -1083,4 +1113,12 @@ li.user-card span.name {
 }
 .support-link:hover img {
     opacity: 1;
+}
+
+
+.flex-row {
+    display: flex;
+}
+.flex-row > .col {
+    flex: 1 1;
 }

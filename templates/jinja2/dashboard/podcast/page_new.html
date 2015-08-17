@@ -52,7 +52,7 @@
       <span>{{ _('Explicit?') }}</span>
     </label>
 
-    <label>
+    <label class="markdwon-editor-small">
       <span>{{ _('Description') }}</span>
       <textarea name="description">{{ default.get('description')|safe }}</textarea>
     </label>
@@ -62,35 +62,42 @@
   <div class="card-block card">
     <strong>{{ _('Meta') }}</strong>
 
-    <label>
-      <span>{{ _('Homepage') }}</span>
-      <input type="url" name="homepage" placeholder="https://my-great-podcast.biz" required value="{{ default.get('homepage') }}">
-    </label>
+    <div class="flex-row">
+      <div class="col">
+        <label>
+          <span>{{ _('Homepage') }}</span>
+          <input type="url" name="homepage" placeholder="https://my-great-podcast.biz" required value="{{ default.get('homepage') }}">
+        </label>
 
-    <label>
-      <span>{{ _('Language') }}</span>
-      <input type="text" name="language" placeholder="en-US" required maxlength="16" value="{{ default.get('language', 'en-US')}}">
-    </label>
+        <label>
+          <span>{{ _('Language') }}</span>
+          <input type="text" name="language" placeholder="en-US" required maxlength="16" value="{{ default.get('language', 'en-US')}}">
+        </label>
+        
+      </div>
+      <div class="col">
+        <label>
+          <span>{{ _('Copyright') }}</span>
+          <input type="text"
+            name="copyright"
+            maxlength="1024"
+            placeholder="{{ _('Copyright 2015 Foo Bar Inc.') }}"
+            required
+            value="{{ default.get('copyright') }}">
+        </label>
 
-    <label>
-      <span>{{ _('Copyright') }}</span>
-      <input type="text"
-        name="copyright"
-        maxlength="1024"
-        placeholder="{{ _('Copyright 2015 Foo Bar Inc.') }}"
-        required
-        value="{{ default.get('copyright') }}">
-    </label>
-
-    <label>
-      <span>{{ _('Author') }}</span>
-      <input type="text"
-        name="author_name"
-        maxlength="1024"
-        placeholder="Jane Doe"
-        required
-        value="{{ default.get('author_name') }}">
-    </label>
+        <label>
+          <span>{{ _('Author') }}</span>
+          <input type="text"
+            name="author_name"
+            maxlength="1024"
+            placeholder="Jane Doe"
+            required
+            value="{{ default.get('author_name') }}">
+        </label>
+        
+      </div>
+    </div>
 
   </div>
 

@@ -7,7 +7,7 @@
   <menu class="toolbar toolbar-right">
     <li><a class="btn btn-danger" href="{{ url('delete_podcast_episode', kwargs={'podcast_slug': podcast.slug, 'episode_id': str(episode.id)}) }}">{{ _('Delete Episode') }}</a></li>
   </menu>
-  <h1>{% trans title=episode.title %}Edit {{ title }}{% endtrans %}</h1>
+  <h1>{{ _('Edit Episode') }}</h1>
 </header>
 
 {% if error %}
