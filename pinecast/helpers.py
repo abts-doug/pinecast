@@ -37,10 +37,13 @@ def tz_offset(tz_name):
 
 
 def cached_method(func):
-    cache = {}
     @wraps(func)
-    def memoized(*args):
+    def memoized(self, *args):
+        cache = getattr(self, '__pccache__', None)
+        if not cache:
+            cache = {}
+            setattr(self, '__pccache__', cache)
         if args not in cache:
-            cache[args] = func(*args)
+            cache[args] = func(self, *args)
         return cache[args]
     return memoized
