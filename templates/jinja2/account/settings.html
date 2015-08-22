@@ -13,7 +13,13 @@
 
     <dl class="user-detail-list">
       <dt>{{ _('Username') }}</dt>
-      <dd>{{ user.username }}</dd>
+      <dd>
+        <form action="{{ url('user_settings_change_username') }}" method="POST">
+          <input type="text" placeholder="{{ user.username }}" name="username" required class="username-field">
+          <button type="submit">{{ _('Change Username') }}</button>
+          <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+        </form>
+      </dd>
 
       <dt>{{ _('Email') }}</dt>
       <dd>{{ user.email }}</dd>
@@ -39,6 +45,10 @@
   <div class="success">
     {{ _('Your email address has been updated') }}
   </div>
+{% elif success == 'un' %}
+  <div class="success">
+    {{ _('Your username has been updated') }}
+  </div>
 {% endif %}
 
 {% if error == 'eae' %}
@@ -56,6 +66,14 @@
 {% elif error == 'pwl' %}
   <div class="error">
     {{ _('The password you chose was not long enough. Passwords must be at least eight characters.') }}
+  </div>
+{% elif error == 'uau' %}
+  <div class="error">
+    {{ _('The username you chose is unavailable. Please try again.') }}
+  </div>
+{% elif error == 'uae' %}
+  <div class="error">
+    {{ _('The username you chose is already in use. Please try again.') }}
   </div>
 {% endif %}
 
@@ -90,17 +108,17 @@
 
     <label>
       <span>{{ _('Old Password') }}</span>
-      <input type="password" name="old_password">
+      <input required type="password" name="old_password">
     </label>
 
     <label>
       <span>{{ _('New Password') }}</span>
-      <input type="password" name="new_password" minlength="8">
+      <input required type="password" name="new_password" minlength="8">
     </label>
 
     <label>
       <span>{{ _('Confirm') }}</span>
-      <input type="password" name="confirm_password">
+      <input required type="password" name="confirm_password">
     </label>
 
     <menu class="toolbar">

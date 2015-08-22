@@ -878,7 +878,7 @@ table .primary {
 
 
 dl {
-    line-height: 2em;
+    line-height: 35px;
     margin: 0;
 }
 dl dt {
@@ -1129,4 +1129,24 @@ li.user-card span.name {
 }
 .flex-row > .col {
     flex: 1 1;
+}
+
+.username-field:not(:focus) {
+    border: 1px dotted #999;
+}
+.username-field::-webkit-input-placeholder {
+   color: black;
+}
+.username-field::-moz-placeholder {
+   color: black;
+}
+.username-field:focus::-webkit-input-placeholder {
+   color: transparent;
+}
+.username-field:focus::-moz-placeholder {
+   color: transparent;
+}
+.username-field:invalid + button {
+    display: none;
+    margin: 0;
 }
