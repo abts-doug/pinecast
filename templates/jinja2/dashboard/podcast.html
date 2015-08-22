@@ -60,6 +60,11 @@
       readonly
       value="https://pinecast.com{{ url('feed', podcast_slug=podcast.slug) }}"
       class="width-full">
+    <div>
+      <a href="https://buy.itunes.apple.com/WebObjects/MZFinance.woa/wa/publishPodcast" target="_blank">
+        {{ _('Submit to iTunes') }}
+      </a>
+    </div>
   </div>
 
   <div class="card-block card">

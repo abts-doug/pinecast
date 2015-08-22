@@ -8,7 +8,7 @@ from django.views.decorators.http import require_POST
 
 from .models import BetaRequest, UserSettings
 from dashboard.views import _pmrender
-from pinecast.email import request_must_be_confirmed, send_confirmation_email
+from pinecast.email import request_must_be_confirmed, send_confirmation_email, send_notification_email
 from pinecast.helpers import reverse, tz_offset
 
 
@@ -90,6 +90,30 @@ to verify that you own the email address provided.
         req.POST.get('new_email')
     )
     return redirect(reverse('user_settings') + '?success=em')
+
+@login_required
+@require_POST
+def user_settings_page_changepassword(req):
+    if req.POST.get('new_password') != req.POST.get('confirm_password'):
+        return redirect(reverse('user_settings') + '?error=pwc')
+    if not req.user.check_password(req.POST.get('old_password')):
+        return redirect(reverse('user_settings') + '?error=pwo')
+    if len(req.POST.get('new_password')) < 8:
+        return redirect(reverse('user_settings') + '?error=pwl')
+
+    req.user.set_password(req.POST.get('new_password'))
+    req.user.save()
+
+    send_notification_email(
+        req.user,
+        ugettext('[Pinecast] Password changed'),
+        ugettext('''
+Your Pinecast password has been updated. If you did not request this change,
+please contact Pinecast support as soon as possible at
+support@pinecast.zendesk.com.
+''')
+    )
+    return redirect(reverse('login'))
 
 @login_required
 @request_must_be_confirmed

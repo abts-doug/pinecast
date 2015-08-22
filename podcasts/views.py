@@ -119,6 +119,7 @@ def feed(req, podcast_slug):
             '<link>%s</link>' % escape(pod.homepage),
             '<language>%s</language>' % escape(pod.language),
             '<copyright>%s</copyright>' % escape(pod.copyright),
+            '<generator>Pinecast (https://pinecast.com)</generator>',
             ('<itunes:subtitle>%s</itunes:subtitle>' % escape(pod.subtitle)) if pod.subtitle else '',
             '<itunes:author>%s</itunes:author>' % escape(pod.author_name),
             '<itunes:summary><![CDATA[%s]]></itunes:summary>' % _itunes_summary(pod.description, pod.name),

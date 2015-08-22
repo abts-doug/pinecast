@@ -1,4 +1,5 @@
 from django.core.exceptions import ValidationError
+from django.core.validators import RegexValidator
 from django.db import models
 from django.utils.translation import ugettext_lazy
 
@@ -53,6 +54,8 @@ BANNED_SLUGS = set([
 THEME_ABN = 'abn'
 SECRET_THEMES = set([THEME_ABN])
 
+GA_VALIDATOR = RegexValidator(r'^[0-9a-zA-Z\-]+$', ugettext_lazy('Only GA IDs are accepted'))
+
 class Site(models.Model):
     SITE_THEMES = (
         # Inspired by http://themepathra.tumblr.com/
@@ -74,6 +77,8 @@ class Site(models.Model):
     logo_url = models.URLField(blank=True)
     itunes_url = models.URLField(blank=True)
     stitcher_url = models.URLField(blank=True)
+
+    analytics_id = models.CharField(blank=True, null=True, max_length=32, validators=[GA_VALIDATOR])
 
     def clean(self):
         if self.slug in BANNED_SLUGS:

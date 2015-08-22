@@ -1,4 +1,4 @@
-{% extends 'sites/podcasty/base.html' %}
+{% extends 'sites/panther/base.html' %}
 
 {% block main %}
 
@@ -9,25 +9,26 @@
       <div class="published right">
         {{ post.publish|pretty_date }}
       </div>
-      <h2><a href="{{ url('site_post', site_slug=site.slug, post_slug=post.slug) }}">{{ post.title }}</a></h2>
-      <div>
+      <h2><a href="{{ url('site_post', post_slug=post.slug) }}">{{ post.title }}</a></h2>
+      <div class="body">
         {{ post.body|markdown|sanitize|safe }}
       </div>
+      <a href="{{ url('site_post', site_slug=site.slug, post_slug=post.slug) }}" class="read-more">{{ _('Read More') }}</a>
     </article>
   {% endif %}
 
   {% for episode in pager %}
     <article class="episode">
+      <div class="published">
+        {{ episode.publish|pretty_date }}
+      </div>
+
       <hgroup>
         <h1>{{ episode.title }}</h1>
         {% if episode.subtitle %}
           <h2>{{ episode.subtitle }}</h2>
         {% endif %}
       </hgroup>
-
-      <div class="published">
-        {{ episode.publish|pretty_date }}
-      </div>
 
       {% if episode.image_url %}
         <img src="{{ episode.image_url }}" alt="">

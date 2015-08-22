@@ -1,0 +1,41 @@
+{% extends 'sites/zen/base.html' %}
+
+{% block main %}
+  {% for episode in pager %}
+    <article class="episode">
+      <div>
+        <img src="{{ episode.image_url }}" alt="" height="300" width="300">
+        <hgroup>
+          <h1>{{ episode.title }}</h1>
+          {% if episode.subtitle %}
+            <h2>{{ episode.subtitle }}</h2>
+          {% endif %}
+        </hgroup>
+
+        <div class="description">
+          {{ episode.description|markdown|sanitize|safe }}
+        </div>
+
+        <iframe src="https://pinecast.com{{ url_global('player', episode_id=str(episode.id)) }}" seamless height="60" style="border:0" class="pinecast-embed"></iframe>
+
+      </div>
+    </article>
+  {% else %}
+    <div class="empty-state">
+      {{ _('There is nothing here yet.') }}
+    </div>
+  {% endfor %}
+
+  {% if pager.has_other_pages() %}
+    <div class="pagination">
+      {% if pager.has_next() %}
+        <a class="btn" href="{{ url('site_home', site_slug=site.slug) }}?page={{ pager.next_page_number() }}">{{ _('Back in time') }}</a>
+      {% endif %}
+      {% if pager.has_next() and pager.has_previous() %}&bull;{% endif %}
+      {% if pager.has_previous() %}
+        <a class="btn" href="{{ url('site_home', site_slug=site.slug) }}?page={{ pager.previous_page_number() }}">{{ _('Onwards to the future') }}</a>
+      {% endif %}
+    </div>
+  {% endif %}
+
+{% endblock %}

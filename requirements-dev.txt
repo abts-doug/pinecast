@@ -1,7 +1,7 @@
 bleach==1.4.1
 boto==2.38.0
 defusedxml==0.4.1
-Django==1.8.3
+Django==1.8.4
 gevent==1.1b1
 gfm==0.0.3
 greenlet==0.4.7

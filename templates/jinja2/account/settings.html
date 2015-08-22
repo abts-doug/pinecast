@@ -45,6 +45,18 @@
   <div class="error">
     {{ _('That email address is already in use.') }}
   </div>
+{% elif error == 'pwo' %}
+  <div class="error">
+    {{ _('The password that you entered did not match the password we have on file.') }}
+  </div>
+{% elif error == 'pwc' %}
+  <div class="error">
+    {{ _('Your passwords did not match. Try again.') }}
+  </div>
+{% elif error == 'pwl' %}
+  <div class="error">
+    {{ _('The password you chose was not long enough. Passwords must be at least eight characters.') }}
+  </div>
 {% endif %}
 
 <div class="card card-block">
@@ -63,6 +75,36 @@
 
     <menu class="toolbar">
       <button type="submit">{{ _('Save Timezone') }}</button>
+    </menu>
+
+    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+  </form>
+</div>
+
+<div class="card card-block">
+  <strong>{{ _('Change Password') }}</strong>
+
+  <form action="{{ url('user_settings_change_password') }}" method="post">
+
+    <p>{{ _('Passwords must be at least eight characters') }}</p>
+
+    <label>
+      <span>{{ _('Old Password') }}</span>
+      <input type="password" name="old_password">
+    </label>
+
+    <label>
+      <span>{{ _('New Password') }}</span>
+      <input type="password" name="new_password" minlength="8">
+    </label>
+
+    <label>
+      <span>{{ _('Confirm') }}</span>
+      <input type="password" name="confirm_password">
+    </label>
+
+    <menu class="toolbar">
+      <button type="submit">{{ _('Change Password') }}</button>
     </menu>
 
     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
