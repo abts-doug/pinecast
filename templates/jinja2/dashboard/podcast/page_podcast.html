@@ -40,6 +40,7 @@
   <li><a data-tab=".tab-episodes" href="">{{ _('Episodes') }}</a></li>
   <li><a data-tab=".tab-analytics" href="">{{ _('Analytics') }}</a></li>
   <li><a data-tab=".tab-feedback" href="">{{ _('Feedback') }}</a></li>
+  <li><a data-tab=".tab-site" href="">{{ _('Site') }}</a></li>
 </menu>
 
 <div class="tab-overview">
@@ -87,6 +88,14 @@
     {% include 'dashboard/podcast/tab_feedback.html' %}
   {% else %}
     {% include 'dashboard/podcast/tab_feedback_upgrade.html' %}
+  {% endif %}
+</div>
+
+<div class="tab-site" style="overflow: hidden; height: 0">
+  {% if minimum_plan(podcast.owner, PLANS.FEATURE_MIN_SITES) %}
+    {% include 'dashboard/podcast/tab_sites.html' %}
+  {% else %}
+    {% include 'dashboard/podcast/tab_sites_upgrade.html' %}
   {% endif %}
 </div>
 

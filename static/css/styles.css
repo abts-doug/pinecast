@@ -1150,3 +1150,17 @@ li.user-card span.name {
     display: none;
     margin: 0;
 }
+
+
+.site-links {
+    list-style: none;
+    padding: 0;
+}
+.site-links .site-link {
+    border-top: 1px solid #B6B6B6;
+    padding: 10px;
+    position: relative;
+}
+.site-links .site-link:last-child {
+    border-bottom: 1px solid #B6B6B6;
+}

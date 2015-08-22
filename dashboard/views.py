@@ -23,6 +23,7 @@ from feedback.models import Feedback
 from pinecast.helpers import json_response
 from podcasts.models import (CATEGORIES, Podcast, PodcastCategory,
                              PodcastEpisode, PodcastReviewAssociation)
+from sites.models import Site
 
 
 signer = itsdangerous.Signer(settings.SECRET_KEY)
@@ -113,7 +114,7 @@ def podcast_dashboard(req, podcast_slug):
     if payment_plans.minimum(owner_uset.plan, payment_plans.FEATURE_MIN_COMMENT_BOX):
         data['feedback'] = Feedback.objects.filter(podcast=pod, episode=None).order_by('-created')
 
-    return _pmrender(req, 'dashboard/podcast.html', data)
+    return _pmrender(req, 'dashboard/podcast/page_podcast.html', data)
 
 
 @login_required
@@ -194,7 +195,7 @@ def edit_podcast(req, podcast_slug):
            'PODCAST_CATEGORIES': json.dumps(list(CATEGORIES))}
 
     if not req.POST:
-        return _pmrender(req, 'dashboard/edit_podcast.html', ctx)
+        return _pmrender(req, 'dashboard/podcast/page_edit.html', ctx)
 
     try:
         pod.slug = req.POST.get('slug')
@@ -211,7 +212,7 @@ def edit_podcast(req, podcast_slug):
         pod.save()
     except Exception as e:
         ctx.update(default=req.POST, error=True)
-        return _pmrender(req, 'dashboard/edit_podcast.html', ctx)
+        return _pmrender(req, 'dashboard/podcast/page_edit.html', ctx)
     return redirect('podcast_dashboard', podcast_slug=pod.slug)
 
 
@@ -220,7 +221,7 @@ def delete_podcast(req, podcast_slug):
     # This doesn't use `get_podcast` because only the owner may delete the podcast
     pod = get_object_or_404(Podcast, slug=podcast_slug, owner=req.user)
     if not req.POST:
-        return _pmrender(req, 'dashboard/delete_podcast.html', {'podcast': pod})
+        return _pmrender(req, 'dashboard/podcast/page_delete.html', {'podcast': pod})
 
     if req.POST.get('slug') != pod.slug:
         return redirect('dashboard')
@@ -233,7 +234,7 @@ def delete_podcast_episode(req, podcast_slug, episode_id):
     pod = get_podcast(req, podcast_slug)
     ep = get_object_or_404(PodcastEpisode, podcast=pod, id=episode_id)
     if not req.POST:
-        return _pmrender(req, 'dashboard/delete_episode.html', {'podcast': pod, 'episode': ep})
+        return _pmrender(req, 'dashboard/episode/page_delete.html', {'podcast': pod, 'episode': ep})
 
     ep.delete()
     return redirect('podcast_dashboard', podcast_slug=pod.slug)
@@ -278,7 +279,7 @@ def edit_podcast_episode(req, podcast_slug, episode_id):
     ep = get_object_or_404(PodcastEpisode, id=episode_id, podcast=pod)
 
     if not req.POST:
-        return _pmrender(req, 'dashboard/edit_episode.html', {'podcast': pod, 'episode': ep})
+        return _pmrender(req, 'dashboard/episode/page_edit.html', {'podcast': pod, 'episode': ep})
 
     try:
         naive_publish = datetime.datetime.strptime(req.POST.get('publish'), '%Y-%m-%dT%H:%M') # 2015-07-09T12:00
@@ -301,7 +302,7 @@ def edit_podcast_episode(req, podcast_slug, episode_id):
         ep.save()
     except Exception as e:
         print e
-        return  _pmrender(req, 'dashboard/edit_episode.html', {'podcast': pod, 'episode': ep, 'default': req.POST, 'error': True})
+        return  _pmrender(req, 'dashboard/episode/page_edit.html', {'podcast': pod, 'episode': ep, 'default': req.POST, 'error': True})
     return redirect('podcast_episode', podcast_slug=pod.slug, episode_id=str(ep.id))
 
 
@@ -318,7 +319,7 @@ def podcast_episode(req, podcast_slug, episode_id):
         },
         'feedback': Feedback.objects.filter(podcast=pod, episode=ep).order_by('-created'),
     }
-    return _pmrender(req, 'dashboard/podcast_episode.html', data)
+    return _pmrender(req, 'dashboard/episode/page_episode.html', data)
 
 
 @login_required
@@ -349,6 +350,8 @@ def get_upload_url(req, podcast_slug, type):
         basepath = 'podcasts/covers/'
     elif podcast_slug == '$net':
         basepath = 'networks/covers/'
+    elif podcast_slug == '$site':
+        basepath = 'sites/covers/'
     else:
         return Http404('Unknown slug')
 

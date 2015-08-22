@@ -1,0 +1,68 @@
+{% extends 'dashboard/base.html' %}
+{% block dashboard_body %}
+
+<header>
+  {{ breadcrumb(site.podcast.name, url('podcast_dashboard', podcast_slug=site.podcast.slug, tab='tab-site')) }}
+
+  <menu class="toolbar toolbar-right">
+    <li><a class="btn btn-neutral" href="{{ url('edit_site', site_slug=site.slug) }}">{{ _('Edit') }}</a></li>
+  </menu>
+
+  <h1>{% trans podcast_name=site.podcast.name %}Site Options for {{ podcast_name }}{% endtrans %}</h1>
+</header>
+
+<div class="card card-block">
+  <strong>{{ _('Links') }}</strong>
+  <p>{{ _('You can add links to the footers and sidebars of your site.') }}</p>
+  <ul class="site-links">
+    {% for link in site.sitelink_set.all() %}
+      <li class="site-link">
+        <menu class="toolbar toolbar-right">
+          <li>
+            <form action="{{ url('site_remove_link', site_slug=site.slug) }}" method="post">
+              <button class="btn btn-danger">{{ _('Remove') }}</button>
+              <input type="hidden" name="id" value="{{ link.id }}">
+              <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+            </form>
+          </li>
+        </menu>
+
+        {{ link.title }}<br>
+        <small>{{ link.url }}</small>
+      </li>
+    {% endfor %}
+  </ul>
+
+  <form action="{{ url('site_add_link', site_slug=site.slug) }}" method="post">
+    {% if error == 'link' %}
+      <div class="error">
+        {{ _('Could not create link') }}
+      </div>
+    {% endif %}
+
+    <div class="flex-row">
+      <label class="col">
+        <span>{{ _('Link Title') }}</span>
+        <input class="width-full" type="text" maxlength="512" placeholder="My Great Link" name="title" required>
+      </label>
+
+      <label class="col">
+        <span>{{ _('Link URL') }}</span>
+        <input class="width-full" type="url" placeholder="https://legitimatewebsite.biz" name="url" required>
+      </label>
+    </div>
+
+    <menu class="toolbar">
+      <button>{{ _('Add Link') }}</button>
+    </menu>
+
+    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+  </form>
+</div>
+
+{% endblock %}
+
+{% block after_content %}
+<script src="/static/js/react-0.13.3.min.js"></script>
+<script src="/static/js/tabs.js"></script>
+{% endblock %}

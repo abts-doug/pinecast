@@ -73,10 +73,10 @@ class Site(models.Model):
     slug = models.SlugField(unique=True)
     theme = models.CharField(choices=SITE_THEMES, max_length=16)
     custom_cname = models.CharField(blank=True, null=True, max_length=64)
-    cover_image_url = models.URLField(blank=True)
-    logo_url = models.URLField(blank=True)
-    itunes_url = models.URLField(blank=True)
-    stitcher_url = models.URLField(blank=True)
+    cover_image_url = models.URLField(blank=True, null=True)
+    logo_url = models.URLField(blank=True, null=True)
+    itunes_url = models.URLField(blank=True, null=True)
+    stitcher_url = models.URLField(blank=True, null=True)
 
     analytics_id = models.CharField(blank=True, null=True, max_length=32, validators=[GA_VALIDATOR])
 

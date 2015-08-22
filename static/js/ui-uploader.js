@@ -58,6 +58,14 @@ var Uploader = React.createClass({
                     React.createElement('i', {style: {width: this.state.progress + '%'}})
                 ),
                 this.getError(),
+                this.props.optional ? null : React.createElement(
+                    'input',
+                    {
+                        type: 'file',
+                        required: 'required',
+                        style: {display: 'none'},
+                    }
+                )
             ];
         }
 
@@ -148,7 +156,7 @@ var Uploader = React.createClass({
             },
             React.createElement('i', {
                 'data-text-choose': gettext('Choose a file to upload'),
-                'data-text-drop': gettext('or Drop files to upload'),
+                'data-text-drop': gettext('or drop a file to upload'),
             }),
             this.getError(),
             React.createElement(
@@ -161,7 +169,7 @@ var Uploader = React.createClass({
                         this.setNewFile(fileObj);
                     }.bind(this),
                     ref: 'filePicker',
-                    required: 'required',
+                    required: this.props.optional ? null : 'required',
                 }
             )
         );
@@ -359,6 +367,8 @@ Array.prototype.slice.call(fields).forEach(function(field) {
             defType: field.getAttribute('data-default-type'),
             noiTunesSizeCheck: field.getAttribute('data-no-itunes-size-check') == 'true',
             audioDurationSelector: field.getAttribute('data-audio-duration-selector'),
+
+            optional: field.getAttribute('data-optional') || false,
         }),
         field
     );

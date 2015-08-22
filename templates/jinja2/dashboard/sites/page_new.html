@@ -1,0 +1,127 @@
+{% extends 'dashboard/base.html' %}
+{% block dashboard_body %}
+
+<header>
+  {{ breadcrumb(podcast.name, url('podcast_dashboard', podcast_slug=podcast.slug)) }}
+  <h1>{{ _('New Site') }}</h1>
+</header>
+
+{% if error %}
+<div class="error">
+  {{ _('Please check that all fields are filled out correctly.') }}
+</div>
+{% endif %}
+
+<form action="?" method="post">
+  <div class="card-block card">
+    <strong>{{ _('Details') }}</strong>
+
+    <label>
+      <span>{{ _('Site Slug') }}</span>
+      <input type="text"
+        name="slug"
+        placeholder="my-podcast-site"
+        required
+        maxlength="64"
+        pattern="[\w-]+"
+        class="width-full"
+        value="{{ default.get('slug') }}">
+      <p>{{ _('The slug will act as the subdomain for your site.') }}</p>
+    </label>
+
+    <label>
+      <span>{{ _('Theme') }}</span>
+      <select name="theme">
+        {% for theme, name in themes %}
+          <option value="{{ theme }}"{{ ' selected' if default.get('theme') == theme else '' }}>{{ name }}</option>
+        {% endfor %}
+      </select>
+      <p>{{ _('You can change your theme later if you\'d like.') }}
+    </label>
+
+  </div>
+
+  <div class="card-block card">
+    <strong>{{ _('Cover Art') }}</strong>
+    <div class="upload-placeholder"
+      data-optional="true"
+      data-no-itunes-size-check="true"
+      data-default-url="{{ default.get('cover-url', '') }}"
+      data-default-name="{{ default.get('cover-url-name') }}"
+      data-default-size="{{ default.get('cover-url-size') }}"
+      data-default-type="{{ default.get('cover-url-type') }}"
+      data-accept="image/*"
+      data-name="cover-url"
+      data-type="image"
+      data-podcast="$none"></div>
+  </div>
+
+  <div class="card-block card">
+    <strong>{{ _('Logo') }}</strong>
+    <div class="upload-placeholder"
+      data-optional="true"
+      data-no-itunes-size-check="true"
+      data-default-url="{{ default.get('logo-url', '') }}"
+      data-default-name="{{ default.get('logo-url-name') }}"
+      data-default-size="{{ default.get('logo-url-size') }}"
+      data-default-type="{{ default.get('logo-url-type') }}"
+      data-accept="image/*"
+      data-name="logo-url"
+      data-type="image"
+      data-podcast="$none"></div>
+  </div>
+
+  <menu class="toolbar">
+    <li><button type="submit">{{ _('Create Site') }}</button></li>
+  </menu>
+
+  <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+</form>
+
+{% endblock %}
+
+{% block after_content %}
+<script src="/static/js/react-0.13.3.min.js"></script>
+<script src="/static/js/ui-uploader.js"></script>
+<script src="/static/js/disable-forms.js"></script>
+<script>
+(function() {
+  var slugField = document.querySelector('.slug-field');
+  var urlAvail = document.querySelector('.url-availability');
+  
+  var slugDebounce;
+  var slugXHR;
+
+  slugField.addEventListener('input', function() {
+    if (slugDebounce) clearTimeout(slugDebounce);
+    if (slugXHR) slugXHR.abort();
+    if (!slugField.validity.valid) {
+      urlAvail.textContent = urlAvail.innerText = '';
+      urlAvail.className = 'url-availability';
+      return;
+    }
+    slugDebounce = setTimeout(validateSlug, 500);
+  });
+
+  function validateSlug() {
+    var xhr = new XMLHttpRequest();
+    xhr.onload = function() {
+      slugXHR = null;
+      var parsed = JSON.parse(xhr.responseText);
+      if (parsed.valid) {
+        urlAvail.textContent = urlAvail.innerText = '{% trans slug=("' + slugField.value + '"|safe) %}"{{ slug }}" is available!{% endtrans %}';
+        urlAvail.className = 'url-availability is-available';
+      } else {
+        urlAvail.textContent = urlAvail.innerText = '{% trans slug=("' + slugField.value + '"|safe) %}"{{ slug }}" is unavailable{% endtrans %}';
+        urlAvail.className = 'url-availability is-unavailable';
+      }
+    };
+    xhr.open('get', '/dashboard/services/slug_available?slug=' + encodeURIComponent(slugField.value), true);
+    xhr.send();
+    slugXHR = xhr;
+  }
+
+}());
+
+</script>
+{% endblock %}

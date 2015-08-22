@@ -1,6 +1,6 @@
 from django.conf.urls import url
 
-from . import views, views_importer, views_network
+from . import views, views_importer, views_network, views_sites
 
 
 urlpatterns = [
@@ -27,6 +27,13 @@ urlpatterns = [
     url(r'^network/(?P<network_id>[\w-]+)/deactivate$', views_network.network_deactivate, name='network_deactivate'),
     url(r'^network/(?P<network_id>[\w-]+)/remove_podcast/(?P<podcast_slug>[\w-]+)$', views_network.network_remove_podcast, name='network_remove_podcast'),
     url(r'^network/(?P<network_id>[\w-]+)/remove_member/(?P<member_id>[\w]+)$', views_network.network_remove_member, name='network_remove_member'),
+
+    url(r'^sites/new/(?P<podcast_slug>[\w-]+)$', views_sites.new_site, name='new_site'),
+    url(r'^sites/options/(?P<site_slug>[\w-]+)$', views_sites.site_options, name='site_options'),
+    url(r'^sites/options/(?P<site_slug>[\w-]+)/edit$', views_sites.edit_site, name='edit_site'),
+    url(r'^sites/options/(?P<site_slug>[\w-]+)/add_link$', views_sites.add_link, name='site_add_link'),
+    url(r'^sites/options/(?P<site_slug>[\w-]+)/remove_link$', views_sites.remove_link, name='site_remove_link'),
+    url(r'^sites/options/(?P<site_slug>[\w-]+)/delete_site$', views_sites.delete_site, name='delete_site'),
 
     url(r'^feedback/remove/(?P<podcast_slug>[\w-]+)/(?P<comment_id>[\w-]+)$', views.delete_comment, name='delete_comment'),
 
