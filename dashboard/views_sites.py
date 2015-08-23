@@ -42,7 +42,9 @@ def new_site(req, podcast_slug):
             theme=req.POST.get('theme'),
             cover_image_url=signer.unsign(req.POST.get('cover-url')) if req.POST.get('cover-url') else None,
             logo_url=signer.unsign(req.POST.get('logo-url')) if req.POST.get('logo-url') else None,
-            analytics_id=req.POST.get('analytics_id')
+            analytics_id=req.POST.get('analytics_id'),
+            itunes_url=req.POST.get('itunes_url'),
+            stitcher_url=req.POST.get('stitcher_url')
         )
         site.save()
     except Exception as e:
@@ -76,6 +78,8 @@ def edit_site(req, site_slug):
         site.cover_image_url = signer.unsign(req.POST.get('cover-url')) if req.POST.get('cover-url') else None
         site.logo_url = signer.unsign(req.POST.get('logo-url')) if req.POST.get('logo-url') else None
         site.analytics_id = req.POST.get('analytics_id')
+        site.itunes_url = req.POST.get('itunes_url')
+        site.stitcher_url = req.POST.get('stitcher_url')
         site.save()
     except Exception as e:
         print e

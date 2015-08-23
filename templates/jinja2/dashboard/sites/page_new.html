@@ -44,10 +44,25 @@
       <input type="text"
         name="analytics_id"
         placeholder="UA-123456"
-        required
         maxlength="32"
         pattern="[\w-]+"
         value="{{ default.get('analytics_id') }}">
+    </label>
+
+    <label>
+      <span>{{ _('iTunes URL') }}</span>
+      <input type="url"
+        name="itunes_url"
+        placeholder="https://itunes.apple.com/la/podcast/almost-better-than-dragons/id981540916?mt=2"
+        value="{{ default.get('itunes_url') }}">
+    </label>
+
+    <label>
+      <span>{{ _('Stitcher Radio URL') }}</span>
+      <input type="url"
+        name="stitcher_url"
+        placeholder="http://www.stitcher.com/podcast/this-american-life"
+        value="{{ default.get('stitcher_url') }}">
     </label>
 
   </div>
