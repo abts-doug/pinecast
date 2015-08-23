@@ -28,7 +28,7 @@
         class="width-full"
         value="{{ default.get('slug') }}">
       <div class="url-availability"></div>
-      <p>{{ _('The slug will act as the subdomain for your site.') }}</p>
+      <small>{{ _('The slug will act as the subdomain for your site.') }}</small>
     </label>
 
     <label>
@@ -38,7 +38,6 @@
           <option value="{{ theme }}"{{ ' selected' if default.get('theme') == theme else '' }}>{{ name }}</option>
         {% endfor %}
       </select>
-      <p>{{ _('You can change your theme later if you\'d like.') }}
     </label>
 
     <label>
@@ -71,6 +70,7 @@
 
   <div class="card-block card">
     <strong>{{ _('Cover Art') }}</strong>
+    <p>{{ _('Cover art should be landscape (wider than it is tall) and be at least 1000px wide and 600px tall.') }}</p>
     <div class="upload-placeholder"
       data-optional="true"
       data-no-itunes-size-check="true"
@@ -86,6 +86,7 @@
 
   <div class="card-block card">
     <strong>{{ _('Logo') }}</strong>
+    <p>{{ _('We recommend uploading an image that\'s about 256x256px in size, but any size or SVG will be fine.') }}</p>
     <div class="upload-placeholder"
       data-optional="true"
       data-no-itunes-size-check="true"

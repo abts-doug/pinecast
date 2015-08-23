@@ -343,7 +343,7 @@ def get_upload_url(req, podcast_slug, type):
 
     # NOTE: When udating the code below, make sure to also update gc.py as well
     # to make sure that the cleanup script continues to work as expected.
-    if podcast_slug != '$none' and podcast_slug != '$net':
+    if not podcast_slug.startswith('$'):
         pod = get_podcast(req, podcast_slug)
         basepath = 'podcasts/%s/%s/' % (pod.id, type)
     elif podcast_slug == '$none':
