@@ -45,6 +45,7 @@ urlpatterns = [
     url(r'^import/feed$', views_importer.importer_lookup),
 
     url(r'^services/slug_available$', views.slug_available, name='slug_available'),
+    url(r'^services/sites/slug_available$', views_sites.slug_available, name='slug_available'),
     url(r'^services/getUploadURL/(?P<podcast_slug>([\w-]+|\$none|\$net))/(?P<type>[\w]+)$', views.get_upload_url, name='get_upload_url'),
 
     url(r'^services/start_import$', views_importer.start_import),

@@ -19,6 +19,7 @@
     <label>
       <span>{{ _('Site Slug') }}</span>
       <input type="text"
+        class="slug-field"
         name="slug"
         placeholder="my-podcast-site"
         required
@@ -26,6 +27,7 @@
         pattern="[\w-]+"
         class="width-full"
         value="{{ default.get('slug') }}">
+      <div class="url-availability"></div>
       <p>{{ _('The slug will act as the subdomain for your site.') }}</p>
     </label>
 
@@ -142,7 +144,7 @@
         urlAvail.className = 'url-availability is-unavailable';
       }
     };
-    xhr.open('get', '/dashboard/services/slug_available?slug=' + encodeURIComponent(slugField.value), true);
+    xhr.open('get', '/dashboard/services/sites/slug_available?slug=' + encodeURIComponent(slugField.value), true);
     xhr.send();
     slugXHR = xhr;
   }

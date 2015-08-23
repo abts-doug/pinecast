@@ -7,6 +7,7 @@ from django.views.decorators.http import require_POST
 
 from accounts import payment_plans
 from accounts.models import Network, UserSettings
+from pinecast.helpers import json_response
 from sites.models import Site, SiteBlogPost, SiteLink
 from views import _pmrender, get_podcast, signer
 
@@ -207,3 +208,14 @@ def remove_blog_post(req, site_slug):
 
     post.delete()
     return redirect('site_manage_blog', site_slug=site.slug)
+
+
+@login_required
+@json_response
+def slug_available(req):
+    try:
+        Site.objects.get(slug=req.GET.get('slug'))
+    except Site.DoesNotExist:
+        return {'valid': True}
+    else:
+        return {'valid': False}
