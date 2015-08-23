@@ -43,6 +43,17 @@
       <p>{{ _('You can change your theme later if you\'d like.') }}
     </label>
 
+    <label>
+      <span>{{ _('Google Analytics ID') }}</span>
+      <input type="text"
+        name="analytics_id"
+        placeholder="UA-123456"
+        required
+        maxlength="32"
+        pattern="[\w-]+"
+        value="{{ default.get('analytics_id', site.analytics_id) }}">
+    </label>
+
   </div>
 
   <div class="card-block card">

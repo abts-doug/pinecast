@@ -5,6 +5,7 @@
   {{ breadcrumb(site.podcast.name, url('podcast_dashboard', podcast_slug=site.podcast.slug, tab='tab-site')) }}
 
   <menu class="toolbar toolbar-right">
+    <li><a class="btn btn-neutral" href="http://{{ site.slug }}.pinecast.co">{{ _('Visit Site') }}</a></li>
     <li><a class="btn btn-neutral" href="{{ url('edit_site', site_slug=site.slug) }}">{{ _('Edit') }}</a></li>
   </menu>
 

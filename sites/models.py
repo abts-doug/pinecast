@@ -54,7 +54,7 @@ BANNED_SLUGS = set([
 THEME_ABN = 'abn'
 SECRET_THEMES = set([THEME_ABN])
 
-GA_VALIDATOR = RegexValidator(r'^[0-9a-zA-Z\-]+$', ugettext_lazy('Only GA IDs are accepted'))
+GA_VALIDATOR = RegexValidator(r'^[0-9a-zA-Z\-]*$', ugettext_lazy('Only GA IDs are accepted'))
 
 class Site(models.Model):
     SITE_THEMES = (
