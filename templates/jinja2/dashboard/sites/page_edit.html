@@ -50,7 +50,7 @@
         placeholder="UA-123456"
         maxlength="32"
         pattern="[\w-]+"
-        value="{{ default.get('analytics_id', site.analytics_id) }}">
+        value="{{ default.get('analytics_id', site.analytics_id or '') }}">
     </label>
 
     <label>
@@ -58,7 +58,7 @@
       <input type="url"
         name="itunes_url"
         placeholder="https://itunes.apple.com/la/podcast/almost-better-than-dragons/id981540916?mt=2"
-        value="{{ default.get('itunes_url', site.itunes_url) }}">
+        value="{{ default.get('itunes_url', site.itunes_url or '') }}">
     </label>
 
     <label>
@@ -66,7 +66,7 @@
       <input type="url"
         name="stitcher_url"
         placeholder="http://www.stitcher.com/podcast/this-american-life"
-        value="{{ default.get('stitcher_url', site.stitcher_url) }}">
+        value="{{ default.get('stitcher_url', site.stitcher_url or '') }}">
     </label>
 
   </div>
