@@ -1,3 +1,5 @@
+import datetime
+
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect
@@ -5,7 +7,7 @@ from django.views.decorators.http import require_POST
 
 from accounts import payment_plans
 from accounts.models import Network, UserSettings
-from sites.models import Site, SiteLink
+from sites.models import Site, SiteBlogPost, SiteLink
 from views import _pmrender, get_podcast, signer
 
 
@@ -129,3 +131,79 @@ def remove_link(req, site_slug):
     except Exception:
         pass
     return redirect('site_options', site_slug=site_slug)
+
+
+@login_required
+def add_blog_post(req, site_slug):
+    site = get_site(req, site_slug)
+
+    if not payment_plans.minimum(
+        UserSettings.get_from_user(site.podcast.owner).plan,
+        payment_plans.FEATURE_MIN_BLOG):
+        raise Http404()
+
+    data = {'site': site}
+
+    if not req.POST:
+        return _pmrender(req, 'dashboard/sites/blog/page_new.html', data)
+
+    try:
+        naive_publish = datetime.datetime.strptime(req.POST.get('publish'), '%Y-%m-%dT%H:%M') # 2015-07-09T12:00
+        adjusted_publish = naive_publish - UserSettings.get_from_user(req.user).get_tz_delta()
+        post = SiteBlogPost(
+            site=site,
+            title=req.POST.get('title'),
+            slug=req.POST.get('slug'),
+            body=req.POST.get('body'),
+            publish=adjusted_publish
+        )
+        post.save()
+    except Exception as e:
+        print e
+        data.update(error=True, default=req.POST)
+        return _pmrender(req, 'dashboard/sites/blog/page_new.html', data)
+    else:
+        return redirect('site_manage_blog', site_slug=site.slug)
+
+@login_required
+def manage_blog(req, site_slug):
+    site = get_site(req, site_slug)
+
+    if not payment_plans.minimum(
+        UserSettings.get_from_user(site.podcast.owner).plan,
+        payment_plans.FEATURE_MIN_BLOG):
+        raise Http404()
+
+    return _pmrender(req, 'dashboard/sites/blog/page_manage.html',
+                     {'site': site, 'posts': site.siteblogpost_set.all().order_by('-publish')})
+
+@login_required
+def edit_blog_post(req, site_slug, post_slug):
+    site = get_site(req, site_slug)
+    post = get_object_or_404(SiteBlogPost, site=site, slug=post_slug)
+
+    if not req.POST:
+        return _pmrender(req, 'dashboard/sites/blog/page_edit.html', {'site': site, 'post': post})
+    try:
+        naive_publish = datetime.datetime.strptime(req.POST.get('publish'), '%Y-%m-%dT%H:%M') # 2015-07-09T12:00
+        adjusted_publish = naive_publish - UserSettings.get_from_user(req.user).get_tz_delta()
+        post.title = req.POST.get('title')
+        post.slug = req.POST.get('slug')
+        post.body = req.POST.get('body')
+        post.publish = adjusted_publish
+        post.save()
+    except Exception as e:
+        print e
+        data.update(error=True, default=req.POST)
+        return _pmrender(req, 'dashboard/sites/blog/page_edit.html', data)
+    else:
+        return redirect('site_manage_blog', site_slug=site.slug)
+
+
+@login_required
+def remove_blog_post(req, site_slug):
+    site = get_site(req, site_slug)
+    post = get_object_or_404(SiteBlogPost, site=site, slug=req.POST.get('slug'))
+
+    post.delete()
+    return redirect('site_manage_blog', site_slug=site.slug)

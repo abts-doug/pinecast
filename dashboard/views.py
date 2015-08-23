@@ -351,7 +351,7 @@ def get_upload_url(req, podcast_slug, type):
     elif podcast_slug == '$net':
         basepath = 'networks/covers/'
     elif podcast_slug == '$site':
-        basepath = 'sites/covers/'
+        basepath = 'sites/'
     else:
         return Http404('Unknown slug')
 

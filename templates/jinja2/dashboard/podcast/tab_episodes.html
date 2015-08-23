@@ -16,7 +16,7 @@
       {% macro episode(ep) %}
         <tr>
           <td class="primary">
-            <a href="/dashboard/podcast/{{ podcast.slug }}/episode/{{ ep.id }}">{{ ep.title }}</a>
+            <a href="{{ url('podcast_episode', podcast_slug=podcast.slug, episode_id=str(ep.id)) }}">{{ ep.title }}</a>
           </td>
           <td>{{ ep.subtitle }}</td>
           <td>{{ ep.publish|pretty_date }}</td>
