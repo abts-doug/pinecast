@@ -1,41 +1,80 @@
 {% extends 'sites/zen/base.html' %}
 
 {% block main %}
-  {% for episode in pager %}
-    <article class="episode">
-      <div>
+
+  {% if not pager.has_previous() and site.siteblogpost_set.count() %}
+    <section class="home-blog">
+      <ol>
+        {% for post in site.siteblogpost_set.all()[:5] %}
+          <li>
+            <a href="{{ url('site_post', site_slug=site.slug, post_slug=post.slug) }}">{{ post.title }}</a>
+          </li>
+        {% endfor %}
+      </ol>
+      <p>{% trans blog_link=url('site_blog', site_slug=site.slug) %}Read more on <a href="{{ blog_link }}">our blog</a>.{% endtrans %}</p>
+    </section>
+  {% endif %}
+
+  <div class="episodes">
+    {% for episode in pager %}
+      <article class="episode">
         <img src="{{ episode.image_url }}" alt="" height="300" width="300">
-        <hgroup>
-          <h1>{{ episode.title }}</h1>
-          {% if episode.subtitle %}
-            <h2>{{ episode.subtitle }}</h2>
-          {% endif %}
-        </hgroup>
+        <div class="expando">
+          <hgroup>
+            <h1>{{ episode.title }}</h1>
+            {% if episode.subtitle %}
+              <h2>{{ episode.subtitle }}</h2>
+            {% endif %}
+          </hgroup>
 
-        <div class="description">
-          {{ episode.description|markdown|sanitize|safe }}
+          <div class="description">
+            {{ episode.description|markdown|sanitize|safe }}
+          </div>
+
+          <iframe src="https://pinecast.com{{ url_global('player', episode_id=str(episode.id)) }}" seamless height="60" style="border:0" class="pinecast-embed"></iframe>
+
         </div>
-
-        <iframe src="https://pinecast.com{{ url_global('player', episode_id=str(episode.id)) }}" seamless height="60" style="border:0" class="pinecast-embed"></iframe>
-
+      </article>
+    {% else %}
+      <div class="empty-state">
+        {{ _('There is nothing here yet.') }}
       </div>
-    </article>
-  {% else %}
-    <div class="empty-state">
-      {{ _('There is nothing here yet.') }}
-    </div>
-  {% endfor %}
+    {% endfor %}
+  </div>
 
   {% if pager.has_other_pages() %}
     <div class="pagination">
       {% if pager.has_next() %}
         <a class="btn" href="{{ url('site_home', site_slug=site.slug) }}?page={{ pager.next_page_number() }}">{{ _('Back in time') }}</a>
       {% endif %}
-      {% if pager.has_next() and pager.has_previous() %}&bull;{% endif %}
       {% if pager.has_previous() %}
         <a class="btn" href="{{ url('site_home', site_slug=site.slug) }}?page={{ pager.previous_page_number() }}">{{ _('Onwards to the future') }}</a>
       {% endif %}
     </div>
   {% endif %}
 
+{% endblock %}
+
+{% block afterbody %}
+<script>
+  (function() {
+    document.body.addEventListener('click', function(e) {
+      var target = e.target;
+      do {
+        target = target.parentNode;
+      } while (target && !target.classList.contains('episode') && target !== document.body);
+      if (!target || target === document.body) return;
+
+      if (target.classList.contains('is-expanded')) {
+        target.classList.toggle('is-expanded');
+        return;
+      }
+
+      Array.prototype.slice.call(document.querySelectorAll('.episode.is-expanded')).forEach(function(e) {
+        e.className = 'episode';
+      });
+      target.classList.toggle('is-expanded');
+    });
+  }());
+</script>
 {% endblock %}

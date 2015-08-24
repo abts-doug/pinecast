@@ -2,7 +2,7 @@
 @import url(https://fonts.googleapis.com/css?family=Righteous);
 
 html, body {
-    background: #34495e;
+    background: #f0f0f0;
     font-family: Lato, sans-serif;
     font-size: 14px;
     margin: 0;
@@ -10,11 +10,18 @@ html, body {
 }
 
 a {
-    color: #c0392b;
+    color: #2196F3;
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}
+a:visited {
+    color: #673AB7;
 }
 
 h1 {
-    font-family: Lobster;
+    font-family: Righteous;
 }
 
 p {
@@ -29,7 +36,8 @@ header div {
     background-size: cover;
     padding: 250px 25%;
 }
-header div a {
+header div a,
+header div a:visited {
     color: #fff;
     display: block;
     font-family: Righteous;
@@ -42,76 +50,90 @@ header div a:hover {
     text-decoration: underline;
 }
 
-main {
-    background: #fcfaff;
+.home-blog {
+    font-size: 18px;
+    margin: 0 auto;
+    max-width: 1024px;
+    padding: 10px 20px 20px;
 }
+.home-blog ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+.home-blog li a {
+    display: block;
+    padding: 30px 15px;
+}
+.home-blog li + li {
+    border-top: 1px solid #ccc;
+}
+.home-blog p {
+    color: #444;
+    font-size: 14px;
+    padding-left: 10px;
+}
+.home-blog p a {
+    color: #212121;
+    text-decoration: underline;
+}
+
 
 .blog-post {
-    padding: 40px;
-}
-.blog-post .teaser {
-    color: #222;
-    font-family: Lato;
-    font-size: 18px;
-    text-align: center;
-    text-transform: uppercase;
-}
-.blog-post .published.right {
-    float: right;
-    color: #999;
-    font-family: Lobster;
-    font-size: 13px;
-    padding: 20px 0;
-}
-.blog-post .teaser ~ h2 {
-    margin: 35px 0;
-}
-.blog-post .teaser ~ div.body {
-    max-height: 200px;
-    overflow: hidden;
-    position: relative;
-}
-.blog-post .teaser ~ div.body:after {
-    background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%);
-    bottom: 0;
-    content: "";
-    display: block;
-    height: 30px;
-    left: 0;
-    position: absolute;
-    right: 0;
-}
-.blog-post .read-more {
-    display: block;
-    font-size: 16px;
-    padding: 40px;
-    text-align: center;
+    margin: 0 auto;
+    max-width: 1024px;
+    padding: 40px 0;
 }
 
+
+.episodes {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 0 auto;
+    max-width: 990px;
+    padding-bottom: 40px;
+}
 .episode {
-    padding: 40px;
+    box-shadow: 0 0 0 transparent;
+    height: 300px;
+    margin: 0 15px 20px;
+    transition: box-shadow 0.2s;
+    width: 300px;
 }
-.episode + .episode,
-.blog-post + .episode {
-    border-top: 1px solid #eee;
+.episode.is-expanded {
+    background: #fff;
+    box-shadow: 0 5px 5px rgba(0, 0, 0, 0.2);
+    height: 300px;
+    padding-left: 300px;
+    width: calc(100% - 300px);
 }
+.episode .expando {
+    display: none;
+    padding: 20px;
+}
+.episode.is-expanded .expando {
+    display: block;
+}
+.episode.is-expanded img {
+    float: left;
+    margin-left: -300px;
+}
+
 
 .episode hgroup h1 {
     font-family: Lato;
     font-size: 2em;
     font-weight: normal;
     margin: 0;
-    text-align: center;
     text-transform: uppercase;
 }
 .episode hgroup h2 {
-    color: #d35400;
+    color: #009688;
     font-family: Lato;
     font-size: 1.5em;
     font-weight: normal;
     margin: 0;
-    text-align: center;
-    text-transform: uppercase;
 }
 .episode div h1 {
     font-family: Lato;
@@ -128,62 +150,53 @@ main {
     font-size: 1.1em;
     font-weight: normal;
 }
-.episode .published,
+.episode .description {
+    height: 150px;
+    overflow: hidden;
+    position: relative;
+}
+.episode .description:after {
+    background: linear-gradient(to bottom, rgba(255,255,255,0) 0%,rgba(255,255,255,1) 100%);
+    bottom: 0;
+    content: "";
+    display: block;
+    height: 30px;
+    left: 0;
+    position: absolute;
+    right: 0;
+}
+
 .blog-post .published:not(.right) {
     color: #999;
-    font-family: Lobster;
     font-size: 16px;
+    font-style: italic;
     padding: 20px 0;
-    text-align: center;
-}
-.episode > img {
-    display: block;
-    height: 250px;
-    margin: 10px 0 20px;
-    object-fit: cover;
-    width: 100%;
 }
 .episode .pinecast-embed {
-    margin: 20px 0;
+    margin: 0;
     width: 100%;
 }
 
-footer {
-    background: #111921;
+footer > section > * {
+    margin: 0 auto;
+    max-width: 1024px;
+}
+.footer-links {
+    background: #CDDDE4;
+    padding: 40px 0;
+}
+.footer-links a {
+    color: #212121;
+}
+.footer-links a + a {
+    margin-left: 20px;
+}
+.footer-copyright {
+    background: #607D8B;
     color: #fff;
-    margin-bottom: 50px;
-}
-.footer-row {
-    display: flex;
-}
-.footer-col {
-    flex: 1 1;
+    font-size: 16px;
+    font-weight: bold;
     padding: 20px 0;
-}
-.footer-col strong {
-    display: block;
-    font-family: Lobster;
-    font-size: 2em;
-    text-align: center;
-}
-.footer-col ul {
-    list-style: none;
-    padding: 20px 40px 40px;
-}
-.footer-col li {
-    font-size: 14px;
-    margin: 0;
-    padding: 10px 0;
-    text-align: center;
-}
-.footer-col li + li {
-    border-top: 1px solid rgba(255, 255, 255, 0.125);
-}
-.footer-col li a {
-    color: #fff;
-}
-.footer-col li a:visited {
-    color: #eee;
 }
 
 .pagination {
@@ -200,10 +213,10 @@ footer {
 }
 
 .post-full h1 {
-    color: #2c3e50;
+    color: #444;
     font-size: 2.5em;
     margin-bottom: 1em;
-    text-align: center;
+    text-transform: uppercase;
 }
 .post-full .published {
     margin-bottom: 2em;

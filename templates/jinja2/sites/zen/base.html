@@ -24,40 +24,17 @@
     {% block main %}{% endblock %}
   </main>
   <footer>
-    {% block footer_blog %}
-      {% if site.siteblogpost_set.count() %}
-        <section class="footer-blog">
-          <div>
-            <h1>{{ _('Written just for you') }}</h1>
-            <ul>
-              {% for post in site.siteblogpost_set.all()[:5] %}
-                <li>
-                  <a href="{{ url('site_post', site_slug=site.slug, post_slug=post.slug) }}">
-                    {{ post.title }}
-                  </a>
-                </li>
-              {% endfor %}
-            </ul>
-            <p>{% trans blog_link=url('site_blog', site_slug=site.slug) %}Read more on <a href="{{ blog_link }}">our blog</a>.{% endtrans %}</p>
-          </div>
-        </section>
-      {% endif %}
-    {% endblock %}
-    <section class="footer-copyright">
+    <section class="footer-links">
       <div>
-        <p>{{ site.podcast.copyright }}</p>
+        {% for link in site.sitelink_set.all() %}
+          <a{% if link.class_name %} class="{{ link.class_name }}"{% endif %} href="{{ link.url }}">
+            {{ link.title }}
+          </a>
+        {% endfor %}
       </div>
     </section>
-    {% if site.sitelink_set.count() %}
-      <section class="footer-links">
-        <div>
-          {% for link in site.sitelink_set.all() %}
-            <a{% if link.class_name %} class="{{ link.class_name }}"{% endif %} href="{{ link.url }}">
-              {{ link.title }}
-            </a>
-          {% endfor %}
-        </div>
-      </section>
-    {% endif %}
+    <section class="footer-copyright">
+        <p>{{ site.podcast.copyright }}</p>
+    </section>
   </footer>
 {% endblock %}
