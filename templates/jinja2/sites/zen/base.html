@@ -12,10 +12,10 @@
   <header>
     <div style="{{ site.get_cover_style(bgcolor='#2196F3') }}">
       <a href="{{ url('site_home', site_slug=site.slug) }}">
-        {% if not site.logo_url %}
-          {{ site.podcast.name }}
-        {% else %}
+        {% if site.logo_url %}
           <img src="{{ site.logo_url }}" alt="" class="logo" height="60" width="60">
+        {% else %}
+          {{ site.podcast.name }}
         {% endif %}
       </a>
     </div>

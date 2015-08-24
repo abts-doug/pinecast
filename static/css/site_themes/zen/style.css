@@ -94,6 +94,9 @@ header div a:hover {
     max-width: 990px;
     padding-bottom: 40px;
 }
+.episodes:first-child {
+    padding-top: 40px;
+}
 .episode {
     box-shadow: 0 0 0 transparent;
     height: 300px;
@@ -220,4 +223,27 @@ footer > section > * {
 }
 .post-full .published {
     margin-bottom: 2em;
+}
+
+.btn {
+    background: #009688;
+    border-radius: 0.2em;
+    box-shadow: 0 3px rgba(0, 0, 0, 0.2);
+    color: #fff;
+    display: inline-block;
+    line-height: 1em;
+    margin: 0 10px;
+    padding: 0.5em 1em;
+    position: relative;
+    text-decoration: none;
+    top: 0;
+    transition: box-shadow 0.2s, top 0.1s;
+    vertical-align: middle;
+}
+.btn:hover {
+    box-shadow: 0 5px rgba(0, 0, 0, 0.1);
+}
+.btn:active {
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.4);
+    top: 3px;
 }
