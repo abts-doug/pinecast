@@ -93,7 +93,7 @@ class PodcastEpisode(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     podcast = models.ForeignKey(Podcast)
     title = models.CharField(max_length=1024)
-    subtitle = models.CharField(max_length=1024, default='')
+    subtitle = models.CharField(max_length=1024, default='', blank=True)
     created = models.DateTimeField(auto_now=True)
     publish = models.DateTimeField()
     description = models.TextField(default='')
@@ -105,7 +105,7 @@ class PodcastEpisode(models.Model):
 
     image_url = models.URLField()
 
-    copyright = models.CharField(max_length=1024)
+    copyright = models.CharField(max_length=1024, blank=True)
     license = models.CharField(max_length=1024, blank=True)
 
     awaiting_import = models.BooleanField(default=False)
