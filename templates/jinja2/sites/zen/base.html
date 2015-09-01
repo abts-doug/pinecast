@@ -31,6 +31,20 @@
             {{ link.title }}
           </a>
         {% endfor %}
+
+        <a href="https://pinecast.com{{ url_global('feed', podcast_slug=site.podcast.slug) }}">
+          {{ _('Subscribe with RSS') }}
+        </a>
+        {%- if site.itunes_url -%}
+          <a href="{{ site.itunes_url }}">
+            {{ _('Subscribe on iTunes') }}
+          </a>
+        {%- endif -%}
+        {%- if site.stitcher_url -%}
+          <a href="{{ site.stitcher_url }}">
+            {{ _('Subscribe on Stitcher') }}
+          </a>
+        {%- endif -%}
       </div>
     </section>
     <section class="footer-copyright">

@@ -5,7 +5,7 @@
   {% if not pager.has_previous() and site.siteblogpost_set.count() %}
     <section class="home-blog">
       <ol>
-        {% for post in site.siteblogpost_set.all()[:5] %}
+        {% for post in site.siteblogpost_set.all()[:2] %}
           <li>
             <a href="{{ url('site_post', site_slug=site.slug, post_slug=post.slug) }}">{{ post.title }}</a>
           </li>
@@ -15,7 +15,23 @@
     </section>
   {% endif %}
 
+  <div class="subscribe-buttons">
+    <a class="btn" href="https://pinecast.com{{ url_global('feed', podcast_slug=site.podcast.slug) }}">
+      {{ _('Subscribe with RSS') }}
+    </a>
+    {%- if site.itunes_url -%}
+      <a class="btn" href="{{ site.itunes_url }}">
+        {{ _('Subscribe on iTunes') }}
+      </a>
+    {%- endif -%}
+    {%- if site.stitcher_url -%}
+      <a class="btn" href="{{ site.stitcher_url }}">
+        {{ _('Subscribe on Stitcher') }}
+      </a>
+    {%- endif -%}
+  </div>
   <div class="episodes">
+
     {% for episode in pager %}
       <article class="episode">
         <img src="{{ episode.image_url }}" alt="" height="300" width="300">
