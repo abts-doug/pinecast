@@ -43,7 +43,7 @@ def podcast_listener_locations(req):
     res = query.query(
         'listen',
         {'select': {'podcast': 'count'},
-         'timeframe': 'this_month',
+         'timeframe': {'previous': {'days': 30}},
          'groupBy': 'profile.country',
          'filter': {'podcast': {'eq': unicode(pod.id)}},
          'timezone': UserSettings.get_from_user(req.user).tz_offset})
@@ -62,7 +62,7 @@ def podcast_subscriber_history(req):
     res = query.query(
         'subscribe',
         {'select': {'podcast': 'count'},
-         'timeframe': 'this_month',
+         'timeframe': {'previous': {'days': 30}},
          'interval': 'daily',
          'filter': {'podcast': {'eq': unicode(pod.id)}},
          'timezone': UserSettings.get_from_user(req.user).tz_offset})
@@ -92,7 +92,7 @@ def podcast_listen_history(req):
     res = query.query(
         'listen',
         {'select': {'podcast': 'count'},
-         'timeframe': 'this_month',
+         'timeframe': {'previous': {'days': 30}},
          'interval': 'daily',
          'filter': {'podcast': {'eq': unicode(pod.id)}},
          'timezone': UserSettings.get_from_user(req.user).tz_offset})
@@ -134,7 +134,7 @@ def episode_listen_history(req):
     res = query.query(
         'listen',
         {'select': {'episode': 'count'},
-         'timeframe': 'this_month',
+         'timeframe': {'previous': {'days': 30}},
          'interval': 'daily',
          'filter': {'episode': {'eq': unicode(ep.id)}},
          'timezone': UserSettings.get_from_user(req.user).tz_offset})
@@ -183,7 +183,7 @@ def podcast_listen_breakdown(req):
         'listen',
         {'select': {'podcast': 'count'},
          'groupBy': 'source',
-         'timeframe': 'this_month',
+         'timeframe': {'previous': {'days': 30}},
          'filter': {'podcast': {'eq': unicode(pod.id)}},
          'timezone': UserSettings.get_from_user(req.user).tz_offset})
 
@@ -218,7 +218,7 @@ def podcast_listen_platform_breakdown(req):
         'listen',
         {'select': {'podcast': 'count'},
          'groupBy': [key],
-         'timeframe': 'this_month',
+         'timeframe': {'previous': {'days': 30}},
          'filter': {'podcast': {'eq': unicode(pod.id)}},
          'timezone': UserSettings.get_from_user(req.user).tz_offset})
 
@@ -281,7 +281,7 @@ def network_listen_history(req):
         res = query.query_async(
             'listen',
             {'select': {'podcast': 'count'},
-             'timeframe': 'this_month',
+             'timeframe': {'previous': {'days': 30}},
              'interval': 'daily',
              'filter': {'podcast': {'eq': unicode(pod.id)}},
              'timezone': UserSettings.get_from_user(req.user).tz_offset})
