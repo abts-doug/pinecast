@@ -15,6 +15,34 @@ from views import _pmrender, signer
 
 
 @login_required
+def new_network(req):
+    uset = UserSettings.get_from_user(req.user)
+    if not plans.minimum(uset.plan, plans.FEATURE_MIN_NETWORK):
+        return _pmrender(req, 'dashboard/network/page_new_upgrade.html')
+
+    if not req.POST:
+        return _pmrender(req, 'dashboard/network/page_new.html')
+
+    try:
+        net = Network(
+            name=req.POST.get('name'),
+            owner=req.user,
+            image_url=signer.unsign(req.POST.get('image-url')) if req.POST.get('image-url') else None
+        )
+        net.save()
+        net.members.add(req.user)
+        net.save()
+    except Exception as e:
+        print e
+        return _pmrender(req,
+                         'dashboard/network/page_new.html',
+                         {'error': ugettext('Error while saving network details'),
+                          'default': req.POST})
+
+    return redirect('network_dashboard', network_id=net.id)
+
+
+@login_required
 def network_dashboard(req, network_id):
     net = get_object_or_404(Network, deactivated=False, id=network_id, members__in=[req.user])
 
@@ -22,7 +50,7 @@ def network_dashboard(req, network_id):
     added_member = req.GET.get('added_member', 'false') == 'true'
     podcasts = net.podcast_set.all()
     return _pmrender(req,
-                     'dashboard/network/netdash.html',
+                     'dashboard/network/page_dash.html',
                      {'network': net,
                       'net_podcasts': podcasts,
                       'add_member_error': ame,
@@ -37,15 +65,15 @@ def network_add_show(req, network_id):
         try:
             pod = Podcast.objects.get(slug=slug)
         except Podcast.DoesNotExist:
-            return _pmrender(req, 'dashboard/network/add_show.html', {'network': net, 'error': ugettext('No podcast with the slug "%s" was found') % slug})
+            return _pmrender(req, 'dashboard/network/page_add_show.html', {'network': net, 'error': ugettext('No podcast with the slug "%s" was found') % slug})
         else:
             if pod.owner != req.user:
-                return _pmrender(req, 'dashboard/network/add_show.html', {'network': net, 'error': ugettext('You must be the owner of a podcast to add it to a network')})
+                return _pmrender(req, 'dashboard/network/page_add_show.html', {'network': net, 'error': ugettext('You must be the owner of a podcast to add it to a network')})
             pod.networks.add(net)
             pod.save()
         return redirect('network_dashboard', network_id=net.id)
             
-    return _pmrender(req, 'dashboard/network/add_show.html', {'network': net})
+    return _pmrender(req, 'dashboard/network/page_add_show.html', {'network': net})
 
 
 @login_required
@@ -81,16 +109,18 @@ def network_edit(req, network_id):
     net = get_object_or_404(Network, deactivated=False, id=network_id, members__in=[req.user])
     
     if not req.POST:
-        return _pmrender(req, 'dashboard/network/edit.html', {'network': net})
+        return _pmrender(req, 'dashboard/network/page_edit.html', {'network': net})
 
     try:
         net.name = req.POST.get('name')
-        net.image_url = signer.unsign(req.POST.get('image-url'))
+        net.image_url = signer.unsign(req.POST.get('image-url')) if req.POST.get('image-url') else None
         net.save()
-    except Exception:
+    except Exception as e:
+        print e
         return _pmrender(req,
-                         'dashboard/network/edit.html',
-                         {'network': net, 'error': ugettext('Error while saving network details')})
+                         'dashboard/network/page_edit.html',
+                         {'network': net, 'error': ugettext('Error while saving network details'),
+                          'default': req.POST})
 
     return redirect('network_dashboard', network_id=net.id)
 
@@ -100,7 +130,7 @@ def network_deactivate(req, network_id):
     net = get_object_or_404(Network, deactivated=False, id=network_id, owner=req.user)
     
     if not req.POST:
-        return _pmrender(req, 'dashboard/network/deactivate.html', {'network': net})
+        return _pmrender(req, 'dashboard/network/page_deactivate.html', {'network': net})
 
     if req.POST.get('confirm') != 'doit':
         return redirect('dashboard')
@@ -126,7 +156,7 @@ def network_remove_podcast(req, network_id, podcast_slug):
         raise Http404()
 
     if not req.POST:
-        return _pmrender(req, 'dashboard/network/remove_podcast.html', {'network': net, 'podcast': pod})
+        return _pmrender(req, 'dashboard/network/page_remove_podcast.html', {'network': net, 'podcast': pod})
 
     if req.POST.get('confirm') != 'doit':
         return redirect('network_dashboard', network_id=net.id)
@@ -152,7 +182,7 @@ def network_remove_member(req, network_id, member_id):
     pods = Podcast.objects.filter(owner=user, networks__in=[net])
 
     if not req.POST:
-        return _pmrender(req, 'dashboard/network/remove_member.html', {'network': net, 'member': user, 'pods': pods})
+        return _pmrender(req, 'dashboard/network/page_remove_member.html', {'network': net, 'member': user, 'pods': pods})
 
     if req.POST.get('confirm') != 'doit':
         return redirect('network_dashboard', network_id=net.id)

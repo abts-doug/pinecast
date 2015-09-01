@@ -2,15 +2,8 @@
 {% block dashboard_body %}
 
 <header>
-  {{ breadcrumb(network.name, url('network_dashboard', kwargs={'network_id': network.id})) }}
-
-  {% if user == network.owner %}
-    <menu class="toolbar toolbar-right">
-      <li><a class="btn btn-danger" href="{{ url('network_deactivate', kwargs={'network_id': network.id}) }}">{{ _('Deactivate Network') }}</a></li>
-    </menu>
-  {% endif %}
-
-  <h1>{% trans name=network.name %}Edit {{ name }}{% endtrans %}</h1>
+  {{ breadcrumb(_('Dashboard'), url('dashboard')) }}
+  <h1>{{ _('New Podcast Network') }}</h1>
 </header>
 
 {% if error %}
@@ -24,7 +17,7 @@
 
     <label>
       <span>{{ _('Network Name') }}</span>
-      <input type="text" name="name" required value="{{ default.get('name', network.name) }}">
+      <input type="text" name="name" required value="{{ default.get('name') }}">
     </label>
 
   </div>
@@ -33,14 +26,15 @@
     <strong>{{ _('Cover Image') }}</strong>
 
     <div class="upload-placeholder"
-      data-default-url="{{ sign(default.get('image-url', network.image_url)) }}"
-      data-default-size="{{ default.get('image-url-size') }}"
-      data-default-name="{{ default.get('image-url-name') }}"
-      data-default-type="{{ default.get('image-url-type') }}"
+      data-default-url="{{ sign(default.get('image-url', '')) }}"
+      data-default-size="{{ default.get('image-url-size', '') }}"
+      data-default-name="{{ default.get('image-url-name', '') }}"
+      data-default-type="{{ default.get('image-url-type', '') }}"
       data-accept="image/*"
       data-name="image-url"
       data-type="image"
       data-podcast="$net"
+      data-optional="true"
       data-no-itunes-size-check="true"></div>
   </div>
 
