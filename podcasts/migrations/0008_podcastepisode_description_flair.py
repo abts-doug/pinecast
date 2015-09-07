@@ -15,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='podcastepisode',
             name='description_flair',
-            field=bitfield.models.BitField(((b'feedback_link', 'Feedback Link'), (b'site_link', 'Site Link'), (b'powered_by', 'Powered By Pinecast')), default=None),
+            field=bitfield.models.BitField(((b'feedback_link', 'Feedback Link'), (b'site_link', 'Site Link'), (b'powered_by', 'Powered By Pinecast')), default=0),
         ),
     ]

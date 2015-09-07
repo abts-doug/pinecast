@@ -116,7 +116,8 @@ class PodcastEpisode(models.Model):
             ('feedback_link', ugettext_lazy('Feedback Link')),
             ('site_link', ugettext_lazy('Site Link')),
             ('powered_by', ugettext_lazy('Powered By Pinecast')),
-        )
+        ),
+        default=0
     )
 
     @cached_method
@@ -269,8 +270,8 @@ class PodcastReviewAssociation(models.Model):
     }
 
     podcast = models.ForeignKey(Podcast)  # Not one-to-one because you can have multiple services
-    service = models.CharField(choices=SERVICES, max_length=16)    
-    payload = models.CharField(max_length=256)    
+    service = models.CharField(choices=SERVICES, max_length=16)
+    payload = models.CharField(max_length=256)
 
     def __unicode__(self):
         return '%s: %s' % (self.podcast.name, self.service)
