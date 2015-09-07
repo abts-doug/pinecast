@@ -1,5 +1,6 @@
 from functools import wraps
 
+import bleach
 import django.core.urlresolvers
 import pytz
 from django.core.urlresolvers import reverse as reverse_django
@@ -47,3 +48,12 @@ def cached_method(func):
             cache[args] = func(self, *args)
         return cache[args]
     return memoized
+
+
+def sanitize(data):
+    return bleach.clean(
+        data,
+        bleach.ALLOWED_TAGS + [
+            'p', 'div', 'dl', 'dt', 'dd', 'br', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'hr', 'span'],
+        {'*': ['src', 'href', 'title']}
+    )

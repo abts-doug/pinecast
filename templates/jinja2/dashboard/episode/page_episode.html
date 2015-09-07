@@ -36,7 +36,7 @@
   <div class="card-block card">
     <strong>{{ _('Description') }}</strong>
     <div class="markdown-editor-preview">
-      {{ episode.description|markdown|safe }}
+      {{ episode.get_html_description()|safe }}
     </div>
   </div>
 

@@ -16,7 +16,7 @@
       </hgroup>
 
       <div class="description">
-        {{ episode.description|markdown|sanitize|safe }}
+        {{ episode.get_html_description()|safe }}
       </div>
 
     </div>

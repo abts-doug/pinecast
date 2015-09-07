@@ -248,7 +248,6 @@ def podcast_new_ep(req, podcast_slug):
     ctx = {
         'podcast': pod,
         'latest_ep': latest_episode,
-        'flair_flags': PodcastEpisode.FLAIR_FLAGS,
     }
     if not req.POST:
         return _pmrender(req, 'dashboard/episode/page_new.html', ctx)
@@ -290,7 +289,6 @@ def edit_podcast_episode(req, podcast_slug, episode_id):
     ctx = {
         'podcast': pod,
         'episode': ep,
-        'flair_flags': PodcastEpisode.FLAIR_FLAGS,
     }
 
     if not req.POST:

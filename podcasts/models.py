@@ -2,6 +2,7 @@ import datetime
 import re
 import uuid
 
+import gfm
 import requests
 from bitfield import BitField
 from django.conf import settings
@@ -11,7 +12,18 @@ from django.utils.translation import ugettext, ugettext_lazy
 
 import accounts.payment_plans as payment_plans
 from accounts.models import Network, UserSettings
-from pinecast.helpers import cached_method
+from pinecast.helpers import cached_method, reverse, sanitize
+
+
+FLAIR_FEEDBACK = 'feedback_link'
+FLAIR_SITE_LINK = 'site_link'
+FLAIR_POWERED_BY = 'powered_by'
+FLAIR_FLAGS = (
+    (FLAIR_FEEDBACK, ugettext_lazy('Feedback Link')),
+    (FLAIR_SITE_LINK, ugettext_lazy('Site Link')),
+    (FLAIR_POWERED_BY, ugettext_lazy('Powered By Pinecast')),
+)
+FLAIR_FLAGS_MAP = {k: v for k, v in FLAIR_FLAGS}
 
 
 class Podcast(models.Model):
@@ -90,6 +102,21 @@ class Podcast(models.Model):
         latest = self.get_most_recent_episode()
         return latest.publish if latest else None
 
+    def get_available_flair_flags(self, flatten=False):
+        plan = UserSettings.get_from_user(self.owner).plan
+        flags = []
+        if payment_plans.minimum(plan, payment_plans.PLAN_STARTER):
+            flags.append(FLAIR_POWERED_BY)
+        if payment_plans.minimum(plan, payment_plans.FEATURE_MIN_COMMENT_BOX):
+            flags.append(FLAIR_FEEDBACK)
+        if (payment_plans.minimum(plan, payment_plans.FEATURE_MIN_SITES) and self.site):
+            flags.append(FLAIR_SITE_LINK)
+
+        if flatten:
+            return flags
+        else:
+            return [(f, FLAIR_FLAGS_MAP[f]) for f in flags]
+
     def __unicode__(self):
         return self.name
 
@@ -115,11 +142,6 @@ class PodcastEpisode(models.Model):
 
     awaiting_import = models.BooleanField(default=False)
 
-    FLAIR_FLAGS = (
-        ('feedback_link', ugettext_lazy('Feedback Link')),
-        ('site_link', ugettext_lazy('Site Link')),
-        ('powered_by', ugettext_lazy('Powered By Pinecast')),
-    )
     description_flair = BitField(
         flags=FLAIR_FLAGS,
         default=0
@@ -137,12 +159,36 @@ class PodcastEpisode(models.Model):
 
     def set_flair(self, post, no_save=False):
         val = 0
-        for flag, _ in self.FLAIR_FLAGS:
+        for flag, _ in FLAIR_FLAGS:
             if post.get('flair_%s' % flag):
                 val = val | getattr(PodcastEpisode.description_flair, flag)
         self.description_flair = val
         if not no_save:
             self.save()
+
+    def get_html_description(self, is_demo=None):
+        raw = self.description
+        if is_demo is None:
+            is_demo = UserSettings.get_from_user(self.podcast.owner).plan == payment_plans.PLAN_DEMO
+        available_flags = self.podcast.get_available_flair_flags(flatten=True)
+
+        if (self.description_flair.site_link and
+            FLAIR_SITE_LINK in available_flags):
+            raw += '\n\nFind out more at [%s](http://%s.pinecast.co).' % (
+                self.podcast.name, self.podcast.site.slug)
+
+        if (self.description_flair.feedback_link and
+            FLAIR_FEEDBACK in available_flags):
+            fb_url = 'https://pinecast.com%s' % reverse(
+                'ep_comment_box', podcast_slug=self.podcast.slug, episode_id=str(self.id))
+            raw += '\n\nSend us your feedback online at [%s](%s).' % (fb_url, fb_url)
+
+        if (is_demo or
+            self.description_flair.powered_by and FLAIR_SITE_LINK in available_flags):
+            raw += '\n\nThis podcast is powered by [Pinecast](https://pinecast.com).'
+
+        markdown = gfm.markdown(raw)
+        return sanitize(markdown)
 
     def __unicode__(self):
         return '%s - %s' % (self.title, self.subtitle)

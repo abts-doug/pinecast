@@ -53,7 +53,8 @@
     <div class="flair-options">
       <p>{{ _('Choose flair to show at the bottom of your episode description:') }}</p>
       <ul>
-        {% for flag, flag_name in flair_flags %}
+        {% set flags = podcast.get_available_flair_flags() %}
+        {% for flag, flag_name in flags %}
           <li>
             <label class="checkbox">
               <input type="checkbox" name="flair_{{ flag }}"{{ ' checked' if default.get('flair_%s' % flag, getattr(latest_ep.description_flair, flag) if latest_ep else False) else '' }}>

@@ -66,9 +66,7 @@ def feed(req, podcast_slug):
     for ep in episodes:
         ep_url = _asset(ep.audio_url + '?x-source=rss&x-episode=%s' % str(ep.id))
 
-        md_desc = gfm.markdown(ep.description)
-        if is_demo:
-            md_desc += '<p>This podcast is powered by <a href="https://pinecast.com/">Pinecast</a></p>'
+        md_desc = ep.get_html_description(is_demo=is_demo)
 
         ep_copy = ep.copyright or pod.copyright
         items.append('\n'.join([

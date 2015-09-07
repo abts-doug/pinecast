@@ -2,7 +2,6 @@ import datetime
 import hashlib
 import json
 
-import bleach
 import gfm
 import pytz
 from django.conf import settings
@@ -51,7 +50,7 @@ def environment(**options):
     env.filters['json'] = json.dumps
     env.filters['markdown'] = gfm.markdown
     env.filters['pretty_date'] = pretty_date
-    env.filters['sanitize'] = sanitize
+    env.filters['sanitize'] = helpers.sanitize
     return env
 
 def minimum_plan(user_settings, plan):
@@ -131,12 +130,3 @@ def pretty_date(time=False):
     if day_diff < 365:
         return ungettext('{n} month ago', '{n} months ago', day_diff / 30).format(n=day_diff / 30)
     return ungettext('{n} year ago', '{n} years ago', day_diff / 365).format(n=day_diff / 365)
-
-
-def sanitize(data):
-    return bleach.clean(
-        data,
-        bleach.ALLOWED_TAGS + [
-            'p', 'div', 'dl', 'dt', 'dd', 'br', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'hr', 'span'],
-        {'*': ['src', 'href', 'title']}
-    )
