@@ -11,7 +11,7 @@
   <body>
     {% if minimum_plan(site.podcast.owner, PLANS.FEATURE_MIN_COMMENT_BOX) %}
       <aside class="leave-feedback">
-        <a href="https://pinecast.com{{ url_global('podcast_comment_box', podcast_slug=site.podcast.slug) }}">
+        <a href="{% block feedbackurl %}https://pinecast.com{{ url_global('podcast_comment_box', podcast_slug=site.podcast.slug) }}{% endblock %}">
           {{ _('Leave a note in the comment box') }}
         </a>
       </aside>
