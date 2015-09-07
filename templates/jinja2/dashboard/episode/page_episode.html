@@ -39,6 +39,16 @@
       {{ episode.description|markdown|safe }}
     </div>
   </div>
+
+  {% if podcast.site %}
+    <div class="card-block card">
+      <strong>{{ _('Site Page URL') }}</strong>
+      <input type="url"
+        readonly
+        value="http://{{ podcast.site.slug }}.pinecast.co/episode/{{ str(episode.id) }}"
+        class="width-full">
+    </div>
+  {% endif %}
   
   <div class="card-block card">
     <strong>{{ _('Episode information') }}</strong>
