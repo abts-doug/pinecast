@@ -3,6 +3,7 @@ import re
 import uuid
 
 import requests
+from bitfield import BitField
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models
@@ -109,6 +110,14 @@ class PodcastEpisode(models.Model):
     license = models.CharField(max_length=1024, blank=True)
 
     awaiting_import = models.BooleanField(default=False)
+
+    description_flair = BitField(
+        flags=(
+            ('feedback_link', ugettext_lazy('Feedback Link')),
+            ('site_link', ugettext_lazy('Site Link')),
+            ('powered_by', ugettext_lazy('Powered By Pinecast')),
+        )
+    )
 
     @cached_method
     def formatted_duration(self):
