@@ -244,8 +244,14 @@ def delete_podcast_episode(req, podcast_slug, episode_id):
 def podcast_new_ep(req, podcast_slug):
     pod = get_podcast(req, podcast_slug)
 
+    latest_episode = pod.get_most_recent_episode()
+    ctx = {
+        'podcast': pod,
+        'latest_ep': latest_episode,
+        'flair_flags': PodcastEpisode.FLAIR_FLAGS,
+    }
     if not req.POST:
-        return _pmrender(req, 'dashboard/episode/page_new.html', {'podcast': pod})
+        return _pmrender(req, 'dashboard/episode/page_new.html', ctx)
 
     try:
         naive_publish = datetime.datetime.strptime(req.POST.get('publish'), '%Y-%m-%dT%H:%M') # 2015-07-09T12:00
@@ -267,9 +273,12 @@ def podcast_new_ep(req, podcast_slug):
 
             copyright=req.POST.get('copyright'),
             license=req.POST.get('license'))
+        ep.set_flair(req.POST, no_save=True)
         ep.save()
     except Exception as e:
-        return  _pmrender(req, 'dashboard/episode/page_new.html', {'podcast': pod, 'default': req.POST, 'error': True})
+        ctx['error'] = True
+        ctx['default'] = req.POST
+        return  _pmrender(req, 'dashboard/episode/page_new.html', ctx)
     return redirect('podcast_dashboard', podcast_slug=pod.slug)
 
 
@@ -278,8 +287,14 @@ def edit_podcast_episode(req, podcast_slug, episode_id):
     pod = get_podcast(req, podcast_slug)
     ep = get_object_or_404(PodcastEpisode, id=episode_id, podcast=pod)
 
+    ctx = {
+        'podcast': pod,
+        'episode': ep,
+        'flair_flags': PodcastEpisode.FLAIR_FLAGS,
+    }
+
     if not req.POST:
-        return _pmrender(req, 'dashboard/episode/page_edit.html', {'podcast': pod, 'episode': ep})
+        return _pmrender(req, 'dashboard/episode/page_edit.html', ctx)
 
     try:
         naive_publish = datetime.datetime.strptime(req.POST.get('publish'), '%Y-%m-%dT%H:%M') # 2015-07-09T12:00
@@ -299,10 +314,13 @@ def edit_podcast_episode(req, podcast_slug, episode_id):
 
         ep.copyright = req.POST.get('copyright')
         ep.license = req.POST.get('license')
+        ep.set_flair(req.POST, no_save=True)
         ep.save()
     except Exception as e:
         print e
-        return  _pmrender(req, 'dashboard/episode/page_edit.html', {'podcast': pod, 'episode': ep, 'default': req.POST, 'error': True})
+        ctx['default'] = req.POST
+        ctx['error'] = True
+        return  _pmrender(req, 'dashboard/episode/page_edit.html', ctx)
     return redirect('podcast_episode', podcast_slug=pod.slug, episode_id=str(ep.id))
 
 

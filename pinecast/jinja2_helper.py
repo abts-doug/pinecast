@@ -27,11 +27,13 @@ def environment(**options):
     env = Environment(**options)
     env.globals.update({
         'static': staticfiles_storage.url,
+        'dir': dir,
         'len': len,
         'str': str,
         'url': helpers.reverse,
         'plural': plural,  # DEPRECATED!
         'gravatar': gravatar,
+        'getattr': getattr,
 
         '_': ugettext,
         'gettext': ugettext,

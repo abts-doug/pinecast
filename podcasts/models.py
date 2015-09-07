@@ -81,10 +81,14 @@ class Podcast(models.Model):
         return self.podcastepisode_set.filter(publish__gt=datetime.datetime.now()).count()
 
     @cached_method
-    def get_most_recent_publish_date(self):
+    def get_most_recent_episode(self):
         if not self.get_episodes().count():
             return None
-        return self.get_episodes()[0].publish
+        return self.get_episodes()[0]
+
+    def get_most_recent_publish_date(self):
+        latest = self.get_most_recent_episode()
+        return latest.publish if latest else None
 
     def __unicode__(self):
         return self.name
@@ -111,12 +115,13 @@ class PodcastEpisode(models.Model):
 
     awaiting_import = models.BooleanField(default=False)
 
+    FLAIR_FLAGS = (
+        ('feedback_link', ugettext_lazy('Feedback Link')),
+        ('site_link', ugettext_lazy('Site Link')),
+        ('powered_by', ugettext_lazy('Powered By Pinecast')),
+    )
     description_flair = BitField(
-        flags=(
-            ('feedback_link', ugettext_lazy('Feedback Link')),
-            ('site_link', ugettext_lazy('Site Link')),
-            ('powered_by', ugettext_lazy('Powered By Pinecast')),
-        ),
+        flags=FLAIR_FLAGS,
         default=0
     )
 
@@ -128,6 +133,16 @@ class PodcastEpisode(models.Model):
     @cached_method
     def is_published(self):
         return not self.awaiting_import and self.publish <= datetime.datetime.now()
+
+
+    def set_flair(self, post, no_save=False):
+        val = 0
+        for flag, _ in self.FLAIR_FLAGS:
+            if post.get('flair_%s' % flag):
+                val = val | getattr(PodcastEpisode.description_flair, flag)
+        self.description_flair = val
+        if not no_save:
+            self.save()
 
     def __unicode__(self):
         return '%s - %s' % (self.title, self.subtitle)

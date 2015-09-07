@@ -1164,3 +1164,35 @@ li.user-card span.name {
 .site-links .site-link:last-child {
     border-bottom: 1px solid #B6B6B6;
 }
+
+
+.flair-options {
+    background: #f0f0f0;
+    border: 1px solid #ddd;
+    border-radius: 0 0 3px 3px;
+    box-shadow: 0 2px 1px rgba(0, 0, 0, 0.05);
+    padding: 15px;
+}
+.flair-options p {
+    margin: 0 0 15px;
+}
+.flair-options ul {
+    margin: 0;
+    padding: 0;
+}
+.flair-options li {
+    background: #fff;
+    border: 1px solid #009688;
+    border-radius: 3px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+    list-style: none;
+}
+.flair-options li + li {
+    margin-top: 2px;
+}
+.flair-options li label {
+    line-height: 1.25em;
+}
+.flair-options li input {
+    margin: 0.25em;
+}

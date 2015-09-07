@@ -50,6 +50,20 @@
       <textarea name="description" id="description-field">{{ default.get('description', _('# Episode Notes\n\nNotes go here'))|safe }}</textarea>
     </label>
 
+    <div class="flair-options">
+      <p>{{ _('Choose flair to show at the bottom of your episode description:') }}</p>
+      <ul>
+        {% for flag, flag_name in flair_flags %}
+          <li>
+            <label class="checkbox">
+              <input type="checkbox" name="flair_{{ flag }}"{{ ' checked' if default.get('flair_%s' % flag, getattr(latest_ep.description_flair, flag) if latest_ep else False) else '' }}>
+              <span>{{ flag_name }}</span>
+            </label>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+
   </div>
 
   <div class="card-block card">
