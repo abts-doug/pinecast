@@ -34,22 +34,9 @@
 
     {% for episode in pager %}
       <article class="episode">
-        <img src="{{ episode.image_url }}" alt="" height="300" width="300">
-        <div class="expando">
-          <hgroup>
-            <h1>{{ episode.title }}</h1>
-            {% if episode.subtitle %}
-              <h2>{{ episode.subtitle }}</h2>
-            {% endif %}
-          </hgroup>
-
-          <div class="description">
-            {{ episode.description|markdown|sanitize|safe }}
-          </div>
-
-          <iframe src="https://pinecast.com{{ url_global('player', episode_id=str(episode.id)) }}" seamless height="60" style="border:0" class="pinecast-embed"></iframe>
-
-        </div>
+        <a href="{{ url('site_episode', episode_id=str(episode.id)) }}">
+          <img src="{{ episode.image_url }}" alt="" height="300" width="300">
+        </a>
       </article>
     {% else %}
       <div class="empty-state">
@@ -69,28 +56,4 @@
     </div>
   {% endif %}
 
-{% endblock %}
-
-{% block afterbody %}
-<script>
-  (function() {
-    document.body.addEventListener('click', function(e) {
-      var target = e.target;
-      do {
-        target = target.parentNode;
-      } while (target && !target.classList.contains('episode') && target !== document.body);
-      if (!target || target === document.body) return;
-
-      if (target.classList.contains('is-expanded')) {
-        target.classList.toggle('is-expanded');
-        return;
-      }
-
-      Array.prototype.slice.call(document.querySelectorAll('.episode.is-expanded')).forEach(function(e) {
-        e.className = 'episode';
-      });
-      target.classList.toggle('is-expanded');
-    });
-  }());
-</script>
 {% endblock %}

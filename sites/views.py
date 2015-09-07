@@ -7,6 +7,7 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
 from . import models
+from podcasts.models import PodcastEpisode
 from pinecast.helpers import reverse
 
 
@@ -58,6 +59,11 @@ def site_post(req, site_slug, post_slug):
     site = get_object_or_404(models.Site, slug=site_slug)
     post = get_object_or_404(models.SiteBlogPost, site=site, slug=post_slug)
     return _srender(req, site, 'post.html', {'post': post})
+
+def site_episode(req, site_slug, episode_id):
+    site = get_object_or_404(models.Site, slug=site_slug)
+    episode = get_object_or_404(PodcastEpisode, podcast=site.podcast, id=episode_id)
+    return _srender(req, site, 'episode.html', {'episode': episode})
 
 
 class BlogRSS(Feed):
@@ -117,6 +123,11 @@ def sitemap(req, site_slug):
     output += '''
     <url><loc>{url}</loc></url>
     '''.format(url=reverse('site_blog', site_slug=site_slug))
+
+    for episode in site.podcast.podcastepisode_set.all():
+        output += '''
+        <url><loc>{url}</loc></url>
+        '''.format(url=reverse('site_episode', site_slug=site_slug, episode_id=str(episode.id)))
 
     for post in site.siteblogpost_set.all():
         output += '''

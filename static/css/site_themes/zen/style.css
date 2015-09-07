@@ -123,23 +123,18 @@ header div a:hover {
 .episode.is-expanded {
     background: #fff;
     box-shadow: 0 5px 5px rgba(0, 0, 0, 0.2);
-    height: 300px;
-    padding-left: 300px;
-    width: calc(100% - 300px);
-}
-.episode .expando {
-    display: none;
-    padding: 20px;
-}
-.episode.is-expanded .expando {
-    display: block;
-}
-.episode.is-expanded img {
-    float: left;
-    margin-left: -300px;
+    height: auto;
+    margin: 50px auto;
+    max-width: 1000px;
+    padding: 30px;
+    width: 800px;
 }
 
-
+.episode hgroup {
+    font-size: 1.1em;
+    padding: 10px;
+    text-align: center;
+}
 .episode hgroup h1 {
     font-family: Lato;
     font-size: 2em;
@@ -169,20 +164,10 @@ header div a:hover {
     font-size: 1.1em;
     font-weight: normal;
 }
-.episode .description {
-    height: 150px;
-    overflow: hidden;
-    position: relative;
-}
-.episode .description:after {
-    background: linear-gradient(to bottom, rgba(255,255,255,0) 0%,rgba(255,255,255,1) 100%);
-    bottom: 0;
-    content: "";
+
+.episode.is-expanded > img {
     display: block;
-    height: 30px;
-    left: 0;
-    position: absolute;
-    right: 0;
+    margin: 0 auto;
 }
 
 .blog-post .published:not(.right) {

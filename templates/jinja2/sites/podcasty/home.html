@@ -10,7 +10,9 @@
       <div>
         <hgroup>
           <strong>{{ _('Latest Episode') }}</strong>
-          <h1>{{ episode.title }}</h1>
+          <a href="{{ url('site_episode', episode_id=str(episode.id)) }}">
+            <h1>{{ episode.title }}</h1>
+          </a>
         </hgroup>
 
         <iframe src="https://pinecast.com{{ url_global('player', episode_id=str(episode.id)) }}" seamless height="60" style="border:0" class="pinecast-embed"></iframe>
@@ -37,11 +39,13 @@
   {% endif %}
 
   {% for episode in pager[1 if is_first_page else 0:] %}
-    <article class="episode">
+    <article class="episode inline height-limited">
       <div>
         <img src="{{ episode.image_url }}" alt="" height="300" width="300">
         <hgroup>
-          <h1>{{ episode.title }}</h1>
+          <a href="{{ url('site_episode', episode_id=str(episode.id)) }}">
+            <h1>{{ episode.title }}</h1>
+          </a>
           {% if episode.subtitle %}
             <h2>{{ episode.subtitle }}</h2>
           {% endif %}

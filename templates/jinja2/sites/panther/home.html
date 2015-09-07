@@ -24,21 +24,20 @@
       </div>
 
       <hgroup>
-        <h1>{{ episode.title }}</h1>
-        {% if episode.subtitle %}
-          <h2>{{ episode.subtitle }}</h2>
-        {% endif %}
+        <a href="{{ url('site_episode', episode_id=str(episode.id)) }}">
+          <h1>{{ episode.title }}</h1>
+          {% if episode.subtitle %}
+            <h2>{{ episode.subtitle }}</h2>
+          {% endif %}
+        </a>
       </hgroup>
 
       {% if episode.image_url %}
         <img src="{{ episode.image_url }}" alt="">
+      {% else %}
+        <iframe src="https://pinecast.com{{ url_global('player', episode_id=str(episode.id)) }}" seamless height="60" style="border:0" class="pinecast-embed"></iframe>
       {% endif %}
 
-      <iframe src="https://pinecast.com{{ url_global('player', episode_id=str(episode.id)) }}" seamless height="60" style="border:0" class="pinecast-embed"></iframe>
-
-      <div>
-        {{ episode.description|markdown|sanitize|safe }}
-      </div>
     </article>
   {% else %}
     <div class="empty-state">

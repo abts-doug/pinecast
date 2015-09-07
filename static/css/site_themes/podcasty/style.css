@@ -80,6 +80,12 @@ main {
     font-size: 18px;
     text-transform: uppercase;
 }
+.episode.hero hgroup a {
+    text-decoration: none;
+}
+.episode.hero hgroup a:hover {
+    text-decoration: underline;
+}
 .episode.hero hgroup h1 {
     color: #fff;
     display: block;
@@ -125,50 +131,56 @@ main {
     top: 3px;
 }
 
-.episode:not(.hero) {
+.episode.inline {
     color: #444;
     margin: 0 0 40px;
 }
-.episode:not(.hero):first-child {
+.episode.inline:first-child {
     margin-top: 40px;
 }
-.episode:not(.hero) > div {
+.episode.inline > div {
     background: #fff;
-    height: 240px;
+    border-left: 300px solid #ccc;
     margin: 0 auto;
-    padding: 30px 20px 30px 300px;
-    padding-left: 320px;
+    padding: 30px 20px 30px 20px;
     position: relative;
     width: 620px;
 }
-.episode:not(.hero) > div > img {
-    left: 0;
+.episode.height-limited > div {
+    height: 240px;
+}
+.episode.inline > div > img {
+    left: -300px;
     position: absolute;
     top: 0;
 }
-.episode:not(.hero) h1 {
+.episode.inline h1 {
     font-size: 30px;
-    line-height: 1em;
     margin-top: 0;
+}
+.episode.height-limited h1 {
+    line-height: 1em;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
-.episode:not(.hero) h2 {
+.episode.inline h2 {
     font-size: 16px;
     line-height: 1em;
+    text-transform: uppercase;
+}
+.episode.height-limited h2 {
     overflow: hidden;
     text-overflow: ellipsis;
-    text-transform: uppercase;
     white-space: nowrap;
 }
 
-.episode:not(.hero) .description {
+.episode.height-limited .description {
     height: 90px;
     overflow: hidden;
     position: relative;
 }
-.episode:not(.hero) .description:after {
+.episode.height-limited .description:after {
     background: linear-gradient(to bottom, rgba(255,255,255,0) 0%,rgba(255,255,255,1) 100%);
     bottom: 0;
     content: "";

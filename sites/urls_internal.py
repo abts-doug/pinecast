@@ -9,6 +9,7 @@ urlpatterns = [
     url(r'^rss/blog$', views.BlogRSS(), name='blog_rss'),
     url(r'^blog/?$', views.site_blog, name='site_blog'),
     url(r'^blog/(?P<post_slug>[\w-]+)$', views.site_post, name='site_post'),
+    url(r'^episode/(?P<episode_id>[\w-]+)$', views.site_episode, name='site_episode'),
     url(r'^robots.txt$', lambda req, site_slug: HttpResponse('Sitemap: sitemap.xml\n')),
     url(r'^sitemap.xml$', views.sitemap, name='site_sitemap'),
 ]

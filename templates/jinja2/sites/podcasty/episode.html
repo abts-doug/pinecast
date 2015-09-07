@@ -1,0 +1,24 @@
+{% extends 'sites/podcasty/base.html' %}
+
+{% block main %}
+
+  <article class="episode inline">
+    <div>
+      <img src="{{ episode.image_url }}" alt="" height="300" width="300">
+
+      <hgroup>
+        <h1>{{ episode.title }}</h1>
+        {% if episode.subtitle %}
+          <h2>{{ episode.subtitle }}</h2>
+        {% endif %}
+      </hgroup>
+
+      <iframe src="https://pinecast.com{{ url_global('player', episode_id=str(episode.id)) }}" seamless height="60" style="border:0" class="pinecast-embed"></iframe>
+
+      <div class="description">
+        {{ episode.description|markdown|sanitize|safe }}
+      </div>
+    </div>
+  </article>
+
+{% endblock %}
