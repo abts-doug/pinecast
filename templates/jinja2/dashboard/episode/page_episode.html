@@ -118,6 +118,9 @@
 </div>
 
 <div class="tab-analytics" style="overflow: hidden; height: 0">
+  <menu class="toolbar">
+    <li><a class="btn" href="{{ url('episode_geo', podcast_slug=podcast.slug, episode_id=str(episode.id)) }}">{{ _('Geo') }}</a></li>
+  </menu>
   {% if analytics.total_listens %}
     <div class="card-block card chart-placeholder"
       data-type="episode-listen-history"

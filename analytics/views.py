@@ -37,7 +37,7 @@ def podcast_subscriber_locations(req):
 @json_response(safe=False)
 def podcast_listener_locations(req):
     pod = get_podcast(req, req.GET.get('podcast'))
-    if not UserSettings.user_meets_plan(pod.owner, plans.PLAN_PRO):
+    if not UserSettings.user_meets_plan(pod.owner, plans.FEATURE_MIN_GEOANALYTICS):
         raise Http404()
 
     res = query.query(
@@ -46,6 +46,30 @@ def podcast_listener_locations(req):
          'timeframe': {'previous': {'days': 30}},
          'groupBy': 'profile.country',
          'filter': {'podcast': {'eq': unicode(pod.id)}},
+         'timezone': UserSettings.get_from_user(req.user).tz_offset})
+
+    return [[ugettext('Country'), ugettext('Subscribers')]] + [
+        [p['profile.country'], p['podcast']] for
+        p in res['results'] if p['profile.country']
+    ]
+
+
+@login_required
+@json_response(safe=False)
+def episode_listener_locations(req):
+    pod = get_podcast(req, req.GET.get('podcast'))
+    if not UserSettings.user_meets_plan(pod.owner, plans.FEATURE_MIN_GEOANALYTICS_EP):
+        raise Http404()
+
+    ep = get_object_or_404(PodcastEpisode, podcast=pod, id=req.GET.get('episode'))
+    res = query.query(
+        'listen',
+        {'select': {'podcast': 'count'},
+         'timeframe': {'previous': {'days': 30}},
+         'groupBy': 'profile.country',
+         'filter': {
+            'episode': {'eq': unicode(ep.id)},
+         },
          'timezone': UserSettings.get_from_user(req.user).tz_offset})
 
     return [[ugettext('Country'), ugettext('Subscribers')]] + [

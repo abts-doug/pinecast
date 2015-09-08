@@ -121,10 +121,21 @@ def podcast_dashboard(req, podcast_slug):
 def podcast_geochart(req, podcast_slug):
     pod = get_podcast(req, podcast_slug)
     owner_uset = UserSettings.get_from_user(pod.owner)
-    if not payment_plans.minimum(owner_uset.plan, payment_plans.FEATURE_MIN_COMMENT_BOX):
+    if not payment_plans.minimum(owner_uset.plan, payment_plans.FEATURE_MIN_GEOANALYTICS):
         return _pmrender(req, 'dashboard/podcast/page_geochart_upgrade.html', {'podcast': pod})
 
     return _pmrender(req, 'dashboard/podcast/page_geochart.html', {'podcast': pod})
+
+
+@login_required
+def episode_geochart(req, podcast_slug, episode_id):
+    pod = get_podcast(req, podcast_slug)
+    owner_uset = UserSettings.get_from_user(pod.owner)
+    ep = get_object_or_404(PodcastEpisode, podcast=pod, id=episode_id)
+    if not payment_plans.minimum(owner_uset.plan, payment_plans.FEATURE_MIN_GEOANALYTICS_EP):
+        return _pmrender(req, 'dashboard/episode/page_geochart_upgrade.html', {'podcast': pod, 'episode': ep})
+
+    return _pmrender(req, 'dashboard/episode/page_geochart.html', {'podcast': pod, 'episode': ep})
 
 
 @login_required
