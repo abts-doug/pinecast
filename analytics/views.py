@@ -1,11 +1,13 @@
 import datetime
+from functools import wraps
 
 from django.contrib.auth.decorators import login_required
-from django.http import Http404
+from django.http import Http404, HttpResponseForbidden, JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.utils.translation import ugettext, ugettext_lazy
 
 import accounts.payment_plans as plans
+from formatter import Format
 from . import query
 from accounts.models import Network, UserSettings
 from dashboard.views import get_podcast
@@ -13,182 +15,90 @@ from pinecast.helpers import json_response
 from podcasts.models import Podcast, PodcastEpisode
 
 
-@login_required
-@json_response(safe=False)
-def podcast_subscriber_locations(req):
-    pod = get_podcast(req, req.GET.get('podcast'))
-    if not UserSettings.user_meets_plan(pod.owner, plans.PLAN_PRO):
-        raise Http404()
+def restrict(minimum_plan):
+    def wrapped(view):
+        @wraps(view)
+        def wrapper(*args, **kwargs):
+            req = args[0]
+            if not req.user:
+                return HttpResponseForbidden()
 
-    res = query.query(
-        'subscribe',
-        {'select': {'podcast': 'count'},
-         'timeframe': 'yesterday',
-         'groupBy': 'profile.country',
-         'filter': {'podcast': {'eq': unicode(pod.id)}}})
+            pod = get_podcast(req, req.GET.get('podcast'))
 
-    return [[ugettext('Country'), ugettext('Subscribers')]] + [
-        [p['profile.country'], p['podcast']] for
-        p in res['results'] if p['profile.country']
-    ]
+            uset = UserSettings.get_from_user(pod.owner)
+            if not plans.minimum(uset.plan, minimum_plan):
+                return HttpResponseForbidden()
 
-
-@login_required
-@json_response(safe=False)
-def podcast_listener_locations(req):
-    pod = get_podcast(req, req.GET.get('podcast'))
-    if not UserSettings.user_meets_plan(pod.owner, plans.FEATURE_MIN_GEOANALYTICS):
-        raise Http404()
-
-    res = query.query(
-        'listen',
-        {'select': {'podcast': 'count'},
-         'timeframe': {'previous': {'days': 30}},
-         'groupBy': 'profile.country',
-         'filter': {'podcast': {'eq': unicode(pod.id)}},
-         'timezone': UserSettings.get_from_user(req.user).tz_offset})
-
-    return [[ugettext('Country'), ugettext('Subscribers')]] + [
-        [p['profile.country'], p['podcast']] for
-        p in res['results'] if p['profile.country']
-    ]
+            resp = view(req, pod, *args[1:], **kwargs)
+            if not isinstance(resp, (dict, list, bool, str, unicode, int, float)):
+                # Handle HttpResponse/HttpResponseBadRequest/etc
+                return resp
+            return JsonResponse(resp, safe=False)
+        return wrapper
+    return wrapped
 
 
-@login_required
-@json_response(safe=False)
-def episode_listener_locations(req):
-    pod = get_podcast(req, req.GET.get('podcast'))
-    if not UserSettings.user_meets_plan(pod.owner, plans.FEATURE_MIN_GEOANALYTICS_EP):
-        raise Http404()
+@restrict(plans.PLAN_PRO)
+def podcast_subscriber_locations(req, pod):
+    f = (Format(req, 'subscribe')
+            .select(podcast='count')
+            .where(podcast=pod.id)
+            .during('yesterday')
+            .group('profile.country'))
 
+    return f.format_country()
+
+
+@restrict(plans.FEATURE_MIN_GEOANALYTICS)
+def podcast_listener_locations(req, pod):
+    f = (Format(req, 'listen')
+            .select(podcast='count')
+            .where(podcast=pod.id)
+            .last_thirty()
+            .group('profile.country'))
+
+    return f.format_country(label=ugettext('Listeners'))
+
+@restrict(plans.FEATURE_MIN_GEOANALYTICS_EP)
+def episode_listener_locations(req, pod):
     ep = get_object_or_404(PodcastEpisode, podcast=pod, id=req.GET.get('episode'))
-    res = query.query(
-        'listen',
-        {'select': {'podcast': 'count'},
-         'timeframe': {'previous': {'days': 30}},
-         'groupBy': 'profile.country',
-         'filter': {
-            'episode': {'eq': unicode(ep.id)},
-         },
-         'timezone': UserSettings.get_from_user(req.user).tz_offset})
+    f = (Format(req, 'listen')
+            .select(podcast='count')
+            .where(episode=ep.id)
+            .group('profile.country'))
 
-    return [[ugettext('Country'), ugettext('Subscribers')]] + [
-        [p['profile.country'], p['podcast']] for
-        p in res['results'] if p['profile.country']
-    ]
+    return f.format_country(label=ugettext('Listeners'))
 
 
-@login_required
-@json_response
-def podcast_subscriber_history(req):
-    pod = get_podcast(req, req.GET.get('podcast'))
+@restrict(plans.PLAN_DEMO)
+def podcast_subscriber_history(req, pod):
+    f = (Format(req, 'subscribe')
+            .select(podcast='count')
+            .last_thirty()
+            .where(podcast=pod.id))
 
-    res = query.query(
-        'subscribe',
-        {'select': {'podcast': 'count'},
-         'timeframe': {'previous': {'days': 30}},
-         'interval': 'daily',
-         'filter': {'podcast': {'eq': unicode(pod.id)}},
-         'timezone': UserSettings.get_from_user(req.user).tz_offset})
-
-    out = query.process_intervals(
-        res['results'],
-        datetime.timedelta(days=1),
-        lambda d: d.strftime('%x'),
-        pick='podcast')
-
-    return {'labels': out['labels'],
-            'datasets': [
-                {'label': pod.name,
-                 'data': out['dataset'],
-                 'fillColor': 'transparent',
-                 'strokeColor': '#303F9F',
-                 'pointColor': '#3F51B5',
-                 'pointStrokeColor': '#fff'}
-            ]}
+    return f.format_intervals(label=pod.name)
 
 
-@login_required
-@json_response
-def podcast_listen_history(req):
-    pod = get_podcast(req, req.GET.get('podcast'))
+@restrict(plans.PLAN_DEMO)
+def podcast_listen_history(req, pod):
+    f = (Format(req, 'listen')
+            .select(podcast='count')
+            .last_thirty()
+            .where(podcast=pod.id))
 
-    res = query.query(
-        'listen',
-        {'select': {'podcast': 'count'},
-         'timeframe': {'previous': {'days': 30}},
-         'interval': 'daily',
-         'filter': {'podcast': {'eq': unicode(pod.id)}},
-         'timezone': UserSettings.get_from_user(req.user).tz_offset})
-
-    out = query.process_intervals(
-        res['results'],
-        datetime.timedelta(days=1),
-        lambda d: d.strftime('%x'),
-        pick='podcast')
-
-    if not out:
-        return {'labels': [],
-            'datasets': [
-                {'label': pod.name,
-                 'data': [],
-                 'fillColor': 'transparent',
-                 'strokeColor': '#303F9F',
-                 'pointColor': '#3F51B5',
-                 'pointStrokeColor': '#fff'}
-            ]}
-
-    return {'labels': out['labels'],
-            'datasets': [
-                {'label': pod.name,
-                 'data': out['dataset'],
-                 'fillColor': 'transparent',
-                 'strokeColor': '#303F9F',
-                 'pointColor': '#3F51B5',
-                 'pointStrokeColor': '#fff'}
-            ]}
+    return f.format_intervals(label=pod.name)
 
 
-@login_required
-@json_response
-def episode_listen_history(req):
-    pod = get_podcast(req, req.GET.get('podcast'))
+@restrict(plans.PLAN_DEMO)
+def episode_listen_history(req, pod):
     ep = get_object_or_404(PodcastEpisode, podcast=pod, id=req.GET.get('episode'))
+    f = (Format(req, 'listen')
+            .select(episode='count')
+            .last_thirty()
+            .where(episode=ep.id))
 
-    res = query.query(
-        'listen',
-        {'select': {'episode': 'count'},
-         'timeframe': {'previous': {'days': 30}},
-         'interval': 'daily',
-         'filter': {'episode': {'eq': unicode(ep.id)}},
-         'timezone': UserSettings.get_from_user(req.user).tz_offset})
-
-    out = query.process_intervals(
-        res['results'],
-        datetime.timedelta(days=1),
-        lambda d: d.strftime('%x'),
-        pick='episode')
-
-    if not out:
-        return {'labels': [],
-            'datasets': [
-                {'label': ep.title,
-                 'data': [],
-                 'fillColor': 'transparent',
-                 'strokeColor': '#303F9F',
-                 'pointColor': '#3F51B5',
-                 'pointStrokeColor': '#fff'}
-            ]}
-
-    return {'labels': out['labels'],
-            'datasets': [
-                {'label': ep.title,
-                 'data': out['dataset'],
-                 'fillColor': 'transparent',
-                 'strokeColor': '#303F9F',
-                 'pointColor': '#3F51B5',
-                 'pointStrokeColor': '#fff'}
-            ]}
+    return f.format_intervals(label=ep.title)
 
 
 SOURCE_MAP = {
@@ -198,100 +108,41 @@ SOURCE_MAP = {
     None: ugettext_lazy('Unknown'),
 }
 
-@login_required
-@json_response(safe=False)
-def podcast_listen_breakdown(req):
-    pod = get_podcast(req, req.GET.get('podcast'))
+@restrict(plans.PLAN_DEMO)
+def podcast_listen_breakdown(req, pod):
+    f = (Format(req, 'listen')
+            .select(podcast='count')
+            .group('source')
+            .last_thirty()
+            .where(podcast=pod.id))
 
-    res = query.query(
-        'listen',
-        {'select': {'podcast': 'count'},
-         'groupBy': 'source',
-         'timeframe': {'previous': {'days': 30}},
-         'filter': {'podcast': {'eq': unicode(pod.id)}},
-         'timezone': UserSettings.get_from_user(req.user).tz_offset})
+    return f.format_breakdown(SOURCE_MAP)
 
-    out = query.process_groups(
-        res['results'],
-        SOURCE_MAP,
-        'source',
-        pick='podcast')
 
-    if not out:
-        return []
-
-    out = [{'label': unicode(label), 'value': value} for
-            label, value in
-            zip(out['labels'], out['dataset'])]
-
-    return list(query.rotating_colors(out))
-
-@login_required
-@json_response(safe=False)
-def podcast_listen_platform_breakdown(req):
-    pod = get_podcast(req, req.GET.get('podcast'))
-    if not UserSettings.user_meets_plan(pod.owner, plans.PLAN_STARTER):
-        raise Http404()
-
+@restrict(plans.PLAN_STARTER)
+def podcast_listen_platform_breakdown(req, pod):
     breakdown_type = req.GET.get('breakdown_type', 'device')
     if breakdown_type not in ['device', 'browser', 'os']: raise Http404()
 
-    key = 'profile.%s' % breakdown_type
+    f = (Format(req, 'listen')
+            .select(podcast='count')
+            .group(['profile.%s' % breakdown_type])
+            .last_thirty()
+            .where(podcast=pod.id))
 
-    res = query.query(
-        'listen',
-        {'select': {'podcast': 'count'},
-         'groupBy': [key],
-         'timeframe': {'previous': {'days': 30}},
-         'filter': {'podcast': {'eq': unicode(pod.id)}},
-         'timezone': UserSettings.get_from_user(req.user).tz_offset})
-
-    out = query.process_groups(
-        res['results'],
-        None,
-        key,
-        pick='podcast')
-
-    if not out:
-        return []
-
-    out = [{'label': unicode(label), 'value': value} for
-            label, value in
-            zip(out['labels'], out['dataset'])]
-
-    return list(query.rotating_colors(out))
+    return f.format_breakdown(None)
 
 
-@login_required
-@json_response(safe=False)
-def episode_listen_breakdown(req):
-    pod = get_podcast(req, req.GET.get('podcast'))
-    if not UserSettings.user_meets_plan(pod.owner, plans.PLAN_PRO):
-        raise Http404()
-
+@restrict(plans.PLAN_PRO)
+def episode_listen_breakdown(req, pod):
     ep = get_object_or_404(PodcastEpisode, podcast=pod, id=req.GET.get('episode'))
+    f = (Format(req, 'listen')
+            .select(episode='count')
+            .group('source')
+            .last_thirty()
+            .where(episode=ep.id))
 
-    res = query.query(
-        'listen',
-        {'select': {'episode': 'count'},
-         'groupBy': 'source',
-         'filter': {'episode': {'eq': unicode(ep.id)}},
-         'timezone': UserSettings.get_from_user(req.user).tz_offset})
-
-    out = query.process_groups(
-        res['results'],
-        SOURCE_MAP,
-        'source',
-        pick='episode')
-
-    if not out:
-        return []
-
-    out = [{'label': unicode(label), 'value': value} for
-            label, value in
-            zip(out['labels'], out['dataset'])]
-
-    return list(query.rotating_colors(out))
+    return f.format_breakdown(SOURCE_MAP)
 
 
 @login_required

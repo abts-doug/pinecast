@@ -300,6 +300,7 @@ button:disabled, .btn:disabled {
     width: 350px;
 }
 .login-container h1 {
+    color: #009688;
     font-weight: normal;
     margin: 0 0 30px;
     text-align: center;
