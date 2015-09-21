@@ -90,13 +90,27 @@ var ChartComponent = React.createClass({
     },
 
     getTimeframes: function() {
-        return {
+        var tfs = {
             day: gettext('Today'),
             month: gettext('30d'),
             sixmonth: gettext('6m'),
             year: gettext('1y'),
             all: gettext('All'),
         };
+
+        var atsRaw = this.props.availableTimeframes;
+        if (!atsRaw) return tfs;
+
+        var ats = atsRaw.split(',');
+        if (!ats.length) return tfs;
+
+        Object.keys(tfs).forEach(function(tf) {
+            if (ats.indexOf(tf) === -1) {
+                delete tfs[tf];
+            }
+        });
+
+        return tfs;
     },
 
     getInitialState: function() {
@@ -225,6 +239,7 @@ Array.prototype.slice.call(placeholders).forEach(function(placeholder) {
             extra: placeholder.getAttribute('data-extra'),
             title: placeholder.getAttribute('data-title'),
             hasLegend: placeholder.getAttribute('data-has-legend') == 'true',
+            availableTimeframes: placeholder.getAttribute('data-timeframes') || '',
 
             origElement: placeholder,
         }),
