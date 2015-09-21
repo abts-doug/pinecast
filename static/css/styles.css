@@ -1199,7 +1199,7 @@ li.user-card span.name {
 }
 
 
-.chart-granularity-selector-option {
+.chart-option {
     cursor: pointer;
     display: inline-block;
     border: 1px solid #009688;
@@ -1207,20 +1207,28 @@ li.user-card span.name {
     position: relative;
     z-index: 5;
 }
-.chart-granularity-selector-option:not(.is-selected):hover {
+.chart-option:not(.is-selected):hover {
     box-shadow: 0 2px 0 rgba(0, 0, 0, 0.1);
     text-decoration: none;
 }
-.chart-granularity-selector-option + .chart-granularity-selector-option {
+.chart-option + .chart-option {
     border-left: 0;
 }
-.chart-granularity-selector-option:first-child {
+.chart-option:first-child {
     border-radius: 3px 0 0 3px;
 }
-.chart-granularity-selector-option:last-child {
+.chart-option:last-child {
     border-radius: 0 3px 3px 0;
 }
-.chart-granularity-selector-option.is-selected {
+.chart-option:first-child:last-child {
+    border-radius: 3px;
+}
+.chart-option.is-selected {
     background: #009688;
     color: #fff;
+}
+
+.chart-option-selector {
+    display: inline-block;
+    margin-right: 10px;
 }

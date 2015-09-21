@@ -16,6 +16,14 @@ DELTAS = {
     'yearly': datetime.timedelta(weeks=52),
 }
 
+USER_TIMEFRAMES = {
+    'day': 'today',
+    'month': {'previous': {'hours': 30 * 24}},
+    'sixmonth': {'previous': {'hours': 6 * 30 * 24}},
+    'year': {'previous': {'hours': 12 * 30 * 24}},
+    'all': None,
+}
+
 
 class Format(object):
     def __init__(self, req, event_type):
@@ -66,7 +74,9 @@ class Format(object):
         if self.group_by:
             q['groupBy'] = self.group_by
         if self.timeframe:
-            q['timeframe'] = self.timeframe
+            tf = USER_TIMEFRAMES[self.req.GET.get('timeframe', self.timeframe)]
+            if tf:
+                q['timeframe'] = tf
         if self.interval_val:
             q['interval'] = self.interval_val
 
@@ -100,7 +110,7 @@ class Format(object):
         )
 
         if not out:
-            out = {'data': [], 'labels': []}
+            out = {'dataset': [], 'labels': []}
 
         return {
             'labels': out['labels'],

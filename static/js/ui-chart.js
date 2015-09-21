@@ -9,12 +9,12 @@ Chart.defaults.global.responsive = true;
 Chart.defaults.global.maintainAspectRatio = false;
 
 
-var GranularitySelectorOption = React.createClass({
+var ChartOption = React.createClass({
     render: function() {
         return React.createElement(
             'a',
             {
-                className: 'chart-granularity-selector-option' + this.selectedText(' is-selected'),
+                className: 'chart-option' + this.selectedText(' is-selected'),
                 onClick: this.click,
             },
             this.props.name
@@ -31,62 +31,83 @@ var GranularitySelectorOption = React.createClass({
     }
 });
 
-var GranularitySelector = React.createClass({
-    getInitialState: function() {
-        return {
-            selected: 'daily',
-        };
-    },
+var ChartOptionSelector = React.createClass({
     render: function() {
         return React.createElement(
             'div',
-            {className: 'chart-granularity-selector'},
-            this.renderOption('hourly', 'Hour'),
-            this.renderOption('daily', 'Day'),
-            this.renderOption('weekly', 'Week'),
-            this.renderOption('monthly', 'Month')
+            {className: 'chart-option-selector'},
+            this.renderOptions()
         );
+    },
+
+    renderOptions: function() {
+        return Object.keys(this.props.options).map(function(option) {
+            return this.renderOption(option, this.props.options[option]);
+        }.bind(this));
     },
 
     renderOption: function(value, text) {
         return React.createElement(
-            GranularitySelectorOption,
+            ChartOption,
             {
                 value: value,
                 name: text,
-                selected: this.state.selected,
+                selected: this.props.defaultSelection,
                 setSelected: this.setSelected,
             }
         );
     },
 
     setSelected: function(value) {
-        if (value === this.state.selected) return;
-        this.setState({selected: value});
+        if (value === this.props.defaultSelection) return;
         this.props.onChange(value);
     },
 });
 
 var ChartComponent = React.createClass({
     getCanvas: function() {
-        var c = document.createElement('canvas');
+        var c = document.createElement('canvas'); 
         c.height = 200;
         c.setAttribute('data-fixed-height', 200);
-        c.addEventListener('click', this.startLoadingData);
         return c;
+    },
+
+    getGranularities: function(newTimeframe) {
+        var output = {};
+        switch (newTimeframe || this.state.timeframe) {
+            case 'day':
+                return {hourly: gettext('Hourly')};
+            case 'month':
+            case 'sixmonth':
+                output.daily = gettext('Day');
+            case 'year':
+                output.weekly = gettext('Week');
+            case 'all':
+                output.monthly = gettext('Month');
+        }
+
+        return output;
+    },
+
+    getTimeframes: function() {
+        return {
+            day: gettext('Today'),
+            month: gettext('30d'),
+            sixmonth: gettext('6m'),
+            year: gettext('1y'),
+            all: gettext('All'),
+        };
     },
 
     getInitialState: function() {
         return {
-            loadingData: true,
             data: null,
-
-            canvas: this.getCanvas(),
             legend: null,
 
             xhr: null,
 
             granularity: 'daily',
+            timeframe: 'month',
         };
     },
 
@@ -106,7 +127,20 @@ var ChartComponent = React.createClass({
             React.createElement(
                 'div',
                 {className: 'chart-toolbar'},
-                this.props.chartType === 'line' ? React.createElement(GranularitySelector, {onChange: this.granularityChanged}) : null
+                !this.props.hideGranularity && this.props.chartType === 'line' ?
+                    React.createElement(ChartOptionSelector, {
+                        onChange: this.granularityChanged,
+                        options: this.getGranularities(),
+                        defaultSelection: this.state.granularity,
+                    }) :
+                    null,
+                !this.props.hideTimeframe ?
+                    React.createElement(ChartOptionSelector, {
+                        onChange: this.timeframeChanged,
+                        options: this.getTimeframes(),
+                        defaultSelection: this.state.timeframe,
+                    }) :
+                    null
             )
         );
     },
@@ -116,13 +150,26 @@ var ChartComponent = React.createClass({
             this.state.xhr.abort();
         }
         this.cleanSurface();
-        this.setState({granularity: newGranularity, xhr: null, data: null, loadingData: true});
+        this.setState({granularity: newGranularity, xhr: null, data: null});
+        setTimeout(this.startLoadingData, 0);
+    },
+
+    timeframeChanged: function(newTimeframe) {
+        if (this.state.xhr) {
+            this.state.xhr.abort();
+        }
+        this.cleanSurface();
+        this.setState({timeframe: newTimeframe, xhr: null, data: null});
+
+        var granularities = this.getGranularities(newTimeframe);
+        if (!(this.state.granularity in granularities)) {
+            this.setState({granularity: Object.keys(granularities)[0]});
+        }
+        setTimeout(this.startLoadingData, 0);
     },
 
     componentDidMount: function() {
-        setTimeout(function() {
-            this.startLoadingData();
-        }.bind(this), Math.random() * 500);
+        setTimeout(this.startLoadingData, Math.random() * 500);
     },
 
     cleanSurface: function() {
@@ -134,30 +181,20 @@ var ChartComponent = React.createClass({
         return newCanvas;
     },
 
-    componentDidUpdate: function() {
-        if (this.state.loadingData) {
-            this.startLoadingData();
-            return;
-        }
-        var canvas = this.cleanSurface();
-
-        var ctx = canvas.getContext('2d');
-        var c = new Chart(ctx)[chartTypes[this.props.chartType]](this.state.data);
-        if (this.props.hasLegend) {
-            this.setState({legend: c.generateLegend()});
-        }
-    },
-
     startLoadingData: function() {
         var req = new XMLHttpRequest();
-        this.setState({loadingData: true, xhr: req});
+        this.setState({xhr: req});
         req.onload = function() {
             var parsed = JSON.parse(req.responseText);
-            this.setState({
-                loadingData: false,
-                data: parsed,
-                xhr: null,
-            });
+            this.setState({data: parsed, xhr: null});
+
+            var canvas = this.cleanSurface();
+
+            var ctx = canvas.getContext('2d');
+            var c = new Chart(ctx)[chartTypes[this.props.chartType]](this.state.data);
+            if (this.props.hasLegend) {
+                this.setState({legend: c.generateLegend()});
+            }
         }.bind(this);
         req.open(
             'get',
@@ -165,15 +202,11 @@ var ChartComponent = React.createClass({
                 '?podcast=' + encodeURIComponent(this.props.podcast) +
                 (this.props.episode ? '&episode=' + encodeURIComponent(this.props.episode) : '') +
                 (this.props.extra ? '&' + this.props.extra : '') +
-                '&interval=' + this.state.granularity,
+                '&interval=' + this.state.granularity +
+                '&timeframe=' + this.state.timeframe,
             true
         );
         req.send();
-    },
-
-    shouldComponentUpdate: function(_, nextState) {
-        return nextState.loadingData !== this.state.loadingData ||
-               nextState.legend !== this.state.legend;
     },
 
 });
@@ -184,6 +217,8 @@ Array.prototype.slice.call(placeholders).forEach(function(placeholder) {
     React.render(
         React.createElement(ChartComponent, {
             chartType: placeholder.getAttribute('data-chart-type'),
+            hideGranularity: !!placeholder.getAttribute('data-hide-granularity'),
+            hideTimeframe: !!placeholder.getAttribute('data-hide-timeframe'),
             podcast: placeholder.getAttribute('data-podcast'),
             episode: placeholder.getAttribute('data-episode'),
             type: placeholder.getAttribute('data-type'),
