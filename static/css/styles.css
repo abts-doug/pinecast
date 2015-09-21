@@ -1197,3 +1197,30 @@ li.user-card span.name {
 .flair-options li input {
     margin: 0.25em;
 }
+
+
+.chart-granularity-selector-option {
+    cursor: pointer;
+    display: inline-block;
+    border: 1px solid #009688;
+    padding: 3px 7px;
+    position: relative;
+    z-index: 5;
+}
+.chart-granularity-selector-option:not(.is-selected):hover {
+    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.1);
+    text-decoration: none;
+}
+.chart-granularity-selector-option + .chart-granularity-selector-option {
+    border-left: 0;
+}
+.chart-granularity-selector-option:first-child {
+    border-radius: 3px 0 0 3px;
+}
+.chart-granularity-selector-option:last-child {
+    border-radius: 0 3px 3px 0;
+}
+.chart-granularity-selector-option.is-selected {
+    background: #009688;
+    color: #fff;
+}

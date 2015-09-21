@@ -6,6 +6,17 @@ from . import query
 from accounts.models import UserSettings
 
 
+DELTAS = {
+    'minutely': datetime.timedelta(minutes=1),
+    'hourly': datetime.timedelta(hours=1),
+    'daily': datetime.timedelta(days=1),
+    'weekly': datetime.timedelta(weeks=1),
+    'monthly': datetime.timedelta(weeks=4),
+    'quarterly': datetime.timedelta(weeks=4 * 3),
+    'yearly': datetime.timedelta(weeks=52),
+}
+
+
 class Format(object):
     def __init__(self, req, event_type):
         self.event_type = event_type
@@ -39,6 +50,8 @@ class Format(object):
 
     def interval(self, value=None):
         self.interval_val = value or self.req.GET.get('interval', 'daily')
+        if self.interval_val not in DELTAS:
+            self.interval_val = 'daily'
         return self
 
     def _process(self):
@@ -78,10 +91,11 @@ class Format(object):
 
         key = self.selection.keys()[0]
 
+        sformat = '%x %H:%M' if DELTAS[self.interval_val] < DELTAS['daily'] else '%x'
         out = query.process_intervals(
             self.res['results'],
-            datetime.timedelta(days=1), # TODO: Make this use the current interval
-            lambda d: d.strftime('%x'),
+            DELTAS[self.interval_val],
+            lambda d: d.strftime(sformat),
             pick=key
         )
 
