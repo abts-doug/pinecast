@@ -50,6 +50,7 @@ var Uploader = React.createClass({
     },
 
     isImage: function() {
+        if (this.state.finalContentURL && this.props.accept === 'image/*') return true;
         var fileObj = this.state.fileObj;
         return (fileObj ? fileObj.type || '' : '').split('/')[0] === 'image';
     },

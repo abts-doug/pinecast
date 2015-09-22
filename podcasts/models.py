@@ -7,6 +7,7 @@ import requests
 from bitfield import BitField
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.utils.translation import ugettext, ugettext_lazy
 
@@ -179,9 +180,10 @@ class PodcastEpisode(models.Model):
 
         if (self.description_flair.feedback_link and
             FLAIR_FEEDBACK in available_flags):
+            prompt = self.get_feedback_prompt()
             fb_url = 'https://pinecast.com%s' % reverse(
                 'ep_comment_box', podcast_slug=self.podcast.slug, episode_id=str(self.id))
-            raw += '\n\nSend us your feedback online at [%s](%s).' % (fb_url, fb_url)
+            raw += '\n\n%s [%s](%s)' % (prompt, fb_url, fb_url)
 
         if (is_demo or
             self.description_flair.powered_by and FLAIR_SITE_LINK in available_flags):
@@ -189,6 +191,19 @@ class PodcastEpisode(models.Model):
 
         markdown = gfm.markdown(raw)
         return sanitize(markdown)
+
+    def get_feedback_prompt(self, default=None):
+        try:
+            prompt = self.episodefeedbackprompt
+            return prompt.prompt
+        except ObjectDoesNotExist:
+            return default if default is not None else ugettext('Send us your feedback online:')
+
+    def delete_feedback_prompt(self):
+        try:
+            self.episodefeedbackprompt.delete()
+        except ObjectDoesNotExist:
+            pass
 
     def __unicode__(self):
         return '%s - %s' % (self.title, self.subtitle)

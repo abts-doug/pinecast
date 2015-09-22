@@ -19,7 +19,7 @@ import accounts.payment_plans as payment_plans
 import analytics.query as analytics_query
 from accounts.decorators import restrict_minimum_plan
 from accounts.models import Network, UserSettings
-from feedback.models import Feedback
+from feedback.models import Feedback, EpisodeFeedbackPrompt
 from pinecast.helpers import json_response
 from podcasts.models import (CATEGORIES, Podcast, PodcastCategory,
                              PodcastEpisode, PodcastReviewAssociation)
@@ -285,6 +285,9 @@ def podcast_new_ep(req, podcast_slug):
             license=req.POST.get('license'))
         ep.set_flair(req.POST, no_save=True)
         ep.save()
+        if req.POST.get('feedback_prompt'):
+            prompt = EpisodeFeedbackPrompt(episode=ep, prompt=req.POST.get('feedback_prompt'))
+            prompt.save()
     except Exception as e:
         ctx['error'] = True
         ctx['default'] = req.POST
@@ -325,6 +328,12 @@ def edit_podcast_episode(req, podcast_slug, episode_id):
         ep.license = req.POST.get('license')
         ep.set_flair(req.POST, no_save=True)
         ep.save()
+
+        ep.delete_feedback_prompt()
+        if req.POST.get('feedback_prompt'):
+            prompt = EpisodeFeedbackPrompt(episode=ep, prompt=req.POST.get('feedback_prompt'))
+            prompt.save()
+
     except Exception as e:
         print e
         ctx['default'] = req.POST

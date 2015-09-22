@@ -12,3 +12,8 @@ class Feedback(models.Model):
     sender = models.EmailField()
     sender_ip = models.GenericIPAddressField(null=True)
     message = models.TextField()
+
+
+class EpisodeFeedbackPrompt(models.Model):
+    episode = models.OneToOneField(PodcastEpisode, primary_key=True)
+    prompt = models.TextField()

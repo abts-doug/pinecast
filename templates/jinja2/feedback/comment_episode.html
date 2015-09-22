@@ -3,7 +3,9 @@
 <main>
   <img src="{{ podcast.cover_image|https }}" alt="{{ podcast.name }}" class="cover-image">
   <h1>{{ podcast.name }}</h1>
-  <h2>{% trans title=episode.title %}Leave feedback on {{ title }}{% endtrans %}</h2>
+  <h2>
+    {{ episode.get_feedback_prompt(gettext('Leave feedback on %s') % episode.title) }}
+  </h2>
   {% if error %}
     <div class="error">
       {{ _('There was a problem submitting your feedback') }}

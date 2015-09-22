@@ -105,6 +105,21 @@
       data-podcast="{{ podcast.slug }}"></div>
   </div>
 
+  {% if minimum_plan(podcast.owner, PLANS.FEATURE_MIN_COMMENT_BOX) %}
+  <div class="card-block card">
+    <strong>{{ _('Feedback') }}</strong>
+
+    <label>
+      <span>{{ _('Custom Prompt') }}</span>
+      <input type="text"
+        name="feedback_prompt"
+        maxlength="1024"
+        value="{{ default.get('feedback_prompt', episode.get_feedback_prompt('')) }}">
+    </label>
+
+  </div>
+  {% endif %}
+
   <div class="card-block card">
     <strong>{{ _('Meta') }}</strong>
 
