@@ -49,6 +49,17 @@ var Uploader = React.createClass({
         );
     },
 
+    isImage: function() {
+        var fileObj = this.state.fileObj;
+        return (fileObj ? fileObj.type || '' : '').split('/')[0] === 'image';
+    },
+
+    getImageURL: function() {
+        var s = this.state.finalContentURL.split('.');
+        s.pop();
+        return s.join('.');
+    },
+
     getBody: function() {
         if (this.state.uploading) {
             return [
@@ -87,6 +98,7 @@ var Uploader = React.createClass({
                         this.state.fileObj.type ? React.createElement('dt', null, gettext('Type:')) : null,
                         this.state.fileObj.type ? React.createElement('dd', null, this.state.fileObj.type) : null
                     ) : null),
+                this.renderPreview(),
                 React.createElement(
                     'button',
                     {
@@ -172,6 +184,27 @@ var Uploader = React.createClass({
                     required: this.props.optional ? null : 'required',
                 }
             )
+        );
+    },
+
+    renderPreview: function() {
+        if (!this.isImage()) return null;
+
+        return React.createElement(
+            'div',
+            {
+                className: 'uploader-preview',
+                style: {
+                    backgroundImage: 'url(' + this.getImageURL() + ')',
+                    backgroundPosition: 'center center',
+                    backgroundSize: 'cover',
+                    border: '1px solid #ccc',
+                    borderRadius: '4px',
+                    height: '150px',
+                    maxWidth: '350px',
+                    width: '40%',
+                }
+            }
         );
     },
 
