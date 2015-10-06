@@ -95,7 +95,7 @@ var Uploader = React.createClass({
                         this.state.fileObj.size ? React.createElement('dt', null, gettext('Size:')) : null,
                         this.state.fileObj.size ? React.createElement('dd', null, this.state.fileObj.size) : null,
                         this.state.fileObj.name ? React.createElement('dt', null, gettext('Name:')) : null,
-                        this.state.fileObj.name ? React.createElement('dd', null, this.state.fileObj.name) : null,
+                        this.state.fileObj.name ? React.createElement('dd', null, this.getSafeName(this.state.fileObj.name)) : null,
                         this.state.fileObj.type ? React.createElement('dt', null, gettext('Type:')) : null,
                         this.state.fileObj.type ? React.createElement('dd', null, this.state.fileObj.type) : null
                     ) : null),
@@ -122,7 +122,7 @@ var Uploader = React.createClass({
                     {
                         type: 'hidden',
                         name: this.props.name + '-name',
-                        value: this.state.fileObj.name || '',
+                        value: this.getSafeName(this.state.fileObj.name) || '',
                     }
                 ),
                 React.createElement(
@@ -231,7 +231,7 @@ var Uploader = React.createClass({
             this.props.podcast,
             this.props.type,
             fileObj.type,
-            fileObj.name,
+            this.getSafeName(fileObj.name),
             function(err, data) {
                 if (err) {
                     console.error(err);
@@ -381,6 +381,10 @@ var Uploader = React.createClass({
                 );
         }
         return null;
+    },
+
+    getSafeName: function(name) {
+        return name.replace(/[^a-zA-Z0-9\._\-]/g, '_');
     },
 
 });
