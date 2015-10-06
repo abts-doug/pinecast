@@ -54,7 +54,7 @@ class Format(object):
         return self
 
     def last_thirty(self):
-        self.timeframe = {'previous': {'hours': 30 * 24}}
+        self.timeframe = 'month'
         return self
 
     def interval(self, value=None):
