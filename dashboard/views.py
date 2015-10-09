@@ -265,7 +265,7 @@ def podcast_new_ep(req, podcast_slug):
 
     try:
         naive_publish = datetime.datetime.strptime(req.POST.get('publish'), '%Y-%m-%dT%H:%M') # 2015-07-09T12:00
-        adjusted_publish = naive_publish - UserSettings.get_from_user(req.user).get_tz_delta()
+        adjusted_publish = naive_publish + UserSettings.get_from_user(req.user).get_tz_delta()
 
         ep = PodcastEpisode(
             podcast=pod,
@@ -310,7 +310,7 @@ def edit_podcast_episode(req, podcast_slug, episode_id):
 
     try:
         naive_publish = datetime.datetime.strptime(req.POST.get('publish'), '%Y-%m-%dT%H:%M') # 2015-07-09T12:00
-        adjusted_publish = naive_publish - UserSettings.get_from_user(req.user).get_tz_delta()
+        adjusted_publish = naive_publish + UserSettings.get_from_user(req.user).get_tz_delta()
 
         ep.title = req.POST.get('title')
         ep.subtitle = req.POST.get('subtitle')
@@ -411,7 +411,7 @@ def get_upload_url(req, podcast_slug, type):
         # hours=6 so users around midnight don't get screwed.
         'expiration': (datetime.datetime.now() + datetime.timedelta(days=1, hours=6)).strftime('%Y-%m-%dT00:00:00.000Z'),
         'conditions': [
-            {'bucket': bucket}, 
+            {'bucket': bucket},
             ['starts-with', '$key', basepath],
             {'acl': 'public-read'},
             {'Content-Type': mime_type},
