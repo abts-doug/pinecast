@@ -17,6 +17,10 @@ function getFields(podcastSlug, type, fileType, fileName, cb) {
     xhr.send();
 }
 
+function unloadHandler(e) {
+    return e.returnValue = gettext('A file is currently uploading. Are you sure you wish to leave this page?');
+}
+
 var Uploader = React.createClass({
 
     getInitialState: function() {
@@ -305,7 +309,11 @@ var Uploader = React.createClass({
     startUploading: function(fields) {
         var xhr = new XMLHttpRequest();
 
+        var uh = unloadHandler.bind(this);
+        window.addEventListener('beforeunload', uh);
+
         xhr.onload = xhr.upload.onload = function() {
+            window.removeEventListener('beforeunload', uh);
             this.setState({
                 uploading: false,
                 uploaded: true,
@@ -313,6 +321,7 @@ var Uploader = React.createClass({
             });
         }.bind(this);
         xhr.onerror = xhr.upload.onerror = function() {
+            window.removeEventListener('beforeunload', uh);
             console.error(xhr);
             alert(gettext('There was a problem while uploading the file'));
             this.setState({
