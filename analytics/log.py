@@ -12,7 +12,7 @@ def write(collection, blob, req=None):
 
 def write_many(collection, blobs, req=None):
     # TODO: Convert this to use requests.async
-    for blob in blobs: 
+    for blob in blobs:
         if 'profile' in blob and 'ip' in blob['profile']:
             blob['profile']['country'] = _get_country(blob['profile']['ip'])
     _post('https://api.getconnect.io/events', json.dumps({collection: blobs}))
@@ -39,5 +39,8 @@ def _get_country(ip, req=None):
         return req.META.get('HTTP_CF_IPCOUNTRY').upper()
     if ip == '127.0.0.1':
         return 'US'
-    res = requests.get('http://www.telize.com/geoip/%s' % ip)
-    return res.json()['country_code']
+    try:
+        res = requests.get('https://freegeoip.net/json/%s' % ip)
+        return res.json()['country_code']
+    except Exception:
+        return None
