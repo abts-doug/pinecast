@@ -65,4 +65,3 @@ class Command(BaseCommand):
                 continue
 
             self.to_delete.append(f)
-

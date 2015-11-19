@@ -45,6 +45,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
 
     'accounts',
+    'analytics',
     'dashboard',
     'feedback',
     'podcasts',
@@ -167,6 +168,7 @@ GETCONNECT_IO_QUERY_KEY = os.environ.get('GETCONNECT_IO_QUERY_KEY')
 GETCONNECT_IO_PUSH_KEY = os.environ.get('GETCONNECT_IO_PUSH_KEY')
 
 S3_BUCKET = os.environ.get('S3_BUCKET')
+S3_LOGS_BUCKET = os.environ.get('S3_LOGS_BUCKET')
 S3_PREMIUM_BUCKET = os.environ.get('S3_PREMIUM_BUCKET')
 CDN_HOSTNAME = os.environ.get('CDN_HOSTNAME')
 S3_ACCESS_ID = os.environ.get('S3_ACCESS_ID')
