@@ -16,12 +16,16 @@ def _query(collection, q, _handler):
         del q['timezone']
     return _handler.get(
         'https://api.getconnect.io/events/%s' % collection,
+        timeout=1.2,
         params={'query': json.dumps(q)},
         headers={'X-Project-Id': settings.GETCONNECT_IO_PID,
                  'X-Api-Key': settings.GETCONNECT_IO_QUERY_KEY})
 
 def query(*args):
-    return _query(*args, _handler=requests).json()
+    try:
+        return _query(*args, _handler=requests).json()
+    except requests.exceptions.Timeout:
+        return {}
 
 def query_async(*args):
     return _query(*args, _handler=grequests)
@@ -46,16 +50,21 @@ class AsyncContext(object):
         self.pending = []
         self.resolved = None
 
-    def add(self, item, processor):
+    def add(self, item, processor, default=None):
         self.pending.append(item)
         idx = len(self.pending) - 1
 
-        return lambda: processor(self.resolve()[idx])
+        def proxy():
+            try:
+                return processor(self.resolve()[idx])
+            except Exception:
+                return default
+        return proxy
 
     def resolve(self):
         if self.resolved:
             return self.resolved
-        self.resolved = [x.json() for x in grequests.map(self.pending)]
+        self.resolved = [x.json() if x else {} for x in grequests.map(self.pending)]
         return self.resolved
 
 
@@ -69,7 +78,7 @@ def total_listens(podcast, episode_id=None, async=False):
     if not async:
         return data['results'][0]['episode'] + base_listens
     else:
-        return async.add(data, lambda d: d['results'][0]['episode'] + base_listens)
+        return async.add(data, lambda d: d['results'][0]['episode'] + base_listens, base_listens)
 
 
 def total_listens_this_week(podcast, async=False):
@@ -81,7 +90,7 @@ def total_listens_this_week(podcast, async=False):
     if not async:
         return data['results'][0]['episode']
     else:
-        return async.add(data, lambda d: d['results'][0]['episode'])
+        return async.add(data, lambda d: d['results'][0]['episode'], -1)
 
 
 def total_subscribers(podcast, async=False):
@@ -93,7 +102,7 @@ def total_subscribers(podcast, async=False):
     if not async:
         return data['results'][0]['podcast']
     else:
-        return async.add(data, lambda d: d['results'][0]['podcast'])
+        return async.add(data, lambda d: d['results'][0]['podcast'], -1)
 
 
 def get_top_episodes(podcast_id, async=False):
@@ -105,7 +114,7 @@ def get_top_episodes(podcast_id, async=False):
     if not async:
         return data['results']
     else:
-        return async.add(data, lambda d: d['results'])
+        return async.add(data, lambda d: d['results'], [])
 
 
 
@@ -145,7 +154,7 @@ def process_intervals(intvs, interval_duration, label_maker, pick=None):
 
     if pick:
         values = [(x.payload.get(pick, 0) if x else 0) for x in values]
-    
+
     return {'labels': labels, 'dataset': values}
 
 def process_intervals_bulk(bulk_results, interval_duration, label_maker, pick=None):
@@ -172,7 +181,7 @@ def process_intervals_bulk(bulk_results, interval_duration, label_maker, pick=No
 
         values = []
         cursor = cursor_start
-        # Set zeroed values for all data points before 
+        # Set zeroed values for all data points before
         while cursor <= cursor_end:
             if not results:
                 values.append(0)
