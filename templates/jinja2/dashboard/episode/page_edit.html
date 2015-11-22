@@ -45,6 +45,7 @@
         name="publish"
         required
         value="{{ default.get('publish', (episode.publish + tz_delta).strftime('%Y-%m-%dT%H:%M')) }}">
+      <button class="publish-now btn-neutral">{{ _('Now') }}</button>
     </label>
     <label>
       <span>{{ _('Episode Description') }}</span>
@@ -140,7 +141,7 @@
         placeholder="{{ _('Creative Commons 4.0') }}"
         value="{{ default.get('license', episode.license) }}">
     </label>
-    
+
   </div>
 
   <menu class="toolbar">
@@ -157,6 +158,7 @@
 <script src="/static/js/react-0.13.3.min.js"></script>
 <script src="/static/js/markdown-editor.js"></script>
 <script src="/static/js/ui-uploader.js"></script>
+<script src="/static/js/publish-now.js"></script>
 <script src="/static/js/disable-forms.js"></script>
 <script>
 markdown(document.querySelector('textarea'));

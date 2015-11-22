@@ -43,6 +43,7 @@
         name="publish"
         required
         value="{{ default.get('publish') }}">
+      <button class="publish-now btn-neutral">{{ _('Now') }}</button>
     </label>
 
     <label>
@@ -156,6 +157,7 @@
 <script src="/static/js/react-0.13.3.min.js"></script>
 <script src="/static/js/markdown-editor.js"></script>
 <script src="/static/js/ui-uploader.js"></script>
+<script src="/static/js/publish-now.js"></script>
 <script src="/static/js/disable-forms.js"></script>
 <script>
 markdown(document.querySelector('textarea'));

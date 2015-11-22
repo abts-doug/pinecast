@@ -255,17 +255,25 @@ def delete_podcast_episode(req, podcast_slug, episode_id):
 def podcast_new_ep(req, podcast_slug):
     pod = get_podcast(req, podcast_slug)
 
+    tz_delta = UserSettings.get_from_user(req.user).get_tz_delta()
+
     latest_episode = pod.get_most_recent_episode()
     ctx = {
         'podcast': pod,
         'latest_ep': latest_episode,
+        'default': {
+            'publish': datetime.datetime.strftime(
+                datetime.datetime.now() + tz_delta,
+                '%Y-%m-%dT%H:%M'  # 2015-07-09T12:00
+            ),
+        },
     }
     if not req.POST:
         return _pmrender(req, 'dashboard/episode/page_new.html', ctx)
 
     try:
         naive_publish = datetime.datetime.strptime(req.POST.get('publish'), '%Y-%m-%dT%H:%M') # 2015-07-09T12:00
-        adjusted_publish = naive_publish - UserSettings.get_from_user(req.user).get_tz_delta()
+        adjusted_publish = naive_publish - tz_delta
 
         ep = PodcastEpisode(
             podcast=pod,
