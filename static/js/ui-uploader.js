@@ -21,6 +21,64 @@ function unloadHandler(e) {
     return e.returnValue = gettext('A file is currently uploading. Are you sure you wish to leave this page?');
 }
 
+var ProgressBar = React.createClass({
+    render: function() {
+        return React.createElement(
+            'div',
+            {className: 'progress'},
+            React.createElement('i', {style: {width: this.props.progress + '%'}})
+        );
+    },
+});
+
+var TimeRemainingIndicator = React.createClass({
+    getInitialState: function() {
+        return {
+            timer: null,
+            timeRemaining: null,
+        };
+    },
+    componentDidMount: function() {
+        this.setState({
+            timer: setInterval(function() {
+                this.tick();
+            }.bind(this), 250),
+        });
+    },
+    componentWillUnmount: function() {
+        clearInterval(this.state.timer);
+        this.setState({timer: null});
+    },
+    render: function() {
+        return React.createElement(
+            'div',
+            {className: 'time-remaining'},
+            this.state.timeRemaining ? this.state.timeRemaining : gettext('Calculating time remaining...')
+        );
+    },
+
+    tick: function() {
+        var percent = this.props.progress;
+        if (!percent) return;
+
+        var duration = Date.now() - this.props.startTime;
+
+        var fullTime = Math.ceil(duration / percent / 1000);
+
+        var remaining = fullTime - Math.floor(duration / 1000);
+
+        var seconds = Math.ceil(remaining % 60);
+        var minutes = (remaining - seconds) / 60;
+
+        if (seconds < 10) seconds = '0' + seconds;
+
+        var tr = minutes + ':' + seconds;
+
+        this.setState({timeRemaining: tr});
+    },
+});
+
+
 var Uploader = React.createClass({
 
     getInitialState: function() {
@@ -28,6 +86,7 @@ var Uploader = React.createClass({
         return {
             uploading: false,
             uploaded: hasDef,
+            uploadStart: null,
             progress: 0,
             fileObj: !hasDef ? null : {
                 name: this.props.defName,
@@ -68,11 +127,8 @@ var Uploader = React.createClass({
     getBody: function() {
         if (this.state.uploading) {
             return [
-                React.createElement(
-                    'div',
-                    {className: 'progress'},
-                    React.createElement('i', {style: {width: this.state.progress + '%'}})
-                ),
+                React.createElement(ProgressBar, {progress: this.state.progress}),
+                React.createElement(TimeRemainingIndicator, {startTime: this.state.uploadStart, progress: this.state.progress}),
                 this.getError(),
                 this.props.optional ? null : React.createElement(
                     'input',
@@ -315,6 +371,7 @@ var Uploader = React.createClass({
         xhr.onload = xhr.upload.onload = function() {
             window.removeEventListener('beforeunload', uh);
             this.setState({
+                uploadStart: null,
                 uploading: false,
                 uploaded: true,
                 finalContentURL: fields.destination_url,
@@ -350,6 +407,8 @@ var Uploader = React.createClass({
         }
         data.append('file', this.state.fileObj);
         xhr.send(data);
+
+        this.setState({uploadStart: Date.now()});
     },
 
     clearFile: function(e) {

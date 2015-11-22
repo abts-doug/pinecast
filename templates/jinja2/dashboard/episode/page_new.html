@@ -85,7 +85,7 @@
   <div class="card-block card">
     <strong>{{ _('Audio') }}</strong>
     <div class="upload-placeholder"
-      data-default-url="{{ sign(default.get('audio-url')) }}"
+      data-default-url="{{ sign(default.get('audio-url')) if default.get('audio-url') else '' }}"
       data-default-size="{{ default.get('audio-url-size') }}"
       data-default-name="{{ default.get('audio-url-name') }}"
       data-default-type="{{ default.get('audio-url-type') }}"
