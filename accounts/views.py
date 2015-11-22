@@ -1,4 +1,5 @@
 import re
+from urllib import quote as urlencode
 
 import pytz
 from django.contrib.auth import authenticate, login
@@ -10,8 +11,9 @@ from django.views.decorators.http import require_POST
 
 from .models import BetaRequest, UserSettings
 from dashboard.views import _pmrender
-from pinecast.email import request_must_be_confirmed, send_confirmation_email, send_notification_email
+from pinecast.email import get_expired_page, get_signed_url, request_must_be_confirmed, send_confirmation_email, send_notification_email
 from pinecast.helpers import reverse, tz_offset
+from pinecast.signatures import signer
 
 
 def home(req):
@@ -32,7 +34,7 @@ def login_page(req):
         user = User.objects.get(email=req.POST.get('email'))
         password = req.POST.get('password')
     except User.DoesNotExist:
-        pass
+        user = None
 
     if (user and
         user.is_active and
@@ -40,6 +42,87 @@ def login_page(req):
         login(req, authenticate(username=user.username, password=password))
         return redirect('dashboard')
     return render(req, 'login.html', {'error': ugettext('Invalid credentials')})
+
+
+def forgot_password(req):
+    if not req.user.is_anonymous():
+        return redirect('dashboard')
+
+    if not req.POST:
+        return render(req, 'forgot_password.html')
+
+    try:
+        user = User.objects.get(email=req.POST.get('email'))
+    except User.DoesNotExist:
+        user = None
+
+    if user and user.is_active:
+        send_confirmation_email(
+            user,
+            ugettext('[Pinecast] Password reset'),
+            ugettext('''
+We received a request to reset the password for your Pinecast account. If you
+do not want to reset your password, please ignore this email.
+'''),
+            reverse('forgot_password_finalize') + '?email=%s' % urlencode(user.email))
+        return render(req, 'forgot_password_success.html')
+    return render(req, 'forgot_password.html', {'error': ugettext("We don't recognize that email address.")})
+
+
+@request_must_be_confirmed
+def forgot_password_finalize(req):
+    if not req.user.is_anonymous():
+        return redirect('dashboard')
+
+    email = req.GET.get('email')
+    try:
+        user = User.objects.get(email=email)
+    except User.DoesNotExist:
+        return redirect('login')
+
+    ctx = {'email': email,
+           'signature': signer.sign(email),
+           'error': req.GET.get('error')}
+
+    return render(req, 'forgot_password_finalize.html', ctx)
+
+
+@require_POST
+def forgot_password_finish(req):
+    if not req.user.is_anonymous():
+        return redirect('dashboard')
+
+    # Protection against the forces of evil
+    sig = req.POST.get('__sig')
+    email = req.POST.get('email')
+    try:
+        h = signer.unsign(sig, max_age=1800)
+        if h != email:
+            raise Exception()
+    except Exception:
+        return get_expired_page(req)
+
+    try:
+        user = User.objects.get(email=email)
+    except User.DoesNotExist:
+        return redirect('login')
+
+    passwd = req.POST.get('password')
+    if passwd != req.POST.get('confirm'):
+        err = ugettext("You didn't type the same password twice.")
+        return redirect(
+            get_signed_url(
+                reverse('forgot_password_finalize') +
+                '?email=%s&error=%s' % (
+                    urlencode(email),
+                    urlencode(err))
+            )
+        )
+
+    user.set_password(passwd)
+    user.save()
+
+    return redirect(reverse('login') + '?success=resetpassword')
 
 
 def private_beta_signup(req):
@@ -58,7 +141,7 @@ def private_beta_signup(req):
         podcaster_type=req.POST.get('type')
     )
     request.save()
-    
+
     return render(req, 'pb_signup_done.html')
 
 
@@ -88,7 +171,7 @@ Someone requested a change to your email address on Pinecast. This email is
 to verify that you own the email address provided.
 '''),
         reverse('user_settings_change_email_finalize') + '?user=%s&email=%s' % (
-            req.user.id, req.POST.get('new_email')),
+            urlencode(req.user.id), urlencode(req.POST.get('new_email'))),
         req.POST.get('new_email')
     )
     return redirect(reverse('user_settings') + '?success=em')

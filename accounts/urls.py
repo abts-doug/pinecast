@@ -6,6 +6,9 @@ from . import views
 urlpatterns = [
     url(r'^$', views.home, name='home'),
     url(r'^login$', views.login_page, name='login'),
+    url(r'^forgot_password$', views.forgot_password, name='forgot_password'),
+    url(r'^forgot_password/finalize$', views.forgot_password_finalize, name='forgot_password_finalize'),
+    url(r'^forgot_password/finish$', views.forgot_password_finish, name='forgot_password_finish'),
     url(r'^beta_signup$', views.private_beta_signup, name='beta_signup'),
 
     url(r'^accounts/settings$', views.user_settings_page, name='user_settings'),
