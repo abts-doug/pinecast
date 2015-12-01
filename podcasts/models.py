@@ -107,6 +107,8 @@ class Podcast(models.Model):
         plan = UserSettings.get_from_user(self.owner).plan
         flags = []
         if payment_plans.minimum(plan, payment_plans.PLAN_STARTER):
+            # This is inside a conditional because it's forced on for free
+            # users.
             flags.append(FLAIR_POWERED_BY)
         if payment_plans.minimum(plan, payment_plans.FEATURE_MIN_COMMENT_BOX):
             flags.append(FLAIR_FEEDBACK)

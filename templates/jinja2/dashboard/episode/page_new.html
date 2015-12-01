@@ -48,23 +48,30 @@
 
     <label>
       <span>{{ _('Episode Description') }}</span>
-      <textarea name="description" id="description-field">{{ default.get('description', _('# Episode Notes\n\nNotes go here'))|safe }}</textarea>
+      {#
+      There's a self XSS here. You could enter </ textarea > or something
+      similar, and it'll parse as valid HTML probably. It's not great, but it's
+      an acceptable risk.
+      #}
+      <textarea name="description" id="description-field">{{ default.get('description', _('# Episode Notes\n\nNotes go here'))|replace('</textarea>', '')|safe }}</textarea>
     </label>
 
-    <div class="flair-options">
-      <p>{{ _('Choose flair to show at the bottom of your episode description:') }}</p>
-      <ul>
-        {% set flags = podcast.get_available_flair_flags() %}
-        {% for flag, flag_name in flags %}
-          <li>
-            <label class="checkbox">
-              <input type="checkbox" name="flair_{{ flag }}"{{ ' checked' if default.get('flair_%s' % flag, getattr(latest_ep.description_flair, flag) if latest_ep else False) else '' }}>
-              <span>{{ flag_name }}</span>
-            </label>
-          </li>
-        {% endfor %}
-      </ul>
-    </div>
+    {% set flags = podcast.get_available_flair_flags() %}
+    {% if flags %}
+      <div class="flair-options">
+        <p>{{ _('Choose flair to show at the bottom of your episode description:') }}</p>
+        <ul>
+          {% for flag, flag_name in flags %}
+            <li>
+              <label class="checkbox">
+                <input type="checkbox" name="flair_{{ flag }}"{{ ' checked' if default.get('flair_%s' % flag, getattr(latest_ep.description_flair, flag) if latest_ep else False) else '' }}>
+                <span>{{ flag_name }}</span>
+              </label>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
 
   </div>
 

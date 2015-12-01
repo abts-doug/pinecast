@@ -261,14 +261,13 @@ def podcast_new_ep(req, podcast_slug):
     ctx = {
         'podcast': pod,
         'latest_ep': latest_episode,
-        'default': {
-            'publish': datetime.datetime.strftime(
-                datetime.datetime.now() + tz_delta,
-                '%Y-%m-%dT%H:%M'  # 2015-07-09T12:00
-            ),
-        },
     }
     if not req.POST:
+        base_default = collections.defaultdict(lambda: '')
+        base_default['publish'] = datetime.datetime.strftime(
+            datetime.datetime.now() + tz_delta,
+            '%Y-%m-%dT%H:%M'  # 2015-07-09T12:00
+        )
         return _pmrender(req, 'dashboard/episode/page_new.html', ctx)
 
     try:

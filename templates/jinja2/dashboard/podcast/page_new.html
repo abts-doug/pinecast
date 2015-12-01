@@ -56,7 +56,12 @@
 
     <label class="markdwon-editor-small">
       <span>{{ _('Description') }}</span>
-      <textarea name="description">{{ default.get('description')|safe }}</textarea>
+      {#
+      There's a self XSS here. You could enter </ textarea > or something
+      similar, and it'll parse as valid HTML probably. It's not great, but it's
+      an acceptable risk.
+      #}
+      <textarea name="description">{{ default.get('description')|replace('</textarea>', '')|safe }}</textarea>
     </label>
 
   </div>
@@ -75,7 +80,7 @@
           <span>{{ _('Language') }}</span>
           <input type="text" name="language" placeholder="en-US" required maxlength="16" value="{{ default.get('language', 'en-US')}}">
         </label>
-        
+
       </div>
       <div class="col">
         <label>
@@ -97,7 +102,7 @@
             required
             value="{{ default.get('author_name') }}">
         </label>
-        
+
       </div>
     </div>
 
@@ -148,7 +153,7 @@ window.PODCAST_CATEGORIES = {{ PODCAST_CATEGORIES|safe }};
 (function() {
   var slugField = document.querySelector('.slug-field');
   var urlAvail = document.querySelector('.url-availability');
-  
+
   var slugDebounce;
   var slugXHR;
 

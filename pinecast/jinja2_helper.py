@@ -1,6 +1,7 @@
 import datetime
 import hashlib
 import json
+import string
 
 import gfm
 import pytz
@@ -51,6 +52,7 @@ def environment(**options):
     env.filters['markdown'] = gfm.markdown
     env.filters['pretty_date'] = pretty_date
     env.filters['sanitize'] = helpers.sanitize
+    env.filters['replace'] = string.replace
     return env
 
 def minimum_plan(user_settings, plan):
