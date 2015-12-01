@@ -11,7 +11,7 @@
   {% if user == podcast.owner %}
     {{ _('Episode geographic analytics data are only to Ultimate customers.') }}
     <br>
-    <a class="btn" href="/accounts/upgrade">{{ _('Upgrade Now') }}</a>
+    <a class="btn" href="{{ url('upgrade') }}">{{ _('Upgrade Now') }}</a>
   {% else %}
     {{ _('Episode geographic analytics data are only available to podcasts owned by Ultimate customers.') }}
   {% endif %}

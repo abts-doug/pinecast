@@ -193,6 +193,9 @@ SNS_IMPORT_BUS = 'arn:aws:sns:us-east-1:575938143306:import_notify'
 RECAPTCHA_KEY = os.environ.get('RECAPTCHA_KEY')
 RECAPTCHA_SECRET = os.environ.get('RECAPTCHA_SECRET')
 
+STRIPE_API_KEY = os.environ.get('STRIPE_API_KEY')
+STRIPE_PUBLISHABLE_KEY = os.environ.get('STRIPE_PUBLISHABLE_KEY')
+
 LAMBDA_ACCESS_SECRET = os.environ.get('LAMBDA_ACCESS_SECRET')
 RSS_FETCH_ENDPOINT = os.environ.get('RSS_FETCH_ENDPOINT')
 

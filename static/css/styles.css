@@ -672,6 +672,12 @@ menu.tabs a.selected {
     display: block;
 }
 
+.error:empty,
+.warning:empty,
+.success:empty {
+    display: none;
+}
+
 .error {
     background: #e74c3c;
     border-radius: 4px;
@@ -1165,4 +1171,59 @@ li.user-card span.name {
 .chart-option-selector {
     display: inline-block;
     margin-right: 10px;
+}
+
+
+.plan-card {
+    font-size: 1.1em;
+    padding-bottom: 55px;
+    position: relative;
+    transform: scale(1);
+    transition: box-shadow 0.2s, transform 0.2s;
+    z-index: 9;
+}
+.plan-card:hover {
+    box-shadow: 0 5px 5px 3px rgba(0, 0, 0, 0.2);
+    transform: scale(1.05);
+    z-index: 10;
+}
+.plan-card > strong:first-child {
+    border-bottom: 0;
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0;
+    text-align: center;
+}
+.plan-card p {
+    color: #999;
+    font-size: 0.85em;
+    text-align: center;
+}
+.plan-card ul {
+    padding: 0 0 0 10px;
+}
+.plan-card li {
+    padding: 5px 0;
+}
+.plan-price {
+    bottom: 0;
+    display: block;
+    font-size: 24px;
+    left: 0;
+    line-height: 55px;
+    position: absolute;
+    right: 0;
+    text-align: center;
+}
+.plan-price sub {
+    color: #444;
+    font-size: 0.7em;
+    vertical-align: baseline;
+}
+
+.plan-footer {
+    color: #999;
+    font-style: italic;
+    margin-bottom: 20px;
+    text-align: center;
 }

@@ -1,5 +1,6 @@
 import datetime
 
+import stripe
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -31,6 +32,18 @@ class UserSettings(models.Model):
 
     plan_podcast_limit_override = models.PositiveIntegerField(default=0)  # Podcast limit = max(pplo, plan.max)
 
+
+    ############################
+    # Payments-related fields
+    ############################
+
+    # # All credit fields are measured in cents (USD)
+    # credit_tip = models.PositiveIntegerField(default=0)
+    # credit_tip_limit = models.PositiveIntegerField(default=0)
+
+    stripe_customer_id = models.CharField(max_length=128, blank=True, null=True)
+
+
     def clean(self):
         if self.tz_offset < -12 or self.tz_offset > 14:
             raise ValidationError('Timezone offset must be between -12 and 14, inclusive')
@@ -52,6 +65,16 @@ class UserSettings(models.Model):
     @cached_method
     def get_tz_delta(self):
         return datetime.timedelta(hours=self.tz_offset)
+
+
+    def get_stripe_customer(self):
+        if self.stripe_customer_id:
+            return stripe.Customer.retrieve(self.stripe_customer_id)
+
+        return None
+
+    def create_stripe_customer(self, token):
+        pass
 
 
 class Network(models.Model):

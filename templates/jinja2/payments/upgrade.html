@@ -1,0 +1,151 @@
+{% extends 'dashboard/base.html' %}
+{% block dashboard_body %}
+
+<header>
+  {{ breadcrumb(_('Dashboard'), url('dashboard')) }}
+  <h1>{{ _('Plans') }}</h1>
+</header>
+
+<div class="row">
+  <div class="card plan-card">
+    <strong>{{ _('Free') }}</strong>
+    <ul>
+      <li>{{ _('Ten episode cut-off per show') }}</li>
+      <li>{{ _('48MB limit per episode') }}</li>
+    </ul>
+    <span class="plan-price">{{ _('Free <sub>(as in beer)</sub>')|safe }}</span>
+  </div>
+  <div class="card plan-card">
+    <strong>{{ _('Starter') }}</strong>
+    <ul>
+      <li>{{ _('Basic analytics') }}</li>
+      <li>{{ _('64MB limit per episode') }}</li>
+      <li>{{ _('Beautiful podcast homepage') }}</li>
+    </ul>
+    <span class="plan-price">$5<sub>/mo</sub></span>
+  </div>
+  <div class="card plan-card">
+    <strong>{{ _('Pro') }}</strong>
+    <ul>
+      <li>{{ _('Advanced analytics') }}</li>
+      <li>{{ _('128MB limit per episode') }}</li>
+      <li>{{ _('Podcast network support') }}</li>
+      <li>{{ _('Feedback tool') }}</li>
+    </ul>
+    <span class="plan-price">$50<sub>/mo</sub></span>
+  </div>
+  <div class="card plan-card">
+    <strong>{{ _('Ultimate') }}</strong>
+    <ul>
+      <li>{{ _('Complete analytics') }}</li>
+      <li>{{ _('256MB limit per episode') }}</li>
+      <li>{{ _('Faster episode downloads') }}</li>
+    </ul>
+    <span class="plan-price">$250<sub>/mo</sub></span>
+  </div>
+</div>
+
+<div class="plan-footer">
+  <p>
+    {{ _('All plans include unlimited podcasts, unlimited storage, and unlimited bandwidth.') }}
+  </p>
+</div>
+
+{% if not stripe_customer %}
+
+  <p>
+    {% trans %}
+      It looks like you aren't a Pinecast customer yet. To get started, enter you credit card information below. Credit card processing and storage is done exclusively via <a href="https://stripe.com/">Stripe</a>, so your information is always stored and transmitted securely.
+    {% endtrans %}
+  </p>
+  <p>
+    {% trans %}
+      Saving payment information will not charge your credit card. You will be able to choose your plan on the next step.
+    {% endtrans %}
+  </p>
+
+  <div class="card step-1">
+    <h2>{{ _('Step 1 of 2') }}</h2>
+    <form class="payment-info-form" data-publishable-key="{{ STRIPE_PUBLISHABLE_KEY }}">
+      <div class="error"></div>
+
+      <label>
+        <span>{{ _('Cardholder Name') }}</span>
+        <input required
+          name="name"
+          type="text"
+          data-stripe="name"
+          title="{{ _('Enter the name of the cardholder') }}">
+      </label>
+
+      <label>
+        <span>{{ _('Zip Code') }}</span>
+        <input required
+          name="address_zip"
+          type="text"
+          data-stripe="address_zip"
+          minlength="5"
+          title="{{ _('Enter the zip code of the cardholder') }}">
+      </label>
+
+      <label>
+        <span>{{ _('Card Number') }}</span>
+        <input required
+          name="number"
+          type="text"
+          pattern="(\d{16}|\d{4}-\d{4}-\d{4}-\d{4}|\d{4} \d{4} \d{4} \d{4})"
+          data-stripe="number"
+          title="{{ _('Enter a twenty-digit credit card number') }}">
+      </label>
+
+      <label>
+        <span>{{ _('CVC') }}</span>
+        <input required
+          name="cvc"
+          type="text"
+          minlength="3"
+          maxlength="4"
+          data-stripe="cvc"
+          pattern="\d{3,4}"
+          title="{{ _('Enter the CVC number from your card here') }}">
+      </label>
+
+      <label>
+        <span>{{ _('Expiration (MM/YYYY)') }}</span>
+        <input required
+          name="exp_month"
+          type="text"
+          maxlength="2"
+          data-stripe="exp-month"
+          pattern="(0?[1-9]|1[0-2])"
+          title="{{ _('Enter the month that your credit card expires') }}">
+        <span> / </span>
+        <input required
+          name="exp_year"
+          type="text"
+          minlength="4"
+          maxlength="4"
+          data-stripe="exp-year"
+          pattern="20\d\d"
+          title="{{ _('Enter the four-digit year that your credit card expires') }}">
+      </label>
+
+      <button type="submit">{{ _('Save Payment Information') }}</button>
+    </form>
+  </div>
+  <div class="card step-2">
+    <h2>{{ _('Step 2 of 2') }}</h2>
+  </div>
+
+{% endif %}
+
+{% endblock %}
+
+{% block after_content %}
+<script src="/static/js/disable-forms.js"></script>
+<script src="https://js.stripe.com/v2/"></script>
+<script src="/static/js/payments.js"></script>
+<script>
+  Stripe.setPublishableKey('{{ STRIPE_PUBLISHABLE_KEY }}');
+</script>
+{% endblock %}

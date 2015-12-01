@@ -2,7 +2,7 @@
   {% if user == podcast.owner %}
     {{ _('Feedback is available to users with a Pro or Ultimate plan.') }}
     <br>
-    <a class="btn" href="/accounts/upgrade">{{ _('Upgrade Now') }}</a>
+    <a class="btn" href="{{ url('upgrade') }}">{{ _('Upgrade Now') }}</a>
   {% else %}
     {{ _('The feedback feature is available to podcasts owned by Pro users.') }}
   {% endif %}
