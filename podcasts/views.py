@@ -3,7 +3,6 @@ import time
 from email.Utils import formatdate
 from xml.sax.saxutils import escape, quoteattr
 
-import gfm
 from django.conf import settings
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -93,7 +92,6 @@ def feed(req, podcast_slug):
                 yield '<itunes:category text=%s>%s</itunes:category>' % (
                     quoteattr(k), '\n'.join(render_cat(v)))
 
-    md_pod_desc = gfm.markdown(pod.description)
     content = [
         '<?xml version="1.0" encoding="UTF-8"?>',
         '<rss xmlns:atom="http://www.w3.org/2005/Atom"',
@@ -108,7 +106,7 @@ def feed(req, podcast_slug):
             '<generator>Pinecast (https://pinecast.com)</generator>',
             ('<itunes:subtitle>%s</itunes:subtitle>' % escape(pod.subtitle)) if pod.subtitle else '',
             '<itunes:author>%s</itunes:author>' % escape(pod.author_name),
-            '<description><![CDATA[%s]]></description>' % md_pod_desc,
+            '<description><![CDATA[%s]]></description>' % pod.description,
             '<itunes:owner>',
                 '<itunes:name>%s</itunes:name>' % escape(pod.author_name),
                 '<itunes:email>%s</itunes:email>' % escape(pod.owner.email),

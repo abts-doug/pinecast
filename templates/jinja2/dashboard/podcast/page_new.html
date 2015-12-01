@@ -54,7 +54,7 @@
       <span>{{ _('Explicit?') }}</span>
     </label>
 
-    <label class="markdwon-editor-small">
+    <label>
       <span>{{ _('Description') }}</span>
       {#
       There's a self XSS here. You could enter </ textarea > or something
@@ -142,12 +142,9 @@
 {% block after_content %}
 <link href="/static/css/markdown-editor.css" rel="stylesheet">
 <script src="/static/js/react-0.13.3.min.js"></script>
-<script src="/static/js/markdown-editor.js"></script>
 <script src="/static/js/ui-uploader.js"></script>
 <script src="/static/js/disable-forms.js"></script>
 <script>
-markdown(document.querySelector('textarea'));
-
 window.PODCAST_CATEGORIES = {{ PODCAST_CATEGORIES|safe }};
 
 (function() {
