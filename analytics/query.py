@@ -85,7 +85,7 @@ def total_listens_this_week(podcast, async=False):
     data = _query_async_switch(async)(
         'listen',
         {'select': {'episode': 'count'},
-         'timeframe': 'this_week',
+         'timeframe': {'previous': {'hours': 7 * 24}},
          'filter': {'podcast': {'eq': unicode(podcast.id)}}})
     if not async:
         return data['results'][0]['episode']
