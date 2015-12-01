@@ -60,6 +60,7 @@ var TimeRemainingIndicator = React.createClass({
     tick: function() {
         var percent = this.props.progress;
         if (!percent) return;
+        percent /= 100;
 
         var duration = Date.now() - this.props.startTime;
 
