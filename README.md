@@ -9,6 +9,7 @@ A premium podcast hosting service
 
 - Python 2.7
 - *nix or Cygwin
+- `virtualenv` must be set up
 
 In a production environment, the following dependencies are also required:
 
