@@ -112,8 +112,13 @@ class Podcast(models.Model):
             flags.append(FLAIR_POWERED_BY)
         if payment_plans.minimum(plan, payment_plans.FEATURE_MIN_COMMENT_BOX):
             flags.append(FLAIR_FEEDBACK)
-        if (payment_plans.minimum(plan, payment_plans.FEATURE_MIN_SITES) and self.site):
-            flags.append(FLAIR_SITE_LINK)
+        try:
+            if payment_plans.minimum(plan, payment_plans.FEATURE_MIN_SITES) and self.site:
+                flags.append(FLAIR_SITE_LINK)
+        except Exception:
+            # FIXME: Catch the correct exception here.
+            # `RelatedObjectDoesNotExist` is a strange and fickle beast.
+            pass
 
         if flatten:
             return flags
