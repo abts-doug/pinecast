@@ -64,6 +64,9 @@ MIDDLEWARE_CLASSES = (
 
     'sites.middleware.subdomains.SubdomainMiddleware',
     'pinecast.middleware.hnredirect.HostnameRedirect',
+
+    # Rollbar must come last
+    'rollbar.contrib.django.middleware.RollbarNotifierMiddleware',
 )
 
 ROOT_URLCONF = 'pinecast.urls'
@@ -194,6 +197,14 @@ EMAIL_CONFIRMATION_MAX_AGE = 3600 * 24 * 2  # Two days
 
 SUPPORT_URL = 'https://pinecast.zendesk.com'
 SUPPORT_EMAIL = 'support@pinecast.zendesk.com'
+
+ROLLBAR = {
+    'access_token': os.environ.get('ROLLBAR_ACCESS_TOKEN'),
+    'environment': 'development' if DEBUG else 'production',
+    'branch': 'master',
+    'root': os.getcwd(),
+}
+
 
 try:
     from settings_local import *

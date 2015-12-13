@@ -15,6 +15,7 @@ MarkupSafe==0.23
 pytz==2015.4
 PyYAML==3.11
 requests==2.8.1
+rollbar==0.11.0
 six==1.9.0
 ua-parser==0.3.6
 user-agents==0.3.2
