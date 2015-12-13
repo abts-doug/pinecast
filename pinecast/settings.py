@@ -106,15 +106,27 @@ ADMINS = [
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse',
+        },
+    },
     'handlers': {
         'console': {
             'class': 'logging.StreamHandler',
         },
+        'rollbar': {
+            'filters': ['require_debug_false'],
+            'access_token': 'foobar',  # Overwritten at the bottom of the file
+            'environment': 'development' if DEBUG else 'production',
+            'class': 'rollbar.logger.RollbarHandler'
+        },
     },
     'loggers': {
         'django': {
-            'handlers': ['console'],
+            'handlers': ['rollbar', 'console'],
             'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+            'propagate': True,
         },
     },
 }
@@ -210,3 +222,5 @@ try:
     from settings_local import *
 except ImportError:
     pass
+
+LOGGING['handlers']['rollbar']['access_token'] = ROLLBAR['access_token']
