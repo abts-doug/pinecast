@@ -65,7 +65,7 @@ def get_podcast(req, slug):
     try:
         pod = Podcast.objects.get(slug=slug)
     except Podcast.DoesNotExist:
-        raise HttpResponseNotFound()
+        raise Http404()
 
     if pod.owner == req.user:
         return pod
