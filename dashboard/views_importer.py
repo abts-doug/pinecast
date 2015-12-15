@@ -51,7 +51,7 @@ def importer_lookup(req):
     except Exception as e:
         print e
         return {'error': 'invalid encoding'}
-    
+
     try:
         parsed = parseXMLString(encoded)
     except Exception as e:
@@ -80,7 +80,6 @@ def start_import(req):
             slug=req.POST.get('slug'),
             name=req.POST.get('name'),
             homepage=req.POST.get('homepage'),
-            # TODO: convert this to markdown?
             description=req.POST.get('description'),
             language=req.POST.get('language'),
             copyright=req.POST.get('copyright'),
@@ -115,7 +114,7 @@ def start_import(req):
                 title=item['title'],
                 subtitle=item['subtitle'],
                 publish=datetime.datetime.fromtimestamp(time.mktime(item['publish'])),
-                description=item['description'],  # TODO: convert to markdown?
+                description=item['description'],
                 duration=int(item['duration']),
                 audio_url=item['audio_url'],
                 audio_size=int(item['audio_size']),
