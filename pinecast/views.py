@@ -52,10 +52,20 @@ def log(req):
     except Exception:
         return HttpResponse(status=400)
 
+    ts_formats = ['[%d/%m/%Y:%H:%M:%S +0000]',
+                  '[%d/%m/%Y:%H:%M:%S %z]',
+                  '[%d/%b/%Y:%H:%M:%S +0000]',
+                  '[%d/%b/%Y:%H:%M:%S %z]']
 
     listens_to_log = []
 
-    for blob in parsed: # TODO: this can throw an exception
+    # Make sure we don't iterate over something that's not iterable
+    try:
+        assert list(parsed)
+    except Exception:
+        return HttpResponse(status=400)
+
+    for blob in parsed:
         fr = FakeReq(blob)
         if analyze.is_bot(fr):
             continue
@@ -65,16 +75,22 @@ def log(req):
         except PodcastEpisode.DoesNotExist:
             continue
 
-        try:
-            ts = datetime.datetime.strptime(blob.get('ts'), '[%d/%b/%Y:%H:%M:%S %z]')
-        except ValueError:
-            # http://bugs.python.org/issue6641
-            ts = datetime.datetime.strptime(blob.get('ts'), '[%d/%b/%Y:%H:%M:%S +0000]')
+        raw_ts = blob.get('ts')
+        ts = None
+        for f in ts_formats:
+            try:
+                ts = datetime.datetime.strptime(raw_ts, '[%d/%m/%Y:%H:%M:%S +0000]')
+                break
+            except ValueError:
+                continue
+
+        # If we couldn't parse the timestamp, whatever.
+        if not ts:
+            continue
 
         browser, device, os = analyze.get_device_type(fr)
         print 'Logging record of listen for %s' % unicode(ep.id)
 
-        # TODO: Convert this to use the event batch api
         listens_to_log.append({
             'podcast': unicode(ep.podcast.id),
             'episode': unicode(ep.id),
