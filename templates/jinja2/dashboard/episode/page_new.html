@@ -47,6 +47,17 @@
     </label>
 
     <label>
+      <span>{{ _('Explicit Override') }}</span>
+      <select name="explicit">
+        <option value="none">
+          {{ _('Default for podcast (%s)') % (_('explicit') if podcast.is_explicit else _('clean')) }}
+        </option>
+        <option value="expl">{{ _('Explicit') }}</option>
+        <option value="clen">{{ _('Explicit') }}</option>
+      </select>
+    </label>
+
+    <label>
       <span>{{ _('Episode Description') }}</span>
       {#
       There's a self XSS here. You could enter </ textarea > or something

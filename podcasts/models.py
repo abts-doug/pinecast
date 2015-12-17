@@ -155,6 +155,19 @@ class PodcastEpisode(models.Model):
         default=0
     )
 
+    EXPLICIT_OVERRIDE_CHOICE_NONE = 'none'
+    EXPLICIT_OVERRIDE_CHOICE_EXPLICIT = 'expl'
+    EXPLICIT_OVERRIDE_CHOICE_CLEAN = 'clen'
+    explicit_override = models.CharField(
+        max_length=4,
+        choices=[
+            (EXPLICIT_OVERRIDE_CHOICE_NONE, ugettext_lazy('None')),
+            (EXPLICIT_OVERRIDE_CHOICE_EXPLICIT, ugettext_lazy('Explicit')),
+            (EXPLICIT_OVERRIDE_CHOICE_CLEAN, ugettext_lazy('Clean')),
+        ],
+        default=EXPLICIT_OVERRIDE_CHOICE_NONE
+    )
+
     @cached_method
     def formatted_duration(self):
         seconds = self.duration
