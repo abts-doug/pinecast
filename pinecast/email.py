@@ -1,8 +1,8 @@
 import hashlib
 import uuid
 
-import boto.ses as ses
 import itsdangerous
+from boto3.session import Session
 from django.conf import settings
 from django.http import HttpResponseBadRequest
 from django.shortcuts import render
@@ -14,20 +14,27 @@ from .signatures import signer
 CONFIRMATION_PARAM = '__ctx'
 
 
-def _send_mail(to, subject, body, email_format='text'):
-    conn = ses.connect_to_region(
-        'us-east-1',
-        aws_access_key_id=settings.SES_ACCESS_ID,
-        aws_secret_access_key=settings.SES_SECRET_KEY)
+def _send_mail(to, subject, body, email_format='Text'):
+    session = Session(aws_access_key_id=settings.SES_ACCESS_ID,
+                      aws_secret_access_key=settings.SES_SECRET_KEY,
+                      region_name='us-east-1')
+    conn = session.client('ses')
     print 'Sending email to %s' % to
     conn.send_email(
-        source='mattbasta@gmail.com',
-        subject=subject,
-        body=body,
-        to_addresses=to,
-        format=email_format,
-        return_path=settings.ADMINS[0][1],
-        reply_addresses=settings.SUPPORT_EMAIL
+        Source='mattbasta@gmail.com',
+        Destination={'ToAddresses': [to]},
+        Message={
+            'Subject': {
+                'Data': subject,
+            },
+            'Body': {
+                email_format: {
+                    'Data': body,
+                },
+            },
+        },
+        ReplyToAddresses=[settings.SUPPORT_EMAIL],
+        ReturnPath=settings.ADMINS[0][1]
     )
 
 
