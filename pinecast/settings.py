@@ -67,9 +67,6 @@ MIDDLEWARE_CLASSES = (
 
     'sites.middleware.subdomains.SubdomainMiddleware',
     'pinecast.middleware.hnredirect.HostnameRedirect',
-
-    # Rollbar must come last
-    'rollbar.contrib.django.middleware.RollbarNotifierMiddleware',
 )
 
 ROOT_URLCONF = 'pinecast.urls'
@@ -118,16 +115,10 @@ LOGGING = {
         'console': {
             'class': 'logging.StreamHandler',
         },
-        'rollbar': {
-            'filters': ['require_debug_false'],
-            'access_token': 'foobar',  # Overwritten at the bottom of the file
-            'environment': 'development' if DEBUG else 'production',
-            'class': 'rollbar.logger.RollbarHandler'
-        },
     },
     'loggers': {
         'django': {
-            'handlers': ['rollbar', 'console'],
+            'handlers': ['console'],
             'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
             'propagate': True,
         },
@@ -226,4 +217,13 @@ try:
 except ImportError:
     pass
 
-LOGGING['handlers']['rollbar']['access_token'] = ROLLBAR['access_token']
+
+if not DEBUG:
+    MIDDLEWARE_CLASSES = MIDDLEWARE_CLASSES + ('rollbar.contrib.django.middleware.RollbarNotifierMiddleware')
+    LOGGING['loggers']['django']['handlers'] = ['rollbar', 'console']
+    LOGGING['handlers']['rollbar'] = {
+        'filters': ['require_debug_false'],
+        'access_token': ROLLBAR['access_token'],
+        'environment': 'development' if DEBUG else 'production',
+        'class': 'rollbar.logger.RollbarHandler'
+    }

@@ -85,6 +85,10 @@
       <dt>{{ _('License') }}</dt> {#- -#}
       <dd>{{ episode.license }}</dd>
 
+      <dt>{{ _('Explicit Override') }}</dt> {#- -#}
+      {% set exp_ov = episode.explicit_override %}
+      <dd>{{ _('Explicit') if exp_ov == 'expl' else _('Clean') if exp_ov == 'clen' else _('Default for podcast (%s)') % (_('explicit') if podcast.is_explicit else _('clean')) }}</dd>
+
     </dl>
   </div>
 </div>

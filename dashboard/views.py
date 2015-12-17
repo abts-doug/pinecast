@@ -61,6 +61,16 @@ def _pmrender(req, template, data=None):
 
     return render(req, template, data)
 
+
+class EmptyStringDefaultDict(collections.defaultdict):
+    def __init__(self):
+        super(EmptyStringDefaultDict, self).__init__(lambda: '')
+
+    def get(self, key, def_=None):
+        out = super(EmptyStringDefaultDict, self).get(key, def_)
+        return out if out is not None else ''
+
+
 def get_podcast(req, slug):
     try:
         pod = Podcast.objects.get(slug=slug)
@@ -263,11 +273,12 @@ def podcast_new_ep(req, podcast_slug):
         'latest_ep': latest_episode,
     }
     if not req.POST:
-        base_default = collections.defaultdict(lambda: '')
+        base_default = EmptyStringDefaultDict()
         base_default['publish'] = datetime.datetime.strftime(
             datetime.datetime.now() + tz_delta,
             '%Y-%m-%dT%H:%M'  # 2015-07-09T12:00
         )
+        ctx['default'] = base_default
         return _pmrender(req, 'dashboard/episode/page_new.html', ctx)
 
     try:
@@ -289,7 +300,9 @@ def podcast_new_ep(req, podcast_slug):
             image_url=signer.unsign(req.POST.get('image-url')),
 
             copyright=req.POST.get('copyright'),
-            license=req.POST.get('license'))
+            license=req.POST.get('license'),
+
+            explicit_override=req.POST.get('explicit_override'))
         ep.set_flair(req.POST, no_save=True)
         ep.save()
         if req.POST.get('feedback_prompt'):
@@ -333,6 +346,9 @@ def edit_podcast_episode(req, podcast_slug, episode_id):
 
         ep.copyright = req.POST.get('copyright')
         ep.license = req.POST.get('license')
+
+        ep.explicit_override = req.POST.get('explicit_override')
+
         ep.set_flair(req.POST, no_save=True)
         ep.save()
 

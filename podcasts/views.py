@@ -57,6 +57,11 @@ def feed(req, podcast_slug):
 
         md_desc = ep.get_html_description(is_demo=is_demo)
 
+        explicit_tag = ''
+        if ep.explicit_override != PodcastEpisode.EXPLICIT_OVERRIDE_CHOICE_NONE:
+            explicit_tag = '<itunes:explicit>%s</itunes:explicit>' % (
+                'yes' if ep.explicit_override == PodcastEpisode.EXPLICIT_OVERRIDE_CHOICE_EXPLICIT else 'clean')
+
         items.append('\n'.join([
             '<item>',
                 '<title>%s</title>' % escape(ep.title),
@@ -64,6 +69,7 @@ def feed(req, podcast_slug):
                 '<link>%s</link>' % escape(ep_url),
                 '<guid isPermaLink="false">https://pinecast.com/guid/%s</guid>' % escape(str(ep.id)),
                 '<pubDate>%s</pubDate>' % formatdate(time.mktime(ep.publish.timetuple())),
+                explicit_tag,
                 '<itunes:author>%s</itunes:author>' % escape(pod.author_name),
                 '<itunes:subtitle>%s</itunes:subtitle>' % escape(ep.subtitle),
                 '<itunes:image href=%s />' % quoteattr(_asset(ep.image_url)),

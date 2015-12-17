@@ -48,12 +48,13 @@
 
     <label>
       <span>{{ _('Explicit Override') }}</span>
-      <select name="explicit">
-        <option value="none">
+      <select name="explicit_override">
+        {% set exp_ov = default.get('explicit_override') %}
+        <option value="none" {{ 'selected' if exp_ov == 'none' else '' }}>
           {{ _('Default for podcast (%s)') % (_('explicit') if podcast.is_explicit else _('clean')) }}
         </option>
-        <option value="expl">{{ _('Explicit') }}</option>
-        <option value="clen">{{ _('Explicit') }}</option>
+        <option value="expl" {{ 'selected' if exp_ov == 'expl' else '' }}>{{ _('Explicit') }}</option>
+        <option value="clen" {{ 'selected' if exp_ov == 'clen' else '' }}>{{ _('Clean') }}</option>
       </select>
     </label>
 
