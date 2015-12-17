@@ -1,8 +1,7 @@
 import datetime
 import json
 
-from boto.s3.connection import S3Connection
-from boto.awslambda import connect_to_region
+from boto3.session import Session
 from django.conf import settings
 from django.core.management.base import BaseCommand
 
@@ -35,18 +34,16 @@ class Command(BaseCommand):
             help='The AWS Lambda region')
 
     def handle(self, *args, **options):
-        conn = S3Connection(settings.S3_ACCESS_ID, settings.S3_SECRET_KEY)
-        lambda_client = connect_to_region(options['region'],
-            aws_access_key_id=settings.S3_ACCESS_ID,
-            aws_secret_access_key=settings.S3_SECRET_KEY)
+        session = Session(aws_access_key_id=settings.S3_ACCESS_ID,
+                          aws_secret_access_key=settings.S3_SECRET_KEY,
+                          region_name=options['region'])
 
         to_reprocess = []
 
         self.stdout.write('Processing bucket: %s' % settings.S3_LOGS_BUCKET)
         self.stdout.write('Downloading S3 manifest...')
-        bucket = conn.get_bucket(settings.S3_LOGS_BUCKET)
-        files = bucket.list()
 
+        bucket = session.resource('s3').Bucket(name=settings.S3_LOGS_BUCKET)
 
         self.stdout.write('Analyzing bucket contents...')
 
@@ -54,13 +51,12 @@ class Command(BaseCommand):
         end_date = datetime.datetime.strptime(options['end'], '%Y-%m-%d')
 
         hits = 0
-        for f in files:
+        for f in bucket.objects.all():
             hits += 1
 
             if hits % 500 == 0:
                 self.stdout.write(' - Processed %d log listings...' % hits)
 
-            canon_url = 'http://%s.s3.amazonaws.com/%s' % (settings.S3_LOGS_BUCKET, f.key)
             filename = f.key.split('/')[-1]
             if not filename:
                 continue
@@ -83,6 +79,7 @@ class Command(BaseCommand):
         if not to_reprocess: return
 
         if options['run']:
+            lambda_client = session.client('lambda')
             for f in to_reprocess:
                 blob = json.dumps({
                     'Records': [{
@@ -92,7 +89,11 @@ class Command(BaseCommand):
                         }
                     }]
                 })
-                lambda_client.invoke_async(options['function'], blob)
+                lambda_client.invoke(
+                    FunctionName=options['function'],
+                    InvocationType='Event',
+                    Payload=blob
+                )
             self.stdout.write('Lambda invoked for each log file. See CloudWatch for output')
         else:
             self.stdout.write('No additional action was performed. Use --run to actually reprocess')
