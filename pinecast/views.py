@@ -2,6 +2,7 @@ import datetime
 import json
 
 import requests
+import rollbar
 from django.conf import settings
 from django.http import Http404, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -52,10 +53,9 @@ def log(req):
     except Exception:
         return HttpResponse(status=400)
 
-    ts_formats = ['[%d/%m/%Y:%H:%M:%S +0000]',
-                  '[%d/%m/%Y:%H:%M:%S %z]',
+    ts_formats = ['[%d/%b/%Y:%H:%M:%S %z]',
                   '[%d/%b/%Y:%H:%M:%S +0000]',
-                  '[%d/%b/%Y:%H:%M:%S %z]']
+                  '[%d/%m/%Y:%H:%M:%S +0000]'] # For cdn
 
     listens_to_log = []
 
@@ -79,13 +79,14 @@ def log(req):
         ts = None
         for f in ts_formats:
             try:
-                ts = datetime.datetime.strptime(raw_ts, '[%d/%m/%Y:%H:%M:%S +0000]')
+                ts = datetime.datetime.strptime(raw_ts, f)
                 break
             except ValueError:
                 continue
 
         # If we couldn't parse the timestamp, whatever.
         if not ts:
+            rollbar.report_message('Got unparseable date: %s' % raw_ts, 'error')
             continue
 
         browser, device, os = analyze.get_device_type(fr)
