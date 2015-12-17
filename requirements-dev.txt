@@ -1,5 +1,4 @@
 bleach==1.4.1
-boto==2.38.0
 boto3==1.2.2
 defusedxml==0.4.1
 Django==1.9
