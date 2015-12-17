@@ -1,10 +1,11 @@
-from boto.s3.connection import S3Connection
+from boto3.session import Session
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 from django.db.models import Q
 
 from accounts.models import Network
 from podcasts.models import Podcast, PodcastEpisode
+from sites.models import Site
 
 
 class Command(BaseCommand):
@@ -18,12 +19,14 @@ class Command(BaseCommand):
             help='Actually runs the command instead of doing a dry run')
 
     def handle(self, *args, **options):
-        conn = S3Connection(settings.S3_ACCESS_ID, settings.S3_SECRET_KEY)
+        session = Session(aws_access_key_id=settings.S3_ACCESS_ID,
+                          aws_secret_access_key=settings.S3_SECRET_KEY)
+        res = session.resource('s3')
 
         self.to_delete = []
 
-        self.clean_bucket(conn, settings.S3_BUCKET, options)
-        self.clean_bucket(conn, settings.S3_PREMIUM_BUCKET, options)
+        self.clean_bucket(res, settings.S3_BUCKET, options)
+        self.clean_bucket(res, settings.S3_PREMIUM_BUCKET, options)
 
         self.stdout.write('Completed analysis')
         self.stdout.write('%d files to remove' % len(self.to_delete))
@@ -34,16 +37,15 @@ class Command(BaseCommand):
         else:
             self.stdout.write('No files were removed. Use --run to actually GC')
 
-    def clean_bucket(conn, bucket_name, options):
+    def clean_bucket(self, res, bucket_name, options):
         self.stdout.write('Processing bucket: %s' % bucket_name)
         self.stdout.write('Downloading S3 manifest...')
-        bucket = conn.get_bucket(bucket_name)
-        files = bucket.list()
 
         self.stdout.write('Analyzing bucket contents...')
-        for f in files:
-            canon_url = 'http://%s.s3.amazonaws.com/%s' % (settings.S3_BUCKET, f.key)
-            https_canon_url = 'https://%s.s3.amazonaws.com/%s' % (settings.S3_BUCKET, f.key)
+        bucket = res.Bucket(bucket_name)
+        for f in bucket.objects.all():
+            canon_url = 'http://%s.s3.amazonaws.com/%s' % (bucket_name, f.key)
+            https_canon_url = 'https://%s.s3.amazonaws.com/%s' % (bucket_name, f.key)
             self.stdout.write(' - %s' % canon_url)
 
             if (f.key.startswith('networks/covers/') and
@@ -54,7 +56,7 @@ class Command(BaseCommand):
 
             elif (f.key.startswith('podcasts/covers/') and
                 Podcast.objects.filter(
-                    Q(image_url=canon_url) | Q(image_url=https_canon_url)).count()):
+                    Q(cover_image=canon_url) | Q(cover_image=https_canon_url)).count()):
                 self.stdout.write('     Still in use by Podcast')
                 continue
 
@@ -62,6 +64,12 @@ class Command(BaseCommand):
                 Q(audio_url=canon_url) | Q(image_url=canon_url) |
                 Q(audio_url=https_canon_url) | Q(image_url=https_canon_url)).count():
                 self.stdout.write('     Still in use by PodcastEpisode')
+                continue
+
+            if Site.objects.filter(
+                    Q(cover_image_url=canon_url) | Q(cover_image_url=https_canon_url) |
+                    Q(logo_url=canon_url) | Q(logo_url=https_canon_url)).count():
+                self.stdout.write('     Still in use by Site')
                 continue
 
             self.to_delete.append(f)
