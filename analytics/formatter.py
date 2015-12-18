@@ -27,7 +27,7 @@ USER_TIMEFRAMES = {
 
 
 class Format(object):
-    def __init__(self, req, event_type):
+    def __init__(self, req, event_type, async=False):
         self.event_type = event_type
         self.req = req
         self.selection = {}
@@ -36,6 +36,9 @@ class Format(object):
         self.interval_val = None
         self.group_by = None
         self.res = None
+
+        self.async = async
+        self.async_query = None
 
     def select(self, **kwargs):
         self.selection.update(kwargs)
@@ -65,6 +68,7 @@ class Format(object):
 
     def _process(self):
         assert self.selection
+        assert not self.async_query
         q = {
             'select': self.selection,
             'timezone': UserSettings.get_from_user(self.req.user).tz_offset,
@@ -81,7 +85,10 @@ class Format(object):
         if self.interval_val:
             q['interval'] = self.interval_val
 
-        self.res = query.query(self.event_type, q)
+        if not self.async:
+            self.res = query.query(self.event_type, q)
+        else:
+            self.async_query = query.query_async(self.event_type, q)
         return self
 
     def format_country(self, label=None):
@@ -144,3 +151,61 @@ class Format(object):
                 zip(out['labels'], out['dataset'])]
 
         return list(query.rotating_colors(out))
+
+    @classmethod
+    def async_resolve_all(cls, instances):
+        for instance in instances:
+            if instance.async_query:
+                continue
+            instance._process()
+        results = query.query_async_resolve([x.async_query for x in instances])
+        for result, instance in zip(results, instances):
+            instance.res = result
+
+    @classmethod
+    def format_intervals_bulk(cls, instances, label_maker, pick):
+        if not instances: return [], []
+
+        for instance in instances:
+            if not instance.interval_val:
+                instance.interval()
+
+        interval_duration = DELTAS[instances[0].interval_val]
+
+        # print bulk_results
+        processed = [[query.Interval(x) for x in inst.res['results']] for inst in instances]
+        if not any(processed):
+            return [], []
+        cursor_start = min(x[0].start for x in processed if x)
+        cursor_end = max(x[-1].start for x in processed if x)
+
+        # Process the labels first
+        label_cursor = cursor_start
+        labels = []
+        while label_cursor <= cursor_end:
+            labels.append(label_maker(label_cursor))
+            label_cursor += interval_duration
+
+        datasets = []
+        for results in processed:
+            # If there are no results for this dataset, fille it with zeroed values
+            if not results:
+                datasets.append([0 for x in labels])
+                continue
+
+            values = []
+            cursor = cursor_start
+            # Set zeroed values for all data points before
+            while cursor <= cursor_end:
+                if not results:
+                    values.append(0)
+                elif results[0].start <= cursor <= results[-1].end:
+                    intv = results.pop(0)
+                    values.append(intv.payload.get(pick, 0))
+                else:
+                    values.append(0)
+                cursor += interval_duration
+
+            datasets.append(values)
+
+        return labels, datasets

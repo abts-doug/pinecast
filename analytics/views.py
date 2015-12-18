@@ -153,20 +153,17 @@ def network_listen_history(req):
     pods = net.podcast_set.all()
     async_queries = []
     for pod in pods:
-        res = query.query_async(
-            'listen',
-            {'select': {'podcast': 'count'},
-             'timeframe': {'previous': {'days': 30}},
-             'interval': 'daily',
-             'filter': {'podcast': {'eq': unicode(pod.id)}},
-             'timezone': UserSettings.get_from_user(req.user).tz_offset})
-        async_queries.append(res)
+        async_queries.append(
+            Format(req, 'listen', async=True)
+                .select(podcast='count')
+                .last_thirty()
+                .interval()
+                .where(podcast=pod.id))
 
-    query_results = query.query_async_resolve(async_queries)
+    Format.async_resolve_all(async_queries)
 
-    labels, datasets = query.process_intervals_bulk(
-        query_results,
-        datetime.timedelta(days=1),
+    labels, datasets = Format.format_intervals_bulk(
+        async_queries,
         lambda d: d.strftime('%x'),
         pick='podcast'
     )

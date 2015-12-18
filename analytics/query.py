@@ -157,44 +157,6 @@ def process_intervals(intvs, interval_duration, label_maker, pick=None):
 
     return {'labels': labels, 'dataset': values}
 
-def process_intervals_bulk(bulk_results, interval_duration, label_maker, pick=None):
-    if not bulk_results: return [], []
-
-    # print bulk_results
-    processed = [[Interval(x) for x in results['results']] for results in bulk_results]
-    cursor_start = min(x[0].start for x in processed if x)
-    cursor_end = max(x[-1].start for x in processed if x)
-
-    # Process the labels first
-    label_cursor = cursor_start
-    labels = []
-    while label_cursor <= cursor_end:
-        labels.append(label_maker(label_cursor))
-        label_cursor += interval_duration
-
-    datasets = []
-    for results in processed:
-        # If there are no results for this dataset, fille it with zeroed values
-        if not results:
-            datasets.append([0 for x in labels])
-            continue
-
-        values = []
-        cursor = cursor_start
-        # Set zeroed values for all data points before
-        while cursor <= cursor_end:
-            if not results:
-                values.append(0)
-            elif results[0].start <= cursor <= results[-1].end:
-                intv = results.pop(0)
-                values.append(intv.payload.get(pick, 0))
-            else:
-                values.append(0)
-            cursor += interval_duration
-
-        datasets.append(values)
-
-    return labels, datasets
 
 
 def process_groups(groups, label_mapping=None, label_key=None, pick=None):
