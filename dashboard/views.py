@@ -439,10 +439,10 @@ def get_upload_url(req, podcast_slug, type):
     }
     encoded_policy = base64.b64encode(json.dumps(policy))
 
-    destination_url = 'https://%s.s3.amazonaws.com/%s' % (bucket, path)
+    destination_url = 'https://%s.s3.amazonaws.com/%s' % (settings.S3_BUCKET, path)
     signed_dest_url = signer.sign(destination_url)
     return {
-        'url': 'https://%s.s3.amazonaws.com/' % bucket,
+        'url': 'https://%s.s3.amazonaws.com/' % settings.S3_BUCKET,
         'method': 'post',
         'headers': {},
         'fields': {

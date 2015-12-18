@@ -106,6 +106,7 @@ class Format(object):
     def format_intervals(self, label):
         if not self.interval_val: self.interval()
         if not self.res: self._process()
+        if 'results' not in self.res: return {}  # TODO: come up with better error handling
 
         key = self.selection.keys()[0]
 
