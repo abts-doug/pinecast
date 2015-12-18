@@ -97,7 +97,7 @@ class AssetImportRequest(models.Model):
             'token': self.access_token,
             'id': self.id,
             'url': source,
-            'bucket': pod.get_asset_bucket(),
+            'bucket': settings.S3_BUCKET,
             'key': key,
         }
 

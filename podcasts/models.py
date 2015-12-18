@@ -52,11 +52,6 @@ class Podcast(models.Model):
     networks = models.ManyToManyField(Network)
 
     @cached_method
-    def get_asset_bucket(self):
-        use_premium_cdn = UserSettings.get_from_user(self.owner).use_cdn()
-        return settings.S3_PREMIUM_BUCKET if use_premium_cdn else settings.S3_BUCKET
-
-    @cached_method
     def get_category_list(self):
         return ','.join(x.category for x in self.podcastcategory_set.all())
 

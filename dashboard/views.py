@@ -424,17 +424,13 @@ def get_upload_url(req, podcast_slug, type):
     amz_headers = 'x-amz-acl:public-read'
 
     uset = UserSettings.get_from_user(pod.owner if pod is not None else req.user)
-    if pod:
-        bucket = pod.get_asset_bucket()
-    else:
-        bucket = settings.S3_PREMIUM_BUCKET if uset.use_cdn() else settings.S3_BUCKET
 
     max_size = 1024 * 1024 * 2 if type == 'image' else payment_plans.MAX_FILE_SIZE[uset.plan]
     policy = {
         # hours=6 so users around midnight don't get screwed.
         'expiration': (datetime.datetime.now() + datetime.timedelta(days=1, hours=6)).strftime('%Y-%m-%dT00:00:00.000Z'),
         'conditions': [
-            {'bucket': bucket},
+            {'bucket': settings.S3_BUCKET},
             ['starts-with', '$key', basepath],
             {'acl': 'public-read'},
             {'Content-Type': mime_type},
