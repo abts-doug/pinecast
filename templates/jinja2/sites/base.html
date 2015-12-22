@@ -7,6 +7,7 @@
     {% if site.siteblogpost_set.all().count() %}
       <link rel="alternate" type="application/rss+xml" title="{{ _('Blog RSS Feed') }}" href="{{ url('blog_rss', site_slug=site.slug) }}">
     {% endif %}
+    <link type="image/png" rel="icon" href="https://pinecast.com/static/img/favicon.png">
   </head>
   <body>
     {% if minimum_plan(site.podcast.owner, PLANS.FEATURE_MIN_COMMENT_BOX) %}

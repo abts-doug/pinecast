@@ -33,6 +33,8 @@ urlpatterns = (
         url(r'^services/log$', views.log),
 
         url(r'^jsi18n/$', javascript_catalog, js_info_dict),
+
+        url(r'^favicon\.ico$', lambda *_: redirect('/static/img/favicon.png')),
     ]
 )
 
