@@ -26,17 +26,33 @@ def query(*args):
         return _query(*args, _handler=requests).json()
     except requests.exceptions.Timeout:
         return {}
+    except ValueError:
+        return {}
 
 def query_async(*args):
     return _query(*args, _handler=grequests)
 
 def query_async_resolve(async_queries):
     if isinstance(async_queries, list):
-        return [x.json() for x in grequests.map(async_queries)]
+        out = []
+        for x in grequests.map(async_queries):
+            try:
+                out.append(x.json())
+            except ValueError:
+                pass
+        return out
+
     elif isinstance(async_queries, dict):
         items = async_queries.items()
-        results = [x.json() for x in grequests.map([v for k, v in items])]
+        results = []
+        for x in grequests.map([v for k, v in items]):
+            try:
+                results.append(x.json())
+            except ValueError:
+                pass
+
         return {k: results[i] for i, (k, v) in enumerate(items)}
+
     else:
         raise Exception('Unknown type passed to query_async_resolve')
 
@@ -64,7 +80,17 @@ class AsyncContext(object):
     def resolve(self):
         if self.resolved:
             return self.resolved
-        self.resolved = [x.json() if x else {} for x in grequests.map(self.pending)]
+
+        self.resolved = []
+        for x in grequests.map(self.pending):
+            if not x:
+                self.resolved.append({})
+                continue
+            try:
+                self.resolved.append(x.json())
+            except ValueError:
+                pass
+
         return self.resolved
 
 
