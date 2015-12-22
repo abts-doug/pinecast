@@ -100,7 +100,7 @@ class Format(object):
             [p[self.group_by], p[key]] for
             p in
             self.res['results'] if
-            p[self.group_by]
+            p[self.group_by] and 'results' in self.res
         ]
 
     def format_intervals(self, label):
@@ -135,6 +135,7 @@ class Format(object):
 
     def format_breakdown(self, groups):
         if not self.res: self._process()
+        if 'results' not in self.res: return []  # TODO: come up with better error handling
 
         key = self.selection.keys()[0]
 

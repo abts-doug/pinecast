@@ -70,12 +70,7 @@ class AsyncContext(object):
         self.pending.append(item)
         idx = len(self.pending) - 1
 
-        def proxy():
-            try:
-                return processor(self.resolve()[idx])
-            except Exception:
-                return default
-        return proxy
+        return lambda: processor(self.resolve()[idx])
 
     def resolve(self):
         if self.resolved:
@@ -101,10 +96,16 @@ def total_listens(podcast, episode_id=None, async=False):
         q['filter']['episode'] = {'eq': episode_id}
     data = _query_async_switch(async)('listen', q)
     base_listens = 0 if episode_id is not None else podcast.stats_base_listens
-    if not async:
+
+    def get_listens(data):
+        if ('results' not in data or
+            not data['results'] or
+            'episode' not in data['results'][0]):
+            return base_listens
+
         return data['results'][0]['episode'] + base_listens
-    else:
-        return async.add(data, lambda d: d['results'][0]['episode'] + base_listens, base_listens)
+
+    return get_listens(data) if not async else async.add(data, get_listens)
 
 
 def total_listens_this_week(podcast, async=False):
@@ -113,10 +114,15 @@ def total_listens_this_week(podcast, async=False):
         {'select': {'episode': 'count'},
          'timeframe': {'previous': {'hours': 7 * 24}},
          'filter': {'podcast': {'eq': unicode(podcast.id)}}})
-    if not async:
+
+    def get_listens(data):
+        if ('results' not in data or
+            not data['results'] or
+            'episode' not in data['results'][0]):
+            return -1
         return data['results'][0]['episode']
-    else:
-        return async.add(data, lambda d: d['results'][0]['episode'], -1)
+
+    return get_listens(data) if not async else async.add(data, get_listens)
 
 
 def total_subscribers(podcast, async=False):
@@ -125,10 +131,15 @@ def total_subscribers(podcast, async=False):
         {'select': {'podcast': 'count'},
          'timeframe': 'today',
          'filter': {'podcast': {'eq': unicode(podcast.id)}}})
-    if not async:
+
+    def get_listens(data):
+        if ('results' not in data or
+            not data['results'] or
+            'podcast' not in data['results'][0]):
+            return -1
         return data['results'][0]['podcast']
-    else:
-        return async.add(data, lambda d: d['results'][0]['podcast'], -1)
+
+    return get_listens(data) if not async else async.add(data, get_listens)
 
 
 def get_top_episodes(podcast_id, async=False):
@@ -137,11 +148,11 @@ def get_top_episodes(podcast_id, async=False):
         {'select': {'podcast': 'count'},
          'groupBy': 'episode',
          'filter': {'podcast': {'eq': podcast_id}}})
-    if not async:
-        return data['results']
-    else:
-        return async.add(data, lambda d: d['results'], [])
 
+    def get_listens(data):
+        return data['results'] if 'results' in data else []
+
+    return get_listens(data) if not async else async.add(data, get_listens)
 
 
 class Interval(object):
@@ -149,7 +160,10 @@ class Interval(object):
         self.start = self._parse_date(data['interval']['start'])
         self.end = self._parse_date(data['interval']['end'])
 
-        self.payload = data['results'][0] if data['results'] else {}
+        if 'results' not in data or not data['results']:
+            self.payload = {}
+        else:
+            self.payload = data['results'][0]
 
     def _parse_date(self, date):
         # We need to strip off the timezone because the times are always
