@@ -151,15 +151,15 @@ def network_listen_history(req):
     net = get_object_or_404(Network, id=req.GET.get('network_id'), members__in=[req.user])
 
     pods = net.podcast_set.all()
-    async_queries = []
-    for pod in pods:
-        async_queries.append(
-            Format(req, 'listen', async=True)
-                .select(podcast='count')
-                .last_thirty()
-                .interval()
-                .where(podcast=pod.id))
-
+    async_queries = [
+        Format(req, 'listen', async=True)
+            .select(podcast='count')
+            .last_thirty()
+            .interval()
+            .where(podcast=pod.id) for
+        pod in
+        pods
+    ]
     Format.async_resolve_all(async_queries)
 
     labels, datasets = Format.format_intervals_bulk(

@@ -55,4 +55,6 @@ urlpatterns = [
     url(r'^services/import_result$', views_importer.import_result),
     url(r'^services/get_request_token$', views_importer.get_request_token),
     url(r'^services/check_request_token$', views_importer.check_request_token, name='check_request_token'),
+
+    url(r'^services/get_episodes$', views.get_episodes),
 ]

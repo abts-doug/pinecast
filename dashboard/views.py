@@ -14,6 +14,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import Http404, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.translation import ugettext
+from django.views.decorators.http import require_GET
 
 import accounts.payment_plans as payment_plans
 import analytics.query as analytics_query
@@ -71,7 +72,7 @@ class EmptyStringDefaultDict(collections.defaultdict):
         return out if out is not None else ''
 
 
-def get_podcast(req, slug):
+def get_podcast(req, slug):  # TODO: move to the Podcast model
     try:
         pod = Podcast.objects.get(slug=slug)
     except Podcast.DoesNotExist:
@@ -510,3 +511,45 @@ def podcast_ratings(req, podcast_slug, service=None):
             data['error'] = ugettext('Could not connect service')
 
     return _pmrender(req, 'dashboard/podcast_ratings.html', data)
+
+@login_required
+@require_GET
+@json_response(safe=False)
+def get_episodes(req):
+    pod_slug = req.GET.get('podcast')
+    network = req.GET.get('network')
+    start_date = req.GET.get('start_date')
+
+    if not pod_slug and not network:
+        return []
+
+    pods = set()
+    if pod_slug:
+        pods.add(get_podcast(req, pod_slug))
+
+    if network:
+        net = get_object_or_404(Network, id=network, members__in=[req.user])
+        pods = pods | set(net.podcast_set.all())
+
+    if not pods:
+        return []
+
+    query = PodcastEpisode.objects.filter(
+        podcast__in=list(pods),
+        publish__lt=datetime.datetime.now(),
+        awaiting_import=False
+    )
+    if start_date:
+        try:
+            parsed_date = datetime.datetime.strptime('')
+        except ValueError:
+            raise Http404()
+        query = query.filter(publish__gte=parsed_date)
+
+    return [
+        {'id': ep.id,
+         'title': ep.title,
+         'publish': ep.publish.strftime('%Y/%m/%d %H:%M:%S')} for
+        ep in
+        sorted(query, cmp=lambda a, b: cmp(a.publish, b.publish))
+    ]
