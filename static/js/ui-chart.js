@@ -9196,7 +9196,11 @@
 	        value: function renderOptions() {
 	            var _this3 = this;
 
-	            return Object.keys(this.props.options).map(function (option) {
+	            var keys = Object.keys(this.props.options);
+	            if (keys.length < 2) {
+	                return null;
+	            }
+	            return keys.map(function (option) {
 	                return React.createElement(ChartOption, { value: option,
 	                    name: _this3.props.options[option],
 	                    selected: _this3.props.defaultSelection,
