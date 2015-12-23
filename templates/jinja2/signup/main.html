@@ -1,0 +1,49 @@
+{% extends 'signup/base.html' %}
+{% block body %}
+
+<header>
+  <h1>{{ _('Sign Up') }}</h1>
+  <p>
+    {% trans %}
+      Create an account and start your podcast for free, no credit card required.
+    {% endtrans %}
+  </p>
+</header>
+
+<form method="post">
+  {% if error %}
+    <div class="error">
+      <strong>{{ _('Error') }}</strong> {{ error }}
+    </div>
+  {% endif %}
+
+  <label>
+    <span>{{ _('Your Email') }}</span>
+    <input type="email" name="email" value="{{ email or '' }}" required>
+    <small>{{ _('No spam, promise') }}</small>
+  </label>
+
+  <label>
+    <span>{{ _('Choose A Password') }}</span>
+    <input type="password" name="password" required minlength="8">
+  </label>
+
+  <div class="g-recaptcha" data-sitekey="{{ RECAPTCHA_KEY }}"></div>
+
+  <button type="submit">{{ _('Create Account') }}</button>
+  <p>
+    <a href="{{ url('login') }}">{{ _('Already a member?') }}</a>
+  </p>
+
+  <input type="hidden" name="timezone">
+  <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+
+</form>
+{% endblock %}
+
+{% block after_content %}
+<script>
+document.querySelector('[name=timezone]').value = -new Date(2016, 1).getTimezoneOffset() / 60;
+</script>
+<script src="https://www.google.com/recaptcha/api.js"></script>
+{% endblock %}

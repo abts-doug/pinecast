@@ -3,6 +3,11 @@
 <div class="login-container">
   <h1 class="form-signin-heading">{{ _('Pinecast') }}</h1>
   <form method="post" action="?" class="card">
+    {% if success %}
+      <div class="success">
+        <strong>{{ _('Success') }}</strong> {{ success }}
+      </div>
+    {% endif %}
     {% if error %}
       <div class="error">
         <strong>{{ _('Login Error') }}</strong> {{ error }}

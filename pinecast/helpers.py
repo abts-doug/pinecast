@@ -3,6 +3,8 @@ from functools import wraps
 import bleach
 import django.core.urlresolvers
 import pytz
+import requests
+from django.conf import settings
 from django.core.urlresolvers import reverse as reverse_django
 from django.http import JsonResponse
 
@@ -58,3 +60,20 @@ def sanitize(data):
             'p', 'div', 'dl', 'dt', 'dd', 'br', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'hr', 'span'],
         {'*': ['src', 'href', 'title']}
     )
+
+
+def validate_recaptcha(response, ip):
+    result = requests.post(
+        'https://www.google.com/recaptcha/api/siteverify',
+        data={'response': response,
+              'secret': settings.RECAPTCHA_SECRET,
+              'remoteip': ip})
+    try:
+        parsed = result.json()
+    except Exception:
+        return False
+
+    if parsed.get('error-codes'):
+        print parsed.get('error-codes')
+
+    return parsed['success']

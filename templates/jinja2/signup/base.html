@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block css %}
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link type="text/css" rel="stylesheet" href="/static/css/styles.css">
+<link type="text/css" rel="stylesheet" href="/static/css/signup-styles.css">
+{% endblock %}
+
+{% block content %}
+<header>
+  <h1><a href="{{ url('dashboard') }}">{{ _('Pinecast') }}</a></h1>
+</header>
+<div class="signup-container">
+  <main>
+    <noscript>
+      <div class="error">
+        {% trans %}
+          It looks like JavaScript is turned off in your browser! Lots of stuff might not work unless you turn it back on.
+        {% endtrans %}
+      </div>
+    </noscript>
+    {% block body %}{% endblock %}
+    <a href="{{ SUPPORT_URL }}" target="_blank" class="support-link" title="{{ _('Help') }}">
+      <img src="/static/img/help.svg" alt="{{ _('Help') }}" height="20" width="20">
+    </a>
+  </main>
+</div>
+{% endblock %}

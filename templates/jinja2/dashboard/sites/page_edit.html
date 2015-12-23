@@ -29,7 +29,6 @@
         required
         maxlength="64"
         pattern="[\w-]+"
-        class="width-full"
         value="{{ default.get('slug', site.slug) }}">
       <small>{{ _('The slug will act as the subdomain for your site.') }}</small>
     </label>
@@ -120,7 +119,7 @@
 (function() {
   var slugField = document.querySelector('.slug-field');
   var urlAvail = document.querySelector('.url-availability');
-  
+
   var slugDebounce;
   var slugXHR;
 

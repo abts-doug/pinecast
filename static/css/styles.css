@@ -67,13 +67,14 @@ input[type="number"],
 input[type="password"],
 input[type="datetime-local"],
 textarea {
-    border: 1px solid #888;
+    border: 0 solid #bbb;
+    border-bottom-width: 1px;
     border-radius: 2px;
     box-shadow: 0 0 0 transparent;
     margin: 2px 0 5px;
     padding: 8px;
-    transition: box-shadow 0.2s;
-    width: 300px;
+    transition: box-shadow 0.2s, border-color 0.2s;
+    width: 100%;
 }
 input[type="text"],
 input[type="email"],
@@ -84,6 +85,17 @@ textarea {
     display: block;
 }
 
+input[type="text"][readonly],
+input[type="email"][readonly],
+input[type="url"][readonly],
+input[type="number"][readonly],
+input[type="password"][readonly],
+input[type="datetime-local"][readonly]
+textarea[readonly] {
+    border-color: #ddd;
+    border-width: 1px;
+}
+
 input[type="text"]:focus,
 input[type="email"]:focus,
 input[type="url"]:focus,
@@ -91,12 +103,8 @@ input[type="number"]:focus,
 input[type="password"]:focus,
 input[type="datetime-local"]:focus,
 textarea:focus {
-    border: 1px solid #555;
+    border-color: #555;
     box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
-}
-
-input.width-full {
-    width: 100%;
 }
 
 textarea {

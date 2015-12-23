@@ -25,17 +25,17 @@
 
   <label>
     <span>{{ _('Title') }}</span>
-    <input class="width-full" type="text" required name="title" maxlength="512" value="{{ default.get('title', post.title) }}">
+    <input type="text" required name="title" maxlength="512" value="{{ default.get('title', post.title) }}">
   </label>
 
   <label>
     <span>{{ _('Slug') }}</span>
-    <input class="width-full" type="text" name="slug" required pattern="[\w-]+" value="{{ default.get('slug', post.slug) }}">
+    <input type="text" name="slug" required pattern="[\w-]+" value="{{ default.get('slug', post.slug) }}">
   </label>
 
   <label>
     <span>{{ _('Publish On') }}</span>
-    <input class="width-full" type="datetime-local" name="publish" required value="{{ default.get('publish', (post.publish + tz_delta).strftime('%Y-%m-%dT%H:%M')) }}">
+    <input type="datetime-local" name="publish" required value="{{ default.get('publish', (post.publish + tz_delta).strftime('%Y-%m-%dT%H:%M')) }}">
   </label>
 
   <label class="markdwon-editor-small">

@@ -30,7 +30,6 @@
         placeholder="{{ _('My Great Podcast') }}"
         required
         maxlength="256"
-        class="width-full"
         value="{{ default.get('name', podcast.name) }}">
     </label>
 
@@ -42,7 +41,7 @@
         required
         maxlength="64"
         pattern="[\w-]+"
-        class="slug-field width-full"
+        class="slug-field"
         value="{{ default.get('slug', podcast.slug) }}">
       <div class="url-availability"></div>
       <div class="warning slug-warning">

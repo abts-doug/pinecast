@@ -27,8 +27,12 @@ def login_page(req):
     if not req.user.is_anonymous():
         return redirect('dashboard')
 
+    ctx = {}
+    if req.GET.get('signup_success'):
+        ctx['success'] = ugettext('Your account was created successfully. Login below.')
+
     if not req.POST:
-        return render(req, 'login.html')
+        return render(req, 'login.html', ctx)
 
     try:
         user = User.objects.get(email=req.POST.get('email'))
@@ -41,7 +45,9 @@ def login_page(req):
         user.check_password(password)):
         login(req, authenticate(username=user.username, password=password))
         return redirect('dashboard')
-    return render(req, 'login.html', {'error': ugettext('Invalid credentials')})
+
+    ctx['error'] = ugettext('Invalid credentials')
+    return render(req, 'login.html', ctx)
 
 
 def forgot_password(req):
@@ -199,30 +205,6 @@ support@pinecast.zendesk.com.
 ''')
     )
     return redirect(reverse('login'))
-
-@login_required
-@require_POST
-def user_settings_page_changeusername(req):
-    username = req.POST.get('username')
-    if User.objects.filter(username=username).count():
-        return redirect(reverse('user_settings') + '?error=uae')
-
-    if not re.match(r'\w\w+', username):
-        return redirect(reverse('user_settings') + '?error=uau')
-
-    req.user.username = username
-    req.user.save()
-
-    send_notification_email(
-        req.user,
-        ugettext('[Pinecast] Username changed'),
-        ugettext('''
-Your Pinecast username has been updated. If you did not request this change,
-please contact Pinecast support as soon as possible at
-support@pinecast.zendesk.com.
-''')
-    )
-    return redirect(reverse('user_settings') + '?success=un')
 
 @login_required
 @request_must_be_confirmed

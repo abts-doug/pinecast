@@ -28,7 +28,7 @@
   <h1><a href="{{ url('dashboard') }}">{{ _('Pinecast') }}</a></h1>
   <a class="user-card" href="{{ url('user_settings') }}">
     <img src="{{ gravatar(user.email) }}" alt="">
-    <span>{{ user.username }}</span>
+    <span>{{ user.email }}</span>
   </a>
   <menu>
     <li><a href="{{ url('user_settings') }}">{{ _('Settings') }}</a></li>

@@ -45,8 +45,7 @@
       <strong>{{ _('Site Page URL') }}</strong>
       <input type="url"
         readonly
-        value="http://{{ podcast.site.slug }}.pinecast.co/episode/{{ str(episode.id) }}"
-        class="width-full">
+        value="http://{{ podcast.site.slug }}.pinecast.co/episode/{{ str(episode.id) }}">
     </div>
   {% endif %}
 
@@ -100,8 +99,7 @@
     <input type="url"
       title="{{ _('Comment Box') }}"
       readonly
-      value="https://pinecast.com{{ url('ep_comment_box', kwargs={'podcast_slug': podcast.slug, 'episode_id': str(episode.id)}) }}"
-      class="width-full">
+      value="https://pinecast.com{{ url('ep_comment_box', kwargs={'podcast_slug': podcast.slug, 'episode_id': str(episode.id)}) }}">
   </div>
   {% for f in feedback %}
     <div class="card-block card card-comment">
@@ -171,8 +169,7 @@
     <strong>{{ _('Audio URL') }}</strong>
     <input type="url"
       readonly
-      value="https://pinecast.com{{ url('listen', kwargs={'episode_id': str(episode.id)}) }}"
-      class="width-full">
+      value="https://pinecast.com{{ url('listen', kwargs={'episode_id': str(episode.id)}) }}">
   </div>
 
   {% if minimum_plan(podcast.owner, PLANS.FEATURE_MIN_TORRENT) %}
@@ -181,8 +178,7 @@
       <p>{{ _('Note that downloads via BitTorrent are not counted towards listen stats.') }}</p>
       <input type="url"
         readonly
-        value="{{ episode.audio_url }}?torrent"
-        class="width-full">
+        value="{{ episode.audio_url }}?torrent">
     </div>
   {% endif %}
 

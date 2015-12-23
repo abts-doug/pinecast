@@ -3,11 +3,11 @@
 
 <header>
   {{ breadcrumb(network.name, url('network_dashboard', network_id=network.id)) }}
-  <h1>{% trans name=member.username, net=network.name %}Remove {{ name }} from {{ net }}?{% endtrans %}</h1>
+  <h1>{% trans name=member.email, net=network.name %}Remove {{ name }} from {{ net }}?{% endtrans %}</h1>
 </header>
 
 <form method="post">
-  
+
   <div class="card card-block">
     <strong>{{ _('Confirm Removal') }}</strong>
 

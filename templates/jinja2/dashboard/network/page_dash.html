@@ -62,7 +62,7 @@
     <strong>{{ _('Owner') }}</strong>
     <address class="user-card">
       <img src="{{ gravatar(network.owner.email) }}" alt="">
-      <span class="name">{{ network.owner.username }}</span>
+      <span class="name">{{ network.owner.email }}</span>
       <a href="mailto:{{ network.owner.email }}" class="email">{{ network.owner.email }}</a>
     </address>
   </div>
@@ -102,7 +102,7 @@
             </menu>
           {% endif %}
           <img src="{{ gravatar(m.email) }}" alt="">
-          <span class="name">{{ m.username }}</span>
+          <span class="name">{{ m.email }}</span>
           <a href="mailto:{{ m.email }}" class="email">{{ m.email }}</a>
         </li>
       {% endfor %}

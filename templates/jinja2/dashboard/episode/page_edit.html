@@ -27,8 +27,7 @@
         placeholder="{{ _('Episode 1 - Best one ever') }}"
         required
         maxlength="1024"
-        value="{{ default.get('title', episode.title) }}"
-        class="width-full">
+        value="{{ default.get('title', episode.title) }}">
     </label>
     <label>
       <span>{{ _('Subtitle') }}</span>
@@ -36,8 +35,7 @@
         name="subtitle"
         placeholder="{{ _('You\'ll never believe it') }}"
         maxlength="1024"
-        value="{{ default.get('subtitle', episode.subtitle) }}"
-        class="width-full">
+        value="{{ default.get('subtitle', episode.subtitle) }}">
     </label>
     <label>
       <span>{{ _('Publish On') }}</span>

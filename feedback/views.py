@@ -1,5 +1,3 @@
-import requests
-from django.conf import settings
 from django.http import Http404
 from django.shortcuts import get_object_or_404, render
 from django.utils.translation import ugettext
@@ -11,7 +9,7 @@ from .models import Feedback
 from accounts.models import UserSettings
 from dashboard.views import _pmrender
 from pinecast.email import send_notification_email
-from pinecast.helpers import reverse
+from pinecast.helpers import reverse, validate_recaptcha
 from podcasts.models import Podcast, PodcastEpisode
 
 
@@ -109,18 +107,4 @@ def ep_comment_box(req, podcast_slug, episode_id):
 def _validate_recaptcha(req):
     response = req.POST.get('g-recaptcha-response')
     ip = analyze.get_request_ip(req)
-
-    result = requests.post(
-        'https://www.google.com/recaptcha/api/siteverify',
-        data={'response': response,
-              'secret': settings.RECAPTCHA_SECRET,
-              'remoteip': ip})
-    try:
-        parsed = result.json()
-    except Exception:
-        return False
-
-    if parsed.get('error-codes'):
-        print parsed.get('error-codes')
-
-    return parsed['success']
+    return validate_recaptcha(response, ip)
