@@ -4,33 +4,21 @@ import json
 import re
 
 import grequests
-import requests
 from django.conf import settings
 
 
 TIMZONE_KILLA = re.compile(r'(\d\d\d\d\-\d\d\-\d\dT\d\d:\d\d:\d\d)[+\-]\d\d:\d\d')
 
 
-def _query(collection, q, _handler):
+def query_async(collection, q):
     if 'timeframe' not in q and 'timezone' in q:
         del q['timezone']
-    return _handler.get(
+    return grequests.get(
         'https://api.getconnect.io/events/%s' % collection,
         timeout=1.2,
         params={'query': json.dumps(q)},
         headers={'X-Project-Id': settings.GETCONNECT_IO_PID,
                  'X-Api-Key': settings.GETCONNECT_IO_QUERY_KEY})
-
-def query(*args):
-    try:
-        return _query(*args, _handler=requests).json()
-    except requests.exceptions.Timeout:
-        return {}
-    except ValueError:
-        return {}
-
-def query_async(*args):
-    return _query(*args, _handler=grequests)
 
 def query_async_resolve(async_queries):
     if isinstance(async_queries, list):
@@ -55,10 +43,6 @@ def query_async_resolve(async_queries):
 
     else:
         raise Exception('Unknown type passed to query_async_resolve')
-
-
-def _query_async_switch(async):
-    return query_async if async else query
 
 
 class AsyncContext(object):
@@ -88,13 +72,20 @@ class AsyncContext(object):
 
         return self.resolved
 
+    def __enter__(self):
+        return self
 
-def total_listens(podcast, episode_id=None, async=False):
+    def __exit__(self, type, value, traceback):
+        if traceback: return
+        self.resolve()
+
+
+def total_listens(podcast, async, episode_id=None):
     q = {'select': {'episode': 'count'},
          'filter': {'podcast': {'eq': unicode(podcast.id)}}}
     if episode_id:
         q['filter']['episode'] = {'eq': episode_id}
-    data = _query_async_switch(async)('listen', q)
+    data = query_async('listen', q)
     base_listens = 0 if episode_id is not None else podcast.stats_base_listens
 
     def get_listens(data):
@@ -105,11 +96,11 @@ def total_listens(podcast, episode_id=None, async=False):
 
         return data['results'][0]['episode'] + base_listens
 
-    return get_listens(data) if not async else async.add(data, get_listens)
+    return async.add(data, get_listens)
 
 
-def total_listens_this_week(podcast, async=False):
-    data = _query_async_switch(async)(
+def total_listens_this_week(podcast, async):
+    data = query_async(
         'listen',
         {'select': {'episode': 'count'},
          'timeframe': {'previous': {'hours': 7 * 24}},
@@ -122,11 +113,11 @@ def total_listens_this_week(podcast, async=False):
             return -1
         return data['results'][0]['episode']
 
-    return get_listens(data) if not async else async.add(data, get_listens)
+    return async.add(data, get_listens)
 
 
-def total_subscribers(podcast, async=False):
-    data = _query_async_switch(async)(
+def total_subscribers(podcast, async):
+    data = query_async(
         'subscribe',
         {'select': {'podcast': 'count'},
          'timeframe': 'today',
@@ -139,20 +130,17 @@ def total_subscribers(podcast, async=False):
             return -1
         return data['results'][0]['podcast']
 
-    return get_listens(data) if not async else async.add(data, get_listens)
+    return async.add(data, get_listens)
 
 
-def get_top_episodes(podcast_id, async=False):
-    data = _query_async_switch(async)(
+def get_top_episodes(podcast_id, async):
+    data = query_async(
         'listen',
         {'select': {'podcast': 'count'},
          'groupBy': 'episode',
          'filter': {'podcast': {'eq': podcast_id}}})
 
-    def get_listens(data):
-        return data['results'] if 'results' in data else []
-
-    return get_listens(data) if not async else async.add(data, get_listens)
+    return async.add(data, lambda d: d['results'] if 'results' in d else [])
 
 
 class Interval(object):

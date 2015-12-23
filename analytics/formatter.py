@@ -85,10 +85,10 @@ class Format(object):
         if self.interval_val:
             q['interval'] = self.interval_val
 
+        self.async_query = query.query_async(self.event_type, q)
         if not self.async:
-            self.res = query.query(self.event_type, q)
-        else:
-            self.async_query = query.query_async(self.event_type, q)
+            self.async = query.AsyncContext()
+            Format.async_resolve_all([self])
         return self
 
     def format_country(self, label=None):

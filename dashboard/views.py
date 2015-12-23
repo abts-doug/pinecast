@@ -100,13 +100,10 @@ MILESTONES = [1, 100, 250, 500, 1000, 2000, 5000, 7500, 10000, 15000, 20000,
 def podcast_dashboard(req, podcast_slug):
     pod = get_podcast(req, podcast_slug)
 
-    async_ctx = analytics_query.AsyncContext()
-
-    total_listens = analytics_query.total_listens(pod, async=async_ctx)
-    total_listens_this_week = analytics_query.total_listens_this_week(pod, async=async_ctx)
-    subscribers = analytics_query.total_subscribers(pod, async=async_ctx)
-
-    async_ctx.resolve()
+    with analytics_query.AsyncContext() as async_ctx:
+        total_listens = analytics_query.total_listens(pod, async_ctx)
+        total_listens_this_week = analytics_query.total_listens_this_week(pod, async_ctx)
+        subscribers = analytics_query.total_subscribers(pod, async_ctx)
 
     data = {
         'podcast': pod,
@@ -155,7 +152,10 @@ def podcast_top_episodes(req, podcast_slug):
     if not payment_plans.minimum(owner_uset.plan, payment_plans.FEATURE_MIN_COMMENT_BOX):
         return _pmrender(req, 'dashboard/podcast/page_top_episodes_upgrade.html', {'podcast': pod})
 
-    top_ep_data = analytics_query.get_top_episodes(unicode(pod.id))
+    with analytics_query.AsyncContext() as async_ctx:
+        top_ep_data_query = analytics_query.get_top_episodes(unicode(pod.id), async_ctx)
+    top_ep_data = top_ep_data_query()
+
     ep_ids = [x['episode'] for x in top_ep_data]
     episodes = PodcastEpisode.objects.filter(id__in=ep_ids)
     mapped = {unicode(ep.id): ep for ep in episodes}
@@ -370,12 +370,14 @@ def podcast_episode(req, podcast_slug, episode_id):
     pod = get_podcast(req, podcast_slug)
     ep = get_object_or_404(PodcastEpisode, id=episode_id, podcast=pod)
 
+    with analytics_query.AsyncContext() as async_ctx:
+        total_listens = analytics_query.total_listens(
+            pod, async_ctx, episode_id=str(ep.id))
+
     data = {
         'podcast': pod,
         'episode': ep,
-        'analytics': {
-            'total_listens': analytics_query.total_listens(pod, str(ep.id)),
-        },
+        'analytics': {'total_listens': total_listens()},
         'feedback': Feedback.objects.filter(podcast=pod, episode=ep).order_by('-created'),
     }
     return _pmrender(req, 'dashboard/episode/page_episode.html', data)
