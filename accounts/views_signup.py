@@ -6,6 +6,7 @@ from django.shortcuts import redirect
 from django.utils.translation import ugettext
 
 import analytics.analyze as analyze
+from accounts.models import UserSettings
 from dashboard.views import _pmrender
 from pinecast.helpers import validate_recaptcha
 
@@ -52,6 +53,13 @@ def signup(req):
             'error': str(e),
             'email': req.POST.get('email'),
         })
+
+    try:
+        us = UserSettings.get_from_user(u)
+        us.tz_offset = req.POST.get('timezone')
+        us.save()
+    except Exception:
+        pass  # whatever.
 
     return redirect('login_signupsuccess')
 
