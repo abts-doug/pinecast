@@ -21,7 +21,7 @@
   </div>
   <div class="card stat-card">
     <strong>{{_('Published') if episode.is_published() else _('Pending')}}</strong>
-    <span><time datetime="{{ episode.publish + tz_delta }}" title="{{ episode.publish + tz_delta }}">{{ (episode.publish + tz_delta)|pretty_date }}</time></span>
+    <span><time datetime="{{ episode.publish }}" title="{{ episode.publish }}">{{ episode.publish|pretty_date }}</time></span>
   </div>
 </div>
 

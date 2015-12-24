@@ -541,7 +541,7 @@ def get_episodes(req):
     )
     if start_date:
         try:
-            parsed_date = datetime.datetime.strptime('')
+            parsed_date = datetime.datetime.strptime(start_date, '%Y-%m-%dT%H:%M:%S')
         except ValueError:
             raise Http404()
         query = query.filter(publish__gte=parsed_date)
@@ -549,7 +549,7 @@ def get_episodes(req):
     return [
         {'id': ep.id,
          'title': ep.title,
-         'publish': ep.publish.strftime('%Y/%m/%d %H:%M:%S')} for
+         'publish': ep.publish.strftime('%Y-%m-%dT%H:%M:%S')} for
         ep in
         sorted(query, cmp=lambda a, b: cmp(a.publish, b.publish))
     ]

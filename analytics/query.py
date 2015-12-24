@@ -26,7 +26,7 @@ def query_async_resolve(async_queries):
         for x in grequests.map(async_queries):
             try:
                 out.append(x.json())
-            except ValueError:
+            except (ValueError, AttributeError):
                 pass
         return out
 

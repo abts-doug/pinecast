@@ -19,7 +19,11 @@
             <a href="{{ url('podcast_episode', podcast_slug=podcast.slug, episode_id=str(ep.id)) }}">{{ ep.title }}</a>
           </td>
           <td>{{ ep.subtitle }}</td>
-          <td>{{ ep.publish|pretty_date }}</td>
+          <td>
+            <abbr title="{{ ep.publish + tz_delta }}">
+              {{ ep.publish|pretty_date }}
+            </abbr>
+          </td>
         </tr>
       {% endmacro %}
 
