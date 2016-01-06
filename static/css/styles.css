@@ -207,7 +207,7 @@ button:disabled, .btn:disabled {
     white-space: nowrap;
 }
 .card .chart-title {
-    margin-bottom: 20px;
+    margin-bottom: 0;
 }
 
 .card > menu,

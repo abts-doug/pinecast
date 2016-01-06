@@ -517,7 +517,7 @@ def podcast_ratings(req, podcast_slug, service=None):
 @json_response(safe=False)
 def get_episodes(req):
     pod_slug = req.GET.get('podcast')
-    network = req.GET.get('network')
+    network = req.GET.get('network_id')
     start_date = req.GET.get('start_date')
 
     if not pod_slug and not network:
