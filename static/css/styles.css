@@ -1256,14 +1256,3 @@ li.user-card span.name {
     display: inline-block;
     margin-right: 10px;
 }
-
-
-.chart-labels {
-    margin-bottom: -120px;
-    -ms-pointer-events: none;
-    pointer-events: none;
-    position: relative;
-}
-.chart-labels:empty {
-    display: none;
-}
