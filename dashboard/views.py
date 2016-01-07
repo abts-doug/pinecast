@@ -549,6 +549,7 @@ def get_episodes(req):
     return [
         {'id': ep.id,
          'title': ep.title,
+         'podcastSlug': ep.podcast.slug,
          'publish': ep.publish.strftime('%Y-%m-%dT%H:%M:%S')} for
         ep in
         sorted(query, cmp=lambda a, b: cmp(a.publish, b.publish))

@@ -178,6 +178,7 @@ def network_listen_history(req):
             'strokeColor': '#303F9F',
             'pointColor': '#3F51B5',
             'pointStrokeColor': '#fff',
+            'slug': pod.slug,
         })
 
     return {
