@@ -1,16 +1,16 @@
 {% extends 'signup/base.html' %}
+
 {% block body %}
-
-<header>
+<hgroup>
   <h1>{{ _('Sign Up') }}</h1>
-  <p>
+  <h2>
     {% trans %}
-      Create an account and start your podcast for free, no credit card required.
+      Start your podcast for free, no credit card required.
     {% endtrans %}
-  </p>
-</header>
+  </h2>
+</hgroup>
 
-<form method="post">
+<form method="post" action="?" class="card">
   {% if error %}
     <div class="error">
       <strong>{{ _('Error') }}</strong> {{ error }}
@@ -31,13 +31,13 @@
   <div class="g-recaptcha" data-sitekey="{{ RECAPTCHA_KEY }}"></div>
 
   <button type="submit">{{ _('Create Account') }}</button>
-  <p>
-    <a href="{{ url('login') }}">{{ _('Already a member?') }}</a>
-  </p>
+
+  <div class="signup-footer">
+    {{ _('Already a member?')}} <a href="{{ url('login') }}">{{ _('Sign In') }}</a>
+  </div>
 
   <input type="hidden" name="timezone">
   <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-
 </form>
 {% endblock %}
 

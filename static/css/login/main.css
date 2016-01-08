@@ -140,6 +140,16 @@ form label > textarea {
     transition: box-shadow 0.2s, border-color 0.2s;
     width: 100%;
 }
+form label > small {
+    color: #aaa;
+    display: block;
+    margin-bottom: 5px;
+    margin-top: -3px;
+}
+
+form .g-recaptcha {
+    margin-top: 20px;
+}
 
 form button[type=submit] {
     background: #8B75EF;
@@ -164,4 +174,26 @@ form .post-submit-links {
 
 form a {
     color: #8B75EF;
+}
+
+.error {
+    background: #e74c3c;
+    border-radius: 4px;
+    color: #fff;
+    margin: 0 0 10px;
+    padding: 20px;
+}
+.warning {
+    background: #e67e22;
+    border-radius: 4px;
+    color: #fff;
+    margin: 0 0 10px;
+    padding: 20px;
+}
+.success {
+    background: #4FCAB2;
+    border-radius: 4px;
+    color: #fff;
+    margin: 0 0 10px;
+    padding: 20px;
 }

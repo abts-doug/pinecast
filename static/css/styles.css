@@ -319,20 +319,6 @@ button:disabled, .btn:disabled {
 }
 
 
-.login-container {
-    margin: 200px auto;
-    width: 350px;
-}
-.login-container h1 {
-    color: #009688;
-    font-weight: normal;
-    margin: 0 0 30px;
-    text-align: center;
-}
-.login-container input {
-    width: 100%;
-}
-
 body > header {
     background: #fff;
     border-bottom: 1px solid #ddd;
