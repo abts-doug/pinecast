@@ -1,36 +1,61 @@
 {% extends "base.html" %}
-{% block content %}
-<div class="login-container">
-  <h1 class="form-signin-heading">{{ _('Pinecast') }}</h1>
-  <form method="post" action="?" class="card">
-    {% if success %}
-      <div class="success">
-        <strong>{{ _('Success') }}</strong> {{ success }}
-      </div>
-    {% endif %}
-    {% if error %}
-      <div class="error">
-        <strong>{{ _('Login Error') }}</strong> {{ error }}
-      </div>
-    {% endif %}
 
-    <label>
-      <span>{{ _('Email') }}</span>
-      <input type="email" placeholder="{{ _('Email') }}" name="email">
-    </label>
-    <label>
-      <span>{{ _('Password') }}</span>
-      <input type="password" name="password">
-    </label>
-    <menu class="toolbar">
-      <li>
-        <button type="submit">{{ _('Sign In') }}</button>
-      </li>
-      <li>
-        <a href="{{ url('forgot_password') }}" class="btn btn-neutral">{{ _('Forgot Password') }}</a>
-      </li>
-    </menu>
-    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-  </form>
+{% block css %}
+<link type="text/css" rel="stylesheet" href="/static/css/login/main.css">
+{% endblock %}
+
+{% block content %}
+<header>
+  <div>
+    <h1>
+      <a href="/"><span>{{ _('Pinecast') }}</span></a>
+    </h1>
+    <a href="{{ SUPPORT_URL }}" target="_blank" class="support-link">
+      {{ _('Help Center') }}
+    </a>
+  </div>
+</header>
+<div class="main-container">
+  <main>
+    <hgroup>
+      <h1>{{ _('Welcome Back') }}</h1>
+      <h2>{{ _('Please sign in to continue.') }}</h2>
+    </hgroup>
+
+    <form method="post" action="?" class="card">
+      {% if success %}
+        <div class="success">
+          <strong>{{ _('Success') }}</strong> {{ success }}
+        </div>
+      {% endif %}
+      {% if error %}
+        <div class="error">
+          <strong>{{ _('Login Error') }}</strong> {{ error }}
+        </div>
+      {% endif %}
+
+      <label>
+        <span>{{ _('Email') }}</span>
+        <input type="email" placeholder="{{ _('Email') }}" name="email">
+      </label>
+      <label>
+        <span>{{ _('Password') }}</span>
+        <input type="password" name="password">
+      </label>
+      <button type="submit">{{ _('Sign In') }}</button>
+
+      <div class="post-submit-links">
+        <a href="{{ url('forgot_password') }}">{{ _('Forgot Password?') }}</a>
+      </div>
+
+      <div class="signup-footer">
+        {{ _('Don\'t have an account? ')}} <a href="{{ url('signup') }}">{{ _('Sign Up') }}</a>
+      </div>
+
+
+      <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+    </form>
+
+  </main>
 </div>
 {% endblock %}
