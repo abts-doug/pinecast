@@ -111,8 +111,11 @@ main .card {
     font-size: 14px;
     margin: auto;
     max-width: 385px;
-    padding: 35px 40px 0;
+    padding: 35px 40px;
     text-align: left;
+}
+main form.card {
+    padding-bottom: 0;
 }
 
 form label {
@@ -174,6 +177,10 @@ form .post-submit-links {
 
 form a {
     color: #8B75EF;
+}
+
+form p {
+    margin: 0 0 20px;
 }
 
 .error {
