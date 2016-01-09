@@ -1,5 +1,6 @@
-@import url(//fonts.googleapis.com/css?family=Titillium+Web:400,300,600);
-@import url(//fonts.googleapis.com/css?family=Lato);
+@import url(https://fonts.googleapis.com/css?family=Montserrat:400,700);
+
+@import url(header.css);
 
 *, *:before, *:after {
     box-sizing: border-box;
@@ -17,14 +18,13 @@ html {
 }
 
 body {
-    font-family: Lato, Helvetica, Arial, sans-serif;
+    font-family: Montserrat, Helvetica, Arial, sans-serif;
     font-size: 13px;
     height: 100%;
     min-height: 100%;
 }
 
-h1, h2, h3 {
-    font-family: Titillium Web, sans-serif;
+.main-container h1, .main-container h2, .main-container h3 {
     margin: 0;
 }
 
@@ -71,7 +71,6 @@ textarea {
     border-radius: 2px;
     box-shadow: 0 0 0 transparent;
     font-size: 16px;
-    font-family: Titillium Web, sans-serif;
     font-weight: 600;
     margin: 2px 0 5px;
     padding: 8px;
@@ -148,7 +147,7 @@ button, .btn {
     color: #fff;
     cursor: pointer;
     display: inline-block;
-    font-family: Lato, Helvetica, Arial, sans-serif;
+    font-family: Montserrat, Helvetica, Arial, sans-serif;
     font-size: 14px;
     height: 2em;
     line-height: 2em;
@@ -197,7 +196,6 @@ button:disabled, .btn:disabled {
 .card-comment > .comment-from {
     display: block;
     border-bottom: 1px solid #eee;
-    font: 16px Titillium Web, Lato, sans-serif;
     line-height: 40px;
     height: 40px;
     margin: -15px -10px 15px;
@@ -243,7 +241,6 @@ button:disabled, .btn:disabled {
     border: 1px solid #B6B6B6;
     border-radius: 3px;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-    font-family: Titillium Web;
     font-size: 16px;
     margin-bottom: 20px;
     padding: 0;
@@ -261,7 +258,7 @@ button:disabled, .btn:disabled {
 .ticket .ticket-details {
     border-top: 1px solid #B6B6B6;
     color: #607D8B;
-    font-family: Lato;
+    font-family: Montserrat;
     font-size: 0.80em;
     height: 25px;
     line-height: 25px;
@@ -338,14 +335,6 @@ body > header h1 {
     padding: 0;
 }
 
-body > header .user-card {
-    display: block;
-    float: right;
-    font-weight: bold;
-    padding-right: 10px;
-    position: relative;
-    text-align: right;
-}
 .user-card:hover {
     text-decoration: none;
 }
@@ -355,60 +344,6 @@ body > header .user-card {
     margin-right: 5px;
     vertical-align: middle;
     width: 20px;
-}
-
-.user-card + menu {
-    background: #fff;
-    border-radius: 3px;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-    display: none;
-    line-height: 35px;
-    margin: 0;
-    padding: 10px 0;
-    position: fixed;
-    right: 5px;
-    top: 55px;
-    width: 150px;
-}
-.user-card:hover + menu,
-.user-card + menu:hover {
-    display: block;
-}
-.user-card + menu li {
-    display: block;
-}
-.user-card + menu li a {
-    color: #212121;
-    display: block;
-    padding: 0 10px;
-}
-.user-card + menu li a:hover,
-.user-card + menu li a:focus {
-    background: #eee;
-    text-decoration: none;
-}
-.user-card + menu:before {
-    content: "";
-    display: block;
-    height: 5px;
-    left: 0;
-    position: absolute;
-    top: -5px;
-    width: 100%;
-}
-.user-card + menu:after {
-    border: 5px solid transparent;
-    border-top-width: 0;
-    border-bottom: 5px solid #fff;
-    content: "";
-    display: block;
-    height: 0;
-    left: 0;
-    margin: auto;
-    position: absolute;
-    right: 0;
-    top: -5px;
-    width: 0;
 }
 
 
@@ -570,7 +505,7 @@ menu.toolbar-right li {
 }
 
 menu.tabs {
-    font-family: Titillium Web, Lato, sans-serif;
+    font-family: Montserrat, sans-serif;
     font-size: 26px;
     font-weight: 300;
     line-height: 40px;
@@ -634,7 +569,6 @@ menu.tabs a.selected {
     background-color: #fff;
     border: 2px dashed #bdc3c7;
     border-radius: 4px;
-    font-family: Titillium Web;
     text-align: center;
     transform: scale(1);
     transition: background-color 0.2s, transform 0.2s, border-color 0.2s;
@@ -676,7 +610,6 @@ menu.tabs a.selected {
 
 .uploaded-file-card b {
     display: block;
-    font-family: Titillium Web;
     font-size: 1.5em;
 }
 .uploaded-file-card dl {
@@ -704,7 +637,6 @@ menu.tabs a.selected {
 }
 .dashboard-networks li > a {
     display: block;
-    font-family: Titillium Web;
     font-size: 18px;
     font-weight: bold;
     padding: 15px;
@@ -961,7 +893,6 @@ main > header h2 {
 .breadcrumb {
     bottom: 0;
     color: #607D8B;
-    font-family: Titillium Web;
     font-size: 14px;
     display: block;
     height: 2em;
@@ -1104,34 +1035,6 @@ li.user-card span.name {
     right: 20px;
     text-align: center;
     top: 0;
-}
-
-.support-link {
-    background: #fafafa;
-    border: 1px solid #aaa;
-    border-radius: 3px;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-    bottom: 10px;
-    display: block;
-    padding: 5px;
-    position: fixed;
-    right: 10px;
-    transition: box-shadow 0.2s, bottom 0.2s;
-}
-.support-link:hover {
-    box-shadow: 0 3px 4px rgba(0, 0, 0, 0.2);
-}
-.support-link:active {
-    bottom: 7px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
-}
-.support-link img {
-    display: block;
-    opacity: 0.45;
-    transition: opacity 0.2s;
-}
-.support-link:hover img {
-    opacity: 1;
 }
 
 

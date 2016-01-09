@@ -24,18 +24,25 @@
 {%- endmacro %}
 
 {% block content %}
-<header>
-  <h1><a href="{{ url('dashboard') }}">{{ _('Pinecast') }}</a></h1>
-  <a class="user-card" href="{{ url('user_settings') }}">
-    <img src="{{ gravatar(user.email) }}" alt="">
-    <span>{{ user.email }}</span>
-  </a>
-  <menu>
-    <li><a href="{{ url('user_settings') }}">{{ _('Settings') }}</a></li>
-    <li><a href="{{ url('dashboard') }}">{{ _('Dashboard') }}</a></li>
-    <li><a href="{{ url('logout') }}">{{ _('Sign Out') }}</a></li>
-  </menu>
+<header class="main-header">
+  <div>
+    <h1>
+      <a href="/"><span>{{ _('Pinecast') }}</span></a>
+    </h1>
+    <a href="{{ SUPPORT_URL }}" target="_blank" class="support-link">
+      {{ _('Help') }}
+    </a>
+    <a class="user-card" href="{{ url('user_settings') }}">
+      <img src="{{ gravatar(user.email) }}" alt="">
+    </a>
+    <menu>
+      <li><a href="{{ url('user_settings') }}">{{ _('Settings') }}</a></li>
+      <li><a href="{{ url('dashboard') }}">{{ _('Dashboard') }}</a></li>
+      <li><a href="{{ url('logout') }}">{{ _('Sign Out') }}</a></li>
+    </menu>
+  </div>
 </header>
+
 <div class="main-container">
   <main data-max-upload-size="{{ max_upload_size }}">
     <noscript>
@@ -46,9 +53,6 @@
       </div>
     </noscript>
     {% block dashboard_body %}{% endblock %}
-    <a href="{{ SUPPORT_URL }}" target="_blank" class="support-link" title="{{ _('Help') }}">
-      <img src="/static/img/help.svg" alt="{{ _('Help') }}" height="20" width="20">
-    </a>
   </main>
 </div>
 {% endblock %}
