@@ -11,13 +11,14 @@
     z-index: 50;
 }
 .main-header > div {
+    display: flex;
     margin: auto;
     max-width: 1024px;
     position: relative;
 }
 
 .main-header h1 {
-    float: left;
+    flex: 0 0 auto;
     font-size: 13px;
     line-height: 59px;
     margin: 0;
@@ -47,6 +48,7 @@
 }
 .main-header .support-link {
     color: #273650;
+    flex: 0 0 auto;
     font-size: 12px;
     text-decoration: none;
     text-transform: uppercase;
@@ -58,7 +60,7 @@
 
 .main-header .user-card {
     display: block;
-    float: right;
+    flex: 0 0 auto;
     margin-left: 20px;
     position: relative;
 }
@@ -67,48 +69,79 @@
     width: 32px;
 }
 
-.main-header .user-card + menu {
+.main-header menu {
+    display: flex;
+    flex: 1 1 auto;
+    list-style: none;
+    margin: 0;
+}
+
+.main-header .main-toolbar > li {
+    padding: 0 10px;
+    position: relative;
+}
+.main-header .main-toolbar > li > a,
+.main-header .main-toolbar > li > span {
+    color: #273650;
+    display: block;
+    text-transform: uppercase;
+}
+.main-header .main-toolbar menu {
+    text-align: left;
+    width: 250px;
+}
+.main-header .main-toolbar menu li a {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.main-header .menu-trigger + menu {
     background: #fff;
-    border-radius: 3px;
     box-shadow: 0 5px 13px rgba(0, 0, 0, 0.15);
     display: none;
     line-height: 35px;
-    margin: 0;
     padding: 10px 0;
     position: absolute;
-    right: 5px;
+    right: 15px;
     text-align: center;
     top: 65px;
     width: 150px;
 }
-.main-header .user-card:hover + menu,
-.main-header .user-card + menu:hover {
+.main-header .main-toolbar menu {
+    width: 250px;
+}
+
+.main-header .menu-trigger:hover + menu,
+.main-header .menu-trigger + menu:hover {
     display: block;
 }
-.main-header .user-card + menu li {
+.main-header .menu-trigger + menu li {
     display: block;
+    position: relative;
 }
-.main-header .user-card + menu li a {
+.main-header .menu-trigger + menu li a {
     color: #212121;
     display: block;
     padding: 0 10px;
 }
-.main-header .user-card + menu li a:hover,
-.main-header .user-card + menu li a:focus {
+.main-header .menu-trigger + menu li a:hover,
+.main-header .menu-trigger + menu li a:focus {
     background: #eee;
     text-decoration: none;
 }
-.main-header .user-card + menu:before {
+.main-header .menu-trigger + menu:before {
     /* Buffer between the header and the top of the menu */
     content: "";
     display: block;
     height: 5px;
     left: 0;
     position: absolute;
+    right: 0;
     top: -5px;
-    width: 100%;
 }
-.main-header .user-card + menu:after {
+.main-header .menu-trigger + menu:after {
     /* Carat */
     border: 5px solid transparent;
     border-top-width: 0;
@@ -118,7 +151,7 @@
     height: 0;
     margin: auto;
     position: absolute;
-    right: 10px;
+    left: 85%;
     top: -5px;
     width: 0;
 }

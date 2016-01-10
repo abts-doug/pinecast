@@ -29,15 +29,27 @@
     <h1>
       <a href="/"><span>{{ _('Pinecast') }}</span></a>
     </h1>
+
+    <menu class="main-toolbar">
+      <li><a href="{{ url('dashboard') }}">{{ _('Dashboard') }}</a></li>
+      <li>
+        <span class="menu-trigger">{{ _('Podcasts') }}</span>
+        <menu>
+          {% for podcast in podcasts %}
+            <li><a href="{{ url('podcast_dashboard', kwargs={'podcast_slug': podcast.slug}) }}">{{ podcast.name }}</a></li>
+          {% endfor %}
+        </menu>
+      </li>
+    </menu>
+
     <a href="{{ SUPPORT_URL }}" target="_blank" class="support-link">
       {{ _('Help') }}
     </a>
-    <a class="user-card" href="{{ url('user_settings') }}">
+    <a class="user-card menu-trigger" href="{{ url('user_settings') }}">
       <img src="{{ gravatar(user.email) }}" alt="">
     </a>
     <menu>
       <li><a href="{{ url('user_settings') }}">{{ _('Settings') }}</a></li>
-      <li><a href="{{ url('dashboard') }}">{{ _('Dashboard') }}</a></li>
       <li><a href="{{ url('logout') }}">{{ _('Sign Out') }}</a></li>
     </menu>
   </div>
