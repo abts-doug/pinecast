@@ -1,9 +1,0 @@
-<div class="upgrade-empty-state empty-state">
-  {% if user == podcast.owner %}
-    {{ _('Custom podcast sites are available to Starter plans and up.') }}
-    <br>
-    <a class="btn" href="/accounts/upgrade">{{ _('Upgrade Now') }}</a>
-  {% else %}
-    {{ _('The feedback feature is available to podcasts owned by paid users.') }}
-  {% endif %}
-</div>

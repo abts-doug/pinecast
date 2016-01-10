@@ -21,7 +21,7 @@ import analytics.query as analytics_query
 from accounts.decorators import restrict_minimum_plan
 from accounts.models import Network, UserSettings
 from feedback.models import Feedback, EpisodeFeedbackPrompt
-from pinecast.helpers import json_response
+from pinecast.helpers import json_response, reverse
 from podcasts.models import (CATEGORIES, Podcast, PodcastCategory,
                              PodcastEpisode, PodcastReviewAssociation)
 from sites.models import Site
@@ -98,7 +98,7 @@ MILESTONES = [1, 100, 250, 500, 1000, 2000, 5000, 7500, 10000, 15000, 20000,
 
 
 @login_required
-def podcast_dashboard(req, podcast_slug):
+def podcast_dashboard(req, podcast_slug, tab=None):
     pod = get_podcast(req, podcast_slug)
 
     with analytics_query.AsyncContext() as async_ctx:
@@ -471,9 +471,13 @@ def delete_comment(req, podcast_slug, comment_id):
     ep = comment.episode
     comment.delete()
     if ep:
-        return redirect('podcast_episode', podcast_slug=pod.slug, episode_id=str(ep.id), tab='tab-feedback')
+        return redirect(
+            reverse('podcast_episode', podcast_slug=pod.slug, episode_id=str(ep.id)) + '#tab-feedback'
+        )
     else:
-        return redirect('podcast_dashboard', podcast_slug=pod.slug, tab='tab-feedback')
+        return redirect(
+            reverse('podcast_dashboard', podcast_slug=pod.slug) + '#tab-feedback'
+        )
 
 
 @login_required

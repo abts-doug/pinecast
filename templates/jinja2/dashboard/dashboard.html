@@ -40,7 +40,7 @@
         {%- if p.subtitle %}<span>{{ p.subtitle }}</span>{% endif -%}
         {%- if p.get_unpublished_count() -%}
           <span class="icon-clock">
-            <a href="{{ url('podcast_dashboard', podcast_slug=p.slug, tab='tab-episodes') }}" class="b">
+            <a href="{{ url('podcast_dashboard', podcast_slug=p.slug) }}#tab-episodes" class="b">
               {% trans count=p.get_unpublished_count() %}
                 {{ count }} pending episode
               {% pluralize %}

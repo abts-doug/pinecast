@@ -7,7 +7,7 @@ from django.views.decorators.http import require_POST
 
 from accounts import payment_plans
 from accounts.models import Network, UserSettings
-from pinecast.helpers import json_response
+from pinecast.helpers import json_response, reverse
 from sites.models import Site, SiteBlogPost, SiteLink
 from views import _pmrender, get_podcast, signer
 
@@ -102,7 +102,9 @@ def delete_site(req, site_slug):
 
     podcast_slug = site.podcast.slug
     site.delete()
-    return redirect('podcast_dashboard', podcast_slug=podcast_slug, tab='tab-site')
+    return redirect(
+        reverse('podcast_dashboard', podcast_slug=podcast_slug) + '#tab-site'
+    )
 
 
 @login_required

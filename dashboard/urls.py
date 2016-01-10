@@ -6,7 +6,6 @@ from . import views, views_importer, views_network, views_sites
 urlpatterns = [
     url(r'^$', views.dashboard, name='dashboard'),
     url(r'^new_podcast$', views.new_podcast, name='new_podcast'),
-    url(r'^podcast/(?P<podcast_slug>[\w-]+)#(?P<tab>[\w-]+)$', views.podcast_dashboard, name='podcast_dashboard'),
     url(r'^podcast/(?P<podcast_slug>[\w-]+)$', views.podcast_dashboard, name='podcast_dashboard'),
     url(r'^podcast/(?P<podcast_slug>[\w-]+)/delete$', views.delete_podcast, name='delete_podcast'),
     url(r'^podcast/(?P<podcast_slug>[\w-]+)/edit$', views.edit_podcast, name='edit_podcast'),

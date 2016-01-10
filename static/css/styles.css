@@ -463,6 +463,23 @@ ul .empty-state i {
     margin: 10px;
 }
 
+section.row {
+    display: flex;
+}
+
+section.row > * {
+    flex: 1 1 auto;
+}
+section.row > .sidebar {
+    flex: 0 0 33.3%;
+}
+section.row > :first-child {
+    margin-left: 0;
+}
+section.row > :last-child {
+    margin-right: 0;
+}
+
 .stat-card span {
     display: block;
     font-size: 50px;

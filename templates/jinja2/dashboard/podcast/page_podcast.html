@@ -91,29 +91,33 @@
     </div>
   </div>
 
-  <div class="card-block card">
-    <strong>{{ _('RSS Feed') }}</strong>
-    <input type="url"
-      title="{{ _('RSS Feed') }}"
-      readonly
-      value="https://pinecast.com{{ url('feed', podcast_slug=podcast.slug) }}">
+  <section class="row">
     <div>
-      <a href="https://buy.itunes.apple.com/WebObjects/MZFinance.woa/wa/publishPodcast" target="_blank">
-        {{ _('Submit to iTunes') }}
-      </a>
+      {% include 'dashboard/podcast/tab_episodes.html' %}
     </div>
-  </div>
+    <div class="sidebar">
+      <div class="card-block card">
+        <strong>{{ _('RSS Feed') }}</strong>
+        <input type="url"
+          title="{{ _('RSS Feed') }}"
+          readonly
+          value="https://pinecast.com{{ url('feed', podcast_slug=podcast.slug) }}">
+        <div>
+          <a href="https://buy.itunes.apple.com/WebObjects/MZFinance.woa/wa/publishPodcast" target="_blank">
+            {{ _('Submit to iTunes') }}
+          </a>
+        </div>
+      </div>
 
-  <div class="card-block card">
-    <strong>{{ _('Milestones') }}</strong>
-    <p>{{ ngettext('Your next milestone is {n} listen!', 'Your next milestone is {n} listens!', next_milestone).format(n=next_milestone) }}</p>
-    <div class="progress"><i data-tooltip="{{ (analytics.total_listens / next_milestone * 100)|int }}%" style="width: {{ analytics.total_listens / next_milestone * 100 }}%"></i></div>
-  </div>
+      <div class="card-block card">
+        <strong>{{ _('Milestones') }}</strong>
+        <p>{{ ngettext('Your next milestone is {n} listen!', 'Your next milestone is {n} listens!', next_milestone).format(n=next_milestone) }}</p>
+        <div class="progress"><i data-tooltip="{{ (analytics.total_listens / next_milestone * 100)|int }}%" style="width: {{ analytics.total_listens / next_milestone * 100 }}%"></i></div>
+      </div>
+    </div>
+  </section>
+
 </div>
-
-<!-- <div class="tab-episodes" style="overflow: hidden; height: 0">
-  {% include 'dashboard/podcast/tab_episodes.html' %}
-</div> -->
 
 <div class="tab-analytics" style="overflow: hidden; height: 0">
   {% include 'dashboard/podcast/tab_analytics.html' %}
@@ -124,14 +128,6 @@
     {% include 'dashboard/podcast/tab_feedback.html' %}
   {% else %}
     {% include 'dashboard/podcast/tab_feedback_upgrade.html' %}
-  {% endif %}
-</div>
-
-<div class="tab-site" style="overflow: hidden; height: 0">
-  {% if minimum_plan(podcast.owner, PLANS.FEATURE_MIN_SITES) %}
-    {% include 'dashboard/podcast/tab_sites.html' %}
-  {% else %}
-    {% include 'dashboard/podcast/tab_sites_upgrade.html' %}
   {% endif %}
 </div>
 

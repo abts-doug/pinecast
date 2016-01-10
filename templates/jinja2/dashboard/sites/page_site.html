@@ -2,7 +2,7 @@
 {% block dashboard_body %}
 
 <header>
-  {{ breadcrumb(site.podcast.name, url('podcast_dashboard', podcast_slug=site.podcast.slug, tab='tab-site')) }}
+  {{ breadcrumb(site.podcast.name, url('podcast_dashboard', podcast_slug=site.podcast.slug) + '#tab-site') }}
 
   <menu class="toolbar toolbar-right">
     <li><a class="btn" href="http://{{ site.slug }}.pinecast.co" target="_blank">{{ _('Visit') }}</a></li>
@@ -14,6 +14,13 @@
 
   <h1>{{ _('Site Options') }}</h1>
 </header>
+
+<div class="card-block card">
+  <strong>{{ _('Site URL') }}</strong>
+  <input type="url"
+    readonly
+    value="http://{{ site.slug }}.pinecast.co">
+</div>
 
 {% if minimum_plan(site.podcast.owner, PLANS.FEATURE_MIN_BLOG) %}
   <form class="card card-block" action="{{ url('site_add_blog_post', site_slug=site.slug) }}" method="post">
