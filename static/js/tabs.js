@@ -10,19 +10,20 @@ function show(elem) {
 }
 
 function buildTabs(tab) {
-    var allTabs = Array.prototype.slice.call(tab.querySelectorAll('li a'));
+    var allTabs = Array.prototype.slice.call(tab.querySelectorAll('li a[data-tab]'));
 
     function select(a) {
         allTabs.forEach(function(tab) {
             if (tab === a) return;
-            tab.className = '';
+            tab.parentNode.className = '';
             hide(document.querySelector(tab.getAttribute('data-tab')));
         });
-        a.className = 'selected';
+        a.parentNode.className = 'selected';
         show(document.querySelector(a.getAttribute('data-tab')));
     }
 
     tab.addEventListener('click', function(e) {
+        if (!e.target.getAttribute('data-tab')) return;
         e.preventDefault();
         if (e.target.nodeName !== 'A') return;
 
@@ -34,12 +35,12 @@ function buildTabs(tab) {
         selected = tab.querySelector('a[data-tab=".' + window.location.hash.substr(1) + '"]')
     }
     if (!selected) {
-        selected = tab.querySelector('li a');
+        selected = tab.querySelector('li a[data-tab]');
     }
     select(selected);
 }
 
-var tabs = document.querySelectorAll('menu.tabs.dynamic');
+var tabs = document.querySelectorAll('.tabs.dynamic');
 Array.prototype.slice.call(tabs).forEach(function(tab) {
     buildTabs(tab);
 });

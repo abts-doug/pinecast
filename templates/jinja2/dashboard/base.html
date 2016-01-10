@@ -32,7 +32,7 @@
 
     <menu class="main-toolbar">
       <li><a href="{{ url('dashboard') }}">{{ _('Dashboard') }}</a></li>
-      <li>
+      <li class="hide-on-mobile">
         <span class="menu-trigger">{{ _('Podcasts') }}</span>
         <menu>
           {% for podcast in podcasts %}
@@ -48,12 +48,14 @@
     <a class="user-card menu-trigger" href="{{ url('user_settings') }}">
       <img src="{{ gravatar(user.email) }}" alt="">
     </a>
-    <menu>
+    <menu class="hide-on-mobile">
       <li><a href="{{ url('user_settings') }}">{{ _('Settings') }}</a></li>
       <li><a href="{{ url('logout') }}">{{ _('Sign Out') }}</a></li>
     </menu>
   </div>
 </header>
+
+{% block subheader %}{% endblock %}
 
 <div class="main-container">
   <main data-max-upload-size="{{ max_upload_size }}">

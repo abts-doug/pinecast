@@ -1,14 +1,15 @@
 @import url(https://fonts.googleapis.com/css?family=Montserrat:400,700);
 
 @import url(header.css);
+@import url(layout.css);
 
 *, *:before, *:after {
     box-sizing: border-box;
 }
 
 html, body {
-    background: #f0f0f0;
-    color: #212121;
+    background: #F8F9FA;
+    color: #48556A;
     margin: 0;
     padding: 0;
 }
@@ -139,18 +140,17 @@ button, .btn {
     -moz-appearance: none;
     -ms-appearance: none;
     -webkit-appearance: none;
-    background: #303F9F;
+    background: #8B75EF;
     border: 0;
-    border-bottom: 2px solid rgba(0, 0, 0, 0.1);
-    border-radius: 3px;
+    border-radius: 2px;
     box-shadow: 0 0 0 rgba(0, 0, 0, 0);
     color: #fff;
     cursor: pointer;
     display: inline-block;
     font-family: Montserrat, Helvetica, Arial, sans-serif;
     font-size: 14px;
-    height: 2em;
-    line-height: 2em;
+    height: 2.5em;
+    line-height: 2.5em;
     padding: 0 20px;
     position: relative;
     top: 0;
@@ -185,9 +185,7 @@ button:disabled, .btn:disabled {
 
 .card {
     background: #fff;
-    border: 1px solid #fafafa;
-    border-radius: 3px;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+    border: 1px solid #DEE6F3;
     padding: 20px;
     position: relative;
 }
@@ -318,7 +316,6 @@ button:disabled, .btn:disabled {
 
 body > header {
     background: #fff;
-    border-bottom: 1px solid #ddd;
     height: 50px;
     left: 0;
     line-height: 50px;
@@ -363,11 +360,6 @@ main > header > hgroup > h1 {
 main > header > hgroup > h2 {
     color: #7f8c8d;
     line-height: 25px;
-}
-
-.main-container {
-    padding: 50px 10%;
-    z-index: 5;
 }
 
 .main-container main {

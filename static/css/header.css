@@ -4,7 +4,7 @@
     left: 0;
     line-height: 60px;
     padding: 0 15px;
-    position: fixed;
+    position: absolute;
     right: 0;
     text-align: right;
     top: 0;
@@ -99,14 +99,16 @@
 
 .main-header .menu-trigger + menu {
     background: #fff;
-    box-shadow: 0 5px 13px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 10px 13px rgba(0, 0, 0, 0.15);
     display: none;
     line-height: 35px;
+    max-height: 400px;
+    overflow-y: auto;
     padding: 10px 0;
     position: absolute;
-    right: 15px;
+    right: 0;
     text-align: center;
-    top: 65px;
+    top: 50px;
     width: 150px;
 }
 .main-header .main-toolbar menu {
@@ -131,27 +133,16 @@
     background: #eee;
     text-decoration: none;
 }
-.main-header .menu-trigger + menu:before {
-    /* Buffer between the header and the top of the menu */
-    content: "";
-    display: block;
-    height: 5px;
-    left: 0;
-    position: absolute;
-    right: 0;
-    top: -5px;
-}
-.main-header .menu-trigger + menu:after {
-    /* Carat */
-    border: 5px solid transparent;
-    border-top-width: 0;
-    border-bottom: 5px solid #fff;
-    content: "";
-    display: block;
-    height: 0;
-    margin: auto;
-    position: absolute;
-    left: 85%;
-    top: -5px;
-    width: 0;
+
+@media (max-width: 760px) {
+    .main-header h1 a:before {
+        margin-right: 0;
+    }
+    .main-header h1 span {
+        display: none;
+    }
+
+    .main-header .main-toolbar {
+        padding: 0;
+    }
 }

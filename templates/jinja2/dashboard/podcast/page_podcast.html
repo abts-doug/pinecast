@@ -1,67 +1,53 @@
 {% extends 'dashboard/base.html' %}
+
+{% block subheader %}
+<section class="subheader">
+  <div>
+    <hgroup>
+      <h1>{{ podcast.name }}</h1>
+      <h2>
+        {% if is_still_importing %}
+          {{ _('This podcast is still being imported') }}
+        {% else %}
+          {% set episodes_count = episodes.count() %}
+          {% if episodes_count > 1 %}
+            {% trans n=episodes_count %}
+              {{ n }} Published Episode
+            {% pluralize %}
+              {{ n }} Published Episodes
+            {% endtrans %}
+          {% elif episodes_count == 1 %}
+            {{ _('Your first episode is uploaded!') }}
+          {% else %}
+            {{ _('Your listeners await') }}
+          {% endif %}
+        {% endif %}
+      </h2>
+    </hgroup>
+
+    <a href="{{ url('new_episode', podcast_slug=podcast.slug) }}" class="btn">
+      {{ _('New Episode') }}
+    </a>
+  </div>
+</section>
+<nav class="subnav">
+  <ul class="bottom-tabs tabs dynamic">
+    <li class="selected"><a data-tab=".tab-overview" href="">{{ _('Overview') }}</a></li>
+    <li><a data-tab=".tab-analytics" href="">{{ _('Analytics') }}</a></li>
+    <li><a data-tab=".tab-feedback" href="">{{ _('Feedback') }}</a></li>
+    <li>
+      <a href="{{ url('edit_podcast', podcast_slug=podcast.slug) }}">
+        {{ _('Settings') }}
+      </a>
+    </li>
+  </ul>
+</nav>
+{% endblock %}
+
 {% block dashboard_body %}
 
-<header>
-  {{ breadcrumb(_('Dashboard'), url('dashboard')) }}
-
-  <menu class="toolbar toolbar-right">
-    <li><a class="btn" href="{{ url('new_episode', podcast_slug=podcast.slug) }}">{{ _('New Episode') }}</a></li>
-    <li><a class="btn btn-neutral" href="{{ url('edit_podcast', podcast_slug=podcast.slug) }}">{{ _('Edit') }}</a></li>
-  </menu>
-
-  <h1>{{ podcast.name }}</h1>
-</header>
-
-{% if is_still_importing %}
-<div class="warning">
-  {% trans %}
-    This podcast is still importing! Modifying it during this process may cause the import to fail.
-  {% endtrans %}
-</div>
-{% endif %}
-
-<div class="row">
-  <div class="card stat-card total-listens">
-    <strong>{{ _('Total Listens') }}</strong>
-    <span>
-      {% if analytics.total_listens > -1 %}
-        {{ analytics.total_listens }}
-      {% else %}
-        <abbr title="{{ _('Our analytics are having trouble at the moment. Come back later.') }}">???</abbr>
-      {% endif %}
-    </span>
-  </div>
-  <div class="card stat-card this-week">
-    <strong>{{ _('Listens This Week') }}</strong>
-    <span>
-      {% if analytics.total_listens_this_week > -1 %}
-        {{ analytics.total_listens_this_week }}
-      {% else %}
-        <abbr title="{{ _('Our analytics are having trouble at the moment. Come back later.') }}">???</abbr>
-      {% endif %}
-    </span>
-  </div>
-  <div class="card stat-card total-subscribers">
-    <strong>{{ ngettext('Subscriber', 'Subscribers', analytics.subscribers) }}</strong>
-    <span>
-      {% if analytics.subscribers > -1 %}
-        {{ analytics.subscribers }}
-      {% else %}
-        <abbr title="{{ _('Our analytics are having trouble at the moment. Come back later.') }}">???</abbr>
-      {% endif %}
-    </span>
-  </div>
-</div>
-
-<menu class="tabs dynamic">
-  <li class="selected"><a data-tab=".tab-overview" href="">{{ _('Overview') }}</a></li>
-  <li><a data-tab=".tab-episodes" href="">{{ _('Episodes') }}</a></li>
-  <li><a data-tab=".tab-analytics" href="">{{ _('Analytics') }}</a></li>
-  <li><a data-tab=".tab-feedback" href="">{{ _('Feedback') }}</a></li>
-  <li><a data-tab=".tab-site" href="">{{ _('Site') }}</a></li>
-</menu>
-
 <div class="tab-overview">
+
   {% if episodes %}
     <div class="card-block card">
       <div class="chart-placeholder"
@@ -71,6 +57,39 @@
         data-chart-type="line"></div>
     </div>
   {% endif %}
+
+  <div class="row">
+    <div class="card stat-card total-listens">
+      <strong>{{ _('Total Listens') }}</strong>
+      <span>
+        {% if analytics.total_listens > -1 %}
+          {{ analytics.total_listens }}
+        {% else %}
+          <abbr title="{{ _('Our analytics are having trouble at the moment. Come back later.') }}">???</abbr>
+        {% endif %}
+      </span>
+    </div>
+    <div class="card stat-card this-week">
+      <strong>{{ _('Listens This Week') }}</strong>
+      <span>
+        {% if analytics.total_listens_this_week > -1 %}
+          {{ analytics.total_listens_this_week }}
+        {% else %}
+          <abbr title="{{ _('Our analytics are having trouble at the moment. Come back later.') }}">???</abbr>
+        {% endif %}
+      </span>
+    </div>
+    <div class="card stat-card total-subscribers">
+      <strong>{{ ngettext('Subscriber', 'Subscribers', analytics.subscribers) }}</strong>
+      <span>
+        {% if analytics.subscribers > -1 %}
+          {{ analytics.subscribers }}
+        {% else %}
+          <abbr title="{{ _('Our analytics are having trouble at the moment. Come back later.') }}">???</abbr>
+        {% endif %}
+      </span>
+    </div>
+  </div>
 
   <div class="card-block card">
     <strong>{{ _('RSS Feed') }}</strong>
@@ -92,9 +111,9 @@
   </div>
 </div>
 
-<div class="tab-episodes" style="overflow: hidden; height: 0">
+<!-- <div class="tab-episodes" style="overflow: hidden; height: 0">
   {% include 'dashboard/podcast/tab_episodes.html' %}
-</div>
+</div> -->
 
 <div class="tab-analytics" style="overflow: hidden; height: 0">
   {% include 'dashboard/podcast/tab_analytics.html' %}
