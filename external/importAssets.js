@@ -9,12 +9,24 @@ var url = require('url');
 var aws = require('aws-sdk');
 var s3 = new aws.S3({ apiVersion: '2006-03-01' });
 
+
+var allowedContentTypes = {
+    'audio/aac': true,
+    'audio/mp4': true,
+    'audio/mpeg': true,
+    'audio/mp3': true,
+    'audio/mpeg3': true,
+    'audio/mpeg-3': true,
+    'audio/x-mpeg-3': true,
+};
+
+
 exports.handler = function(event, context) {
     // console.log('Received event:', JSON.stringify(event, null, 2));
 
     var record = event.Records[0].Sns.Message;
     record = JSON.parse(record);
-    
+
     var redirects = 0;
 
     function getAsset(assetUrl) {
@@ -33,7 +45,7 @@ exports.handler = function(event, context) {
     }
 
     getAsset(record.url);
-    
+
     function responseHandler(res) {
         console.log('Got response back from server');
         if (res.statusCode >= 300 && res.statusCode < 400) {
@@ -61,6 +73,13 @@ exports.handler = function(event, context) {
         }
         console.log('Content-Length: ' + contentLength);
 
+        var contentType = res.headers['content-type'];
+        if (!contentType || !allowedContentTypes.hasOwnProperty(contentType.toLowerCase())) {
+            console.log('Unrecognized content type: ' + contentType);
+            postFailure('The provided Content-Type is not allowed');
+            return;
+        }
+
         // Hack to work around https://github.com/aws/aws-sdk-js/issues/94
         res.length = contentLength | 0;
 
@@ -70,7 +89,7 @@ exports.handler = function(event, context) {
             Bucket: record.bucket,
             Key: record.key,
             Body: res,
-            ContentType: res.headers['content-type'],
+            ContentType: contentType,
             ACL: 'public-read',
         };
         s3.putObject(params, function(err) {
