@@ -1,6 +1,5 @@
 import json
 
-import boto.sns
 from boto3.session import Session
 from django.conf import settings
 
