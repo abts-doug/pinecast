@@ -98,7 +98,7 @@ MILESTONES = [1, 100, 250, 500, 1000, 2000, 5000, 7500, 10000, 15000, 20000,
 
 
 @login_required
-def podcast_dashboard(req, podcast_slug, tab=None):
+def podcast_dashboard(req, podcast_slug):
     pod = get_podcast(req, podcast_slug)
 
     with analytics_query.AsyncContext() as async_ctx:
