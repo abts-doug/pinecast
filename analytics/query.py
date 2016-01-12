@@ -1,13 +1,9 @@
 import collections
 import datetime
 import json
-import re
 
 import grequests
 from django.conf import settings
-
-
-TIMZONE_KILLA = re.compile(r'(\d\d\d\d\-\d\d\-\d\dT\d\d:\d\d:\d\d)[+\-]\d\d:\d\d')
 
 
 def query_async(collection, q):
@@ -15,7 +11,7 @@ def query_async(collection, q):
         del q['timezone']
     return grequests.get(
         'https://api.getconnect.io/events/%s' % collection,
-        timeout=1.2,
+        timeout=2,
         params={'query': json.dumps(q)},
         headers={'X-Project-Id': settings.GETCONNECT_IO_PID,
                  'X-Api-Key': settings.GETCONNECT_IO_QUERY_KEY})
@@ -33,7 +29,10 @@ def query_async_resolve(async_queries):
     elif isinstance(async_queries, dict):
         items = async_queries.items()
         results = []
-        for x in grequests.map([v for k, v in items]):
+        # Don't pass `.values()`. There's no guarantee that the values will be
+        # returned in the same order as `.items()`. It's also an extra
+        # unnecessary call.
+        for x in grequests.map(v for k, v in items):
             try:
                 results.append(x.json())
             except ValueError:
@@ -41,8 +40,7 @@ def query_async_resolve(async_queries):
 
         return {k: results[i] for i, (k, v) in enumerate(items)}
 
-    else:
-        raise Exception('Unknown type passed to query_async_resolve')
+    raise Exception('Unknown type passed to query_async_resolve')
 
 
 class AsyncContext(object):
@@ -81,20 +79,20 @@ class AsyncContext(object):
 
 
 def total_listens(podcast, async, episode_id=None):
-    q = {'select': {'episode': 'count'},
-         'filter': {'podcast': {'eq': unicode(podcast.id)}}}
+    q = {'select': {'podcast': 'count'},
+         'filter': {'podcast': unicode(podcast.id)}}
     if episode_id:
-        q['filter']['episode'] = {'eq': episode_id}
+        q['filter']['episode'] = episode_id
     data = query_async('listen', q)
     base_listens = 0 if episode_id is not None else podcast.stats_base_listens
 
     def get_listens(data):
         if ('results' not in data or
             not data['results'] or
-            'episode' not in data['results'][0]):
+            'podcast' not in data['results'][0]):
             return base_listens
 
-        return data['results'][0]['episode'] + base_listens
+        return data['results'][0]['podcast'] + base_listens
 
     return async.add(data, get_listens)
 
@@ -141,50 +139,6 @@ def get_top_episodes(podcast_id, async):
          'filter': {'podcast': {'eq': podcast_id}}})
 
     return async.add(data, lambda d: d['results'] if 'results' in d else [])
-
-
-class Interval(object):
-    def __init__(self, data):
-        self.start = self._parse_date(data['interval']['start'])
-        self.end = self._parse_date(data['interval']['end'])
-
-        if 'results' not in data or not data['results']:
-            self.payload = {}
-        else:
-            self.payload = data['results'][0]
-
-    def _parse_date(self, date):
-        # We need to strip off the timezone because the times are always
-        # returned in the correct timezone for the user. Python has issues
-        # with parsing basically anything.
-
-        # 2015-07-06T00:00:00+00:00
-        stripped = TIMZONE_KILLA.match(date).group(1)
-        # 2015-07-06T00:00:00
-        return datetime.datetime.strptime(stripped, '%Y-%m-%dT%H:%M:%S')
-
-def process_intervals(intvs, interval_duration, label_maker, pick=None):
-    if not intvs: return []
-
-    processed = [Interval(x) for x in intvs]
-    cursor = processed[0].start
-
-    # Process the first interval early
-    labels = [label_maker(cursor)]
-    values = [processed.pop(0)]
-    cursor += interval_duration
-
-    if processed:
-        while len(processed) and cursor <= processed[-1].start:
-            labels.append(label_maker(cursor))
-            values.append(processed.pop(0) if processed[0].start == cursor else None)
-            cursor += interval_duration
-
-    if pick:
-        values = [(x.payload.get(pick, 0) if x else 0) for x in values]
-
-    return {'labels': labels, 'dataset': values}
-
 
 
 def process_groups(groups, label_mapping=None, label_key=None, pick=None):

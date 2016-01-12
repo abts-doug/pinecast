@@ -5,7 +5,8 @@
 }
 
 .main-container {
-    padding: 0 10%;
+    margin: auto;
+    max-width: 1024px;
     z-index: 5;
 }
 
@@ -14,6 +15,7 @@
 }
 
 .subheader > div {
+    align-items: center;
     display: flex;
     margin: auto;
     max-width: 1024px;
@@ -30,7 +32,7 @@
 .subheader h1 {
     font-size: 24px;
     line-height: 1em;
-    margin: 0;
+    margin: 0 0 5px;
 }
 .subheader h2 {
     color: rgba(72, 85, 106, 0.5);

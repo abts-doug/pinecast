@@ -1,10 +1,13 @@
 import datetime
+import re
 
 from django.utils.translation import ugettext
 
 from . import query
 from accounts.models import UserSettings
 
+
+TIMZONE_KILLA = re.compile(r'(\d\d\d\d\-\d\d\-\d\dT\d\d:\d\d:\d\d)[+\-]\d\d:\d\d')
 
 DELTAS = {
     'minutely': datetime.timedelta(minutes=1),
@@ -45,7 +48,12 @@ class Format(object):
         return self
 
     def where(self, **kwargs):
-        self.criteria.update(kwargs)
+        for key, val in kwargs.items():
+            if isinstance(val, list):
+                self.criteria[key] = {'in': val}
+            else:
+                self.criteria[key] = val
+
         return self
 
     def group(self, by):
@@ -75,7 +83,7 @@ class Format(object):
         }
 
         if self.criteria:
-            q['filter'] = {k: {'eq': unicode(v)} for k, v in self.criteria.items()}
+            q['filter'] = self.criteria
         if self.group_by:
             q['groupBy'] = self.group_by
         if self.timeframe:
@@ -92,7 +100,7 @@ class Format(object):
         return self
 
     def format_country(self, label=None):
-        if not self.res: self._process()
+        if not self.res or 'results' not in self.res: self._process()
 
         key = self.selection.keys()[0]
 
@@ -103,34 +111,77 @@ class Format(object):
             p[self.group_by] and 'results' in self.res
         ]
 
-    def format_intervals(self, label):
+    def format_intervals(self, labels, labeled_by=None, extra_data=None, unfiltered=False):
         if not self.interval_val: self.interval()
         if not self.res: self._process()
-        if 'results' not in self.res: return {}  # TODO: come up with better error handling
+
+        if not labeled_by and len(self.criteria) > 1:
+            raise Exception('You must pass `labeled_by` to explain disambiguate the criterion to pick')
+
+        if not self.res or 'results' not in self.res or not self.res['results']:
+            # TODO: come up with better error handling
+            return {'labels': [''],
+                    'datasets': [{'label': '', 'data': []}]}
 
         key = self.selection.keys()[0]
 
-        sformat = '%x %H:%M' if DELTAS[self.interval_val] < DELTAS['daily'] else '%x'
-        out = query.process_intervals(
-            self.res['results'],
-            DELTAS[self.interval_val],
-            lambda d: d.strftime(sformat),
-            pick=key
-        )
+        interval_duration = DELTAS[self.interval_val]
+        sformat = '%H:%M' if interval_duration < DELTAS['daily'] else '%x'
 
-        if not out:
-            out = {'dataset': [], 'labels': []}
+        processed = [Interval(x) for x in self.res['results']]
+        output_labels = [x.start.strftime(sformat) for x in processed]
+        cursor = processed[0].start
+
+        default_facet = labeled_by or self.criteria.keys()[0]
+
+        datasets = []
+        dataset_map = {}
+
+        for label_id, label in labels.items():
+            ds = {
+                'label': label,
+                'data': [],
+                'id': label_id,
+                'pointStrokeColor': '#fff'}
+            if extra_data and label_id in extra_data:
+                ds.update(extra_data[label_id])
+            datasets.append(ds)
+            dataset_map[label_id] = ds
+
+        # Process the first interval early
+        first_interval = processed.pop(0)
+        for ds_id, ds in dataset_map.items():
+            for res in first_interval.payload:
+                if res[default_facet] == ds_id or unfiltered:
+                    ds['data'].append(res.get(key, 0))
+                    break
+            else:
+                ds['data'].append(0)
+
+        cursor += interval_duration
+
+        while processed and cursor <= processed[-1].start:
+            current_interval = processed.pop(0)
+            for ds_id, ds in dataset_map.items():
+                for res in current_interval.payload:
+                    if res[default_facet] == ds_id or unfiltered:
+                        ds['data'].append(res.get(key, 0))
+                        break
+                else:
+                    ds['data'].append(0)
+
+            cursor += interval_duration
+
+        if not datasets: datasets = [{}]
+
+        datasets = query.rotating_colors(
+            datasets,
+            key='strokeColor',
+            highlight_key='pointColor')
 
         return {
-            'labels': out['labels'],
-            'datasets': [
-                {'label': label,
-                 'data': out['dataset'],
-                 'fillColor': 'transparent',
-                 'strokeColor': '#303F9F',
-                 'pointColor': '#3F51B5',
-                 'pointStrokeColor': '#fff'},
-            ],
+            'labels': output_labels,
+            'datasets': list(datasets),
         }
 
     def format_breakdown(self, groups):
@@ -164,50 +215,25 @@ class Format(object):
         for result, instance in zip(results, instances):
             instance.res = result
 
-    @classmethod
-    def format_intervals_bulk(cls, instances, label_maker, pick):
-        if not instances: return [], []
 
-        for instance in instances:
-            if not instance.interval_val:
-                instance.interval()
+class Interval(object):
+    def __init__(self, data):
+        self.start = self._parse_date(data['interval']['start'])
+        self.end = self._parse_date(data['interval']['end'])
 
-        interval_duration = DELTAS[instances[0].interval_val]
+        if 'results' not in data or not data['results']:
+            self.payload = []
+        elif not isinstance(data['results'], list):
+            self.payload = [data['results']]
+        else:
+            self.payload = data['results']
 
-        # print bulk_results
-        processed = [[query.Interval(x) for x in inst.res['results']] for inst in instances]
-        if not any(processed):
-            return [], []
-        cursor_start = min(x[0].start for x in processed if x)
-        cursor_end = max(x[-1].start for x in processed if x)
+    def _parse_date(self, date):
+        # We need to strip off the timezone because the times are always
+        # returned in the correct timezone for the user. Python has issues
+        # with parsing basically anything.
 
-        # Process the labels first
-        label_cursor = cursor_start
-        labels = []
-        while label_cursor <= cursor_end:
-            labels.append(label_maker(label_cursor))
-            label_cursor += interval_duration
-
-        datasets = []
-        for results in processed:
-            # If there are no results for this dataset, fille it with zeroed values
-            if not results:
-                datasets.append([0 for x in labels])
-                continue
-
-            values = []
-            cursor = cursor_start
-            # Set zeroed values for all data points before
-            while cursor <= cursor_end:
-                if not results:
-                    values.append(0)
-                elif results[0].start <= cursor <= results[-1].end:
-                    intv = results.pop(0)
-                    values.append(intv.payload.get(pick, 0))
-                else:
-                    values.append(0)
-                cursor += interval_duration
-
-            datasets.append(values)
-
-        return labels, datasets
+        # 2015-07-06T00:00:00+00:00
+        stripped = TIMZONE_KILLA.match(date).group(1)
+        # 2015-07-06T00:00:00
+        return datetime.datetime.strptime(stripped, '%Y-%m-%dT%H:%M:%S')

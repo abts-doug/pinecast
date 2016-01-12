@@ -1,6 +1,7 @@
 import json
 
 import requests
+import rollbar
 from django.conf import settings
 
 
@@ -27,10 +28,15 @@ def _post(url, payload):
             headers={'X-Project-Id': settings.GETCONNECT_IO_PID,
                      'X-Api-Key': settings.GETCONNECT_IO_PUSH_KEY})
     except Exception:
-        print 'Analytics POST timeout: %s' % url
+        rollbar.report_message('Analytics POST timeout: %s' % url, 'error')
         return
 
     if posted.status_code != 200 and posted.status_code != 409:
+        rollbar.report_message(
+            'Got non-200 status code submitting logs: %s %s' % (
+                posted.status_code,
+                posted.text),
+            'error')
         # 409 is a duplicate ID error, which is expected
         print posted.status_code, posted.text
 
@@ -42,5 +48,6 @@ def _get_country(ip, req=None):
     try:
         res = requests.get('https://freegeoip.net/json/%s' % ip)
         return res.json()['country_code']
-    except Exception:
+    except Exception as e:
+        rollbar.report_message('Error resolving country IP: %s' % str(e), 'error')
         return None

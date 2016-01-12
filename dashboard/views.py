@@ -106,15 +106,19 @@ def podcast_dashboard(req, podcast_slug):
         total_listens_this_week = analytics_query.total_listens_this_week(pod, async_ctx)
         subscribers = analytics_query.total_subscribers(pod, async_ctx)
 
+    listens = total_listens()
+
     data = {
         'podcast': pod,
         'episodes': pod.podcastepisode_set.order_by('-publish'),
         'analytics': {
-            'total_listens': total_listens(),
+            'total_listens': listens,
             'total_listens_this_week': total_listens_this_week(),
             'subscribers': subscribers(),
         },
-        'next_milestone': next(x for x in MILESTONES if x > total_listens()),
+        'next_milestone': next(x for x in MILESTONES if x > listens),
+        'previous_milestone': [x for x in MILESTONES if x <= listens][-1] if listens else 0,
+        'hit_first_milestone': listens > MILESTONES[1],  # The first "real" milestone
         'is_still_importing': pod.is_still_importing(),
     }
 
@@ -550,11 +554,13 @@ def get_episodes(req):
             raise Http404()
         query = query.filter(publish__gte=parsed_date)
 
+    uset = UserSettings.get_from_user(req.user)
+    tz_delta = uset.get_tz_delta()
     return [
         {'id': ep.id,
          'title': ep.title,
          'podcastSlug': ep.podcast.slug,
-         'publish': ep.publish.strftime('%Y-%m-%dT%H:%M:%S')} for
+         'publish': (ep.publish + tz_delta).strftime('%Y-%m-%dT%H:%M:%S')} for
         ep in
         sorted(query, cmp=lambda a, b: cmp(a.publish, b.publish))
     ]

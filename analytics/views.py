@@ -42,7 +42,7 @@ def restrict(minimum_plan):
 def podcast_subscriber_locations(req, pod):
     f = (Format(req, 'subscribe')
             .select(podcast='count')
-            .where(podcast=pod.id)
+            .where(podcast=str(pod.id))
             .during('yesterday')
             .group('profile.country'))
 
@@ -53,7 +53,7 @@ def podcast_subscriber_locations(req, pod):
 def podcast_listener_locations(req, pod):
     f = (Format(req, 'listen')
             .select(podcast='count')
-            .where(podcast=pod.id)
+            .where(podcast=str(pod.id))
             .last_thirty()
             .group('profile.country'))
 
@@ -64,7 +64,7 @@ def episode_listener_locations(req, pod):
     ep = get_object_or_404(PodcastEpisode, podcast=pod, id=req.GET.get('episode'))
     f = (Format(req, 'listen')
             .select(podcast='count')
-            .where(episode=ep.id)
+            .where(episode=str(ep.id))
             .group('profile.country'))
 
     return f.format_country(label=ugettext('Listeners'))
@@ -75,19 +75,20 @@ def podcast_subscriber_history(req, pod):
     f = (Format(req, 'subscribe')
             .select(podcast='count')
             .last_thirty()
-            .where(podcast=pod.id))
+            .where(podcast=str(pod.id)))
 
-    return f.format_intervals(label=pod.name)
+    return f.format_intervals(labels={str(pod.id): pod.name}, unfiltered=True)
 
 
 @restrict(plans.PLAN_DEMO)
 def podcast_listen_history(req, pod):
     f = (Format(req, 'listen')
-            .select(podcast='count')
+            .select(episode='count')
             .last_thirty()
-            .where(podcast=pod.id))
+            .group('podcast')
+            .where(podcast=str(pod.id)))
 
-    return f.format_intervals(label=pod.name)
+    return f.format_intervals(labels={str(pod.id): pod.name}, unfiltered=True)
 
 
 @restrict(plans.PLAN_DEMO)
@@ -96,9 +97,9 @@ def episode_listen_history(req, pod):
     f = (Format(req, 'listen')
             .select(episode='count')
             .last_thirty()
-            .where(episode=ep.id))
+            .where(episode=str(ep.id)))
 
-    return f.format_intervals(label=ep.title)
+    return f.format_intervals(labels={str(ep.id): ep.title}, unfiltered=True)
 
 
 SOURCE_MAP = {
@@ -114,7 +115,7 @@ def podcast_listen_breakdown(req, pod):
             .select(podcast='count')
             .group('source')
             .last_thirty()
-            .where(podcast=pod.id))
+            .where(podcast=str(pod.id)))
 
     return f.format_breakdown(SOURCE_MAP)
 
@@ -128,7 +129,7 @@ def podcast_listen_platform_breakdown(req, pod):
             .select(podcast='count')
             .group(['profile.%s' % breakdown_type])
             .last_thirty()
-            .where(podcast=pod.id))
+            .where(podcast=str(pod.id)))
 
     return f.format_breakdown(None)
 
@@ -140,7 +141,7 @@ def episode_listen_breakdown(req, pod):
             .select(episode='count')
             .group('source')
             .last_thirty()
-            .where(episode=ep.id))
+            .where(episode=str(ep.id)))
 
     return f.format_breakdown(SOURCE_MAP)
 
@@ -151,41 +152,15 @@ def network_listen_history(req):
     net = get_object_or_404(Network, id=req.GET.get('network_id'), members__in=[req.user])
 
     pods = net.podcast_set.all()
-    async_queries = [
-        Format(req, 'listen', async=True)
-            .select(podcast='count')
+
+    f = (Format(req, 'listen')
+            .select(episode='count')
             .last_thirty()
             .interval()
-            .where(podcast=pod.id) for
-        pod in
-        pods
-    ]
-    Format.async_resolve_all(async_queries)
+            .group('podcast')
+            .where(podcast=[str(p.id) for p in pods]))
 
-    labels, datasets = Format.format_intervals_bulk(
-        async_queries,
-        lambda d: d.strftime('%x'),
-        pick='podcast'
-    )
-
-    formatted_datasets = []
-    for i, dataset in enumerate(datasets):
-        pod = pods[i]
-        formatted_datasets.append({
-            'label': pod.name,
-            'data': dataset,
-            'fillColor': 'transparent',
-            'strokeColor': '#303F9F',
-            'pointColor': '#3F51B5',
-            'pointStrokeColor': '#fff',
-            'slug': pod.slug,
-        })
-
-    return {
-        'labels': labels,
-        'datasets': list(
-            query.rotating_colors(formatted_datasets,
-                                  key='strokeColor',
-                                  highlight_key='pointColor')
-        ),
-    }
+    return f.format_intervals(
+        labels={str(p.id): p.name for p in pods},
+        labeled_by='podcast',
+        extra_data={str(p.id): {'slug': p.slug} for p in pods})

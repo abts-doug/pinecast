@@ -1,4 +1,4 @@
-@import url(https://fonts.googleapis.com/css?family=Montserrat:400,700);
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800);
 
 @import url(header.css);
 @import url(layout.css);
@@ -19,8 +19,8 @@ html {
 }
 
 body {
-    font-family: Montserrat, Helvetica, Arial, sans-serif;
-    font-size: 13px;
+    font-family: Open Sans, Helvetica, Arial, sans-serif;
+    font-size: 14px;
     height: 100%;
     min-height: 100%;
 }
@@ -67,12 +67,10 @@ input[type="number"],
 input[type="password"],
 input[type="datetime-local"],
 textarea {
-    border: 0 solid #bbb;
-    border-bottom-width: 1px;
+    border: 1px solid #c5c5c5;
     border-radius: 2px;
     box-shadow: 0 0 0 transparent;
-    font-size: 16px;
-    font-weight: 600;
+    font-size: 14px;
     margin: 2px 0 5px;
     padding: 8px;
     transition: box-shadow 0.2s, border-color 0.2s;
@@ -85,8 +83,6 @@ input[type="password"],
 input[type="datetime-local"],
 textarea {
     display: block;
-    margin-left: -8px;
-    margin-right: -8px;
 }
 
 input[type="text"][readonly],
@@ -147,7 +143,7 @@ button, .btn {
     color: #fff;
     cursor: pointer;
     display: inline-block;
-    font-family: Montserrat, Helvetica, Arial, sans-serif;
+    font-family: Open Sans, Helvetica, Arial, sans-serif;
     font-size: 14px;
     height: 2.5em;
     line-height: 2.5em;
@@ -186,23 +182,25 @@ button:disabled, .btn:disabled {
 .card {
     background: #fff;
     border: 1px solid #DEE6F3;
-    padding: 20px;
+    padding: 25px 30px;
     position: relative;
 }
 .card > strong:first-child,
 .card .chart-title,
 .card-comment > .comment-from {
     display: block;
-    border-bottom: 1px solid #eee;
-    line-height: 40px;
-    height: 40px;
-    margin: -15px -10px 15px;
+    font-size: 16px;
+    line-height: 20px;
+    height: 20px;
+    margin-bottom: 20px;
     overflow: hidden;
-    padding: 0 10px;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 .card .chart-title {
+    margin-bottom: 0;
+}
+.card > :last-child {
     margin-bottom: 0;
 }
 
@@ -256,7 +254,7 @@ button:disabled, .btn:disabled {
 .ticket .ticket-details {
     border-top: 1px solid #B6B6B6;
     color: #607D8B;
-    font-family: Montserrat;
+    font-family: Open Sans;
     font-size: 0.80em;
     height: 25px;
     line-height: 25px;
@@ -362,44 +360,6 @@ main > header > hgroup > h2 {
     line-height: 25px;
 }
 
-.main-container main {
-    padding: 10px;
-}
-
-@media (max-width: 900px) {
-    .main-container {
-        padding: 50px 0 0;
-    }
-}
-
-.sidebar {
-    padding-top: 10px;
-}
-.sidebar ul {
-    margin: 0 0 20px;
-    padding: 0;
-}
-.sidebar ul li {
-    list-style: none;
-}
-.sidebar ul li + li {
-    /*border-top: 1px solid rgba(0, 0, 0, 0.2);*/
-}
-.sidebar ul li a {
-    color: #fff;
-    display: block;
-    line-height: 20px;
-    padding: 5px 10px;
-    transition: background-color 0.15s;
-}
-.sidebar ul li a.selected {
-    background: #B2DFDB;
-    color: #212121;
-}
-.sidebar ul li a.selected:hover {
-    text-decoration: none;
-}
-
 
 ul.chunky {
     list-style: none;
@@ -450,17 +410,22 @@ ul .empty-state i {
 }
 
 .card-block {
-    margin: 10px;
+    margin: 10px 0;
 }
 
 
 .row {
-    clear: right;
     display: flex;
 }
 .row > * {
     flex: 1 1;
-    margin: 10px;
+    margin: 0 10px;
+}
+.row > :first-child {
+    margin-left: 0;
+}
+.row > :last-child {
+    margin-right: 0;
 }
 
 section.row {
@@ -514,7 +479,7 @@ menu.toolbar-right li {
 }
 
 menu.tabs {
-    font-family: Montserrat, sans-serif;
+    font-family: Open Sans, sans-serif;
     font-size: 26px;
     font-weight: 300;
     line-height: 40px;
@@ -538,13 +503,13 @@ menu.tabs a.selected {
     border-radius: 3px;
     box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
     display: block;
-    height: 20px;
+    height: 5px;
 }
 .progress i {
-    background: #3F51B5;
+    background: #8B75EF;
     border-radius: 3px;
     display: block;
-    height: 20px;
+    height: 5px;
     position: relative;
     transition: width 0.2s;
 }
@@ -792,12 +757,12 @@ menu.tabs a.selected {
 
 table {
     background: #fff;
-    border-radius: 3px;
-    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.05);
+    border: 1px solid #DEE6F3;
+    border-radius: 2px;
     line-height: 3em;
-    margin: 10px;
+    margin: 10px 0;
     padding: 0 10px;
-    width: calc(100% - 20px);
+    width: 100%;
 }
 
 table thead {

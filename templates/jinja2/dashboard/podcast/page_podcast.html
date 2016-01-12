@@ -56,40 +56,40 @@
         data-title="{{ _('Listen history') }}"
         data-chart-type="line"></div>
     </div>
+    <div class="row">
+      <div class="card stat-card total-listens">
+        <strong>{{ _('Total Listens') }}</strong>
+        <span>
+          {% if analytics.total_listens > -1 %}
+            {{ analytics.total_listens }}
+          {% else %}
+            <abbr title="{{ _('Our analytics are having trouble at the moment. Come back later.') }}">???</abbr>
+          {% endif %}
+        </span>
+      </div>
+      <div class="card stat-card this-week">
+        <strong>{{ _('Listens This Week') }}</strong>
+        <span>
+          {% if analytics.total_listens_this_week > -1 %}
+            {{ analytics.total_listens_this_week }}
+          {% else %}
+            <abbr title="{{ _('Our analytics are having trouble at the moment. Come back later.') }}">???</abbr>
+          {% endif %}
+        </span>
+      </div>
+      <div class="card stat-card total-subscribers">
+        <strong>{{ ngettext('Subscriber', 'Subscribers', analytics.subscribers) }}</strong>
+        <span>
+          {% if analytics.subscribers > -1 %}
+            {{ analytics.subscribers }}
+          {% else %}
+            <abbr title="{{ _('Our analytics are having trouble at the moment. Come back later.') }}">???</abbr>
+          {% endif %}
+        </span>
+      </div>
+    </div>
   {% endif %}
 
-  <div class="row">
-    <div class="card stat-card total-listens">
-      <strong>{{ _('Total Listens') }}</strong>
-      <span>
-        {% if analytics.total_listens > -1 %}
-          {{ analytics.total_listens }}
-        {% else %}
-          <abbr title="{{ _('Our analytics are having trouble at the moment. Come back later.') }}">???</abbr>
-        {% endif %}
-      </span>
-    </div>
-    <div class="card stat-card this-week">
-      <strong>{{ _('Listens This Week') }}</strong>
-      <span>
-        {% if analytics.total_listens_this_week > -1 %}
-          {{ analytics.total_listens_this_week }}
-        {% else %}
-          <abbr title="{{ _('Our analytics are having trouble at the moment. Come back later.') }}">???</abbr>
-        {% endif %}
-      </span>
-    </div>
-    <div class="card stat-card total-subscribers">
-      <strong>{{ ngettext('Subscriber', 'Subscribers', analytics.subscribers) }}</strong>
-      <span>
-        {% if analytics.subscribers > -1 %}
-          {{ analytics.subscribers }}
-        {% else %}
-          <abbr title="{{ _('Our analytics are having trouble at the moment. Come back later.') }}">???</abbr>
-        {% endif %}
-      </span>
-    </div>
-  </div>
 
   <section class="row">
     <div>
@@ -110,9 +110,26 @@
       </div>
 
       <div class="card-block card">
-        <strong>{{ _('Milestones') }}</strong>
-        <p>{{ ngettext('Your next milestone is {n} listen!', 'Your next milestone is {n} listens!', next_milestone).format(n=next_milestone) }}</p>
-        <div class="progress"><i data-tooltip="{{ (analytics.total_listens / next_milestone * 100)|int }}%" style="width: {{ analytics.total_listens / next_milestone * 100 }}%"></i></div>
+        <strong>{{ _('Growth Milestones') }}</strong>
+        <div class="progress">
+          <i data-tooltip="{{ (analytics.total_listens / next_milestone * 100)|int }}%" style="width: {{ analytics.total_listens / next_milestone * 100 }}%"></i>
+        </div>
+        <p>
+          {% if hit_first_milestone %}
+            {% trans n=previous_milestone %}
+              Congratulations, you've hit {{ n }} listen!
+            {% pluralize %}
+              Congratulations, you've hit {{ n }} listens!
+            {% endtrans %}
+            {% trans n=next_milestone %}
+              Your next milestone is at {{ n }} listen.
+            {% pluralize %}
+              Your next milestone is at {{ n }} listens.
+            {% endtrans %}
+          {% else %}
+            {{ ngettext('Your next milestone is {n} listen!', 'Your next milestone is {n} listens!', next_milestone).format(n=next_milestone) }}
+          {% endif %}
+        </p>
       </div>
     </div>
   </section>
