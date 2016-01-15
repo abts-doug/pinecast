@@ -8,7 +8,7 @@ from django.utils.translation import ugettext
 import analytics.analyze as analyze
 from accounts.models import UserSettings
 from dashboard.views import _pmrender
-from pinecast.helpers import validate_recaptcha
+from pinecast.helpers import reverse, validate_recaptcha
 
 
 def signup(req):
@@ -61,7 +61,7 @@ def signup(req):
     except Exception:
         pass  # whatever.
 
-    return redirect('login_signupsuccess')
+    return redirect(reverse('login') + '?signup_success=true')
 
 def _validate_recaptcha(req):
     response = req.POST.get('g-recaptcha-response')

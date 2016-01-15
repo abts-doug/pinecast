@@ -6,7 +6,6 @@ from . import views_signup
 
 urlpatterns = [
     url(r'^$', views.home, name='home'),
-    url(r'^login\?signup_success=true$', views.login_page, name='login_signupsuccess'),
     url(r'^login$', views.login_page, name='login'),
     url(r'^forgot_password$', views.forgot_password, name='forgot_password'),
     url(r'^forgot_password/finalize$', views.forgot_password_finalize, name='forgot_password_finalize'),
