@@ -100,7 +100,8 @@ class Format(object):
         return self
 
     def format_country(self, label=None):
-        if not self.res or 'results' not in self.res: self._process()
+        if not self.res: self._process()
+        if not self.res or 'results' not in self.res: return []
 
         key = self.selection.keys()[0]
 
@@ -186,7 +187,7 @@ class Format(object):
 
     def format_breakdown(self, groups):
         if not self.res: self._process()
-        if 'results' not in self.res: return []  # TODO: come up with better error handling
+        if not self.res or 'results' not in self.res: return []  # TODO: come up with better error handling
 
         key = self.selection.keys()[0]
 
