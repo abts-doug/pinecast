@@ -32,6 +32,7 @@
 
     <menu class="main-toolbar">
       <li><a href="{{ url('dashboard') }}">{{ _('Dashboard') }}</a></li>
+      {% if podcasts %}
       <li class="hide-on-mobile">
         <span class="menu-trigger">{{ _('Podcasts') }}</span>
         <menu>
@@ -40,6 +41,7 @@
           {% endfor %}
         </menu>
       </li>
+      {% endif %}
     </menu>
 
     <a href="{{ SUPPORT_URL }}" target="_blank" class="support-link">
