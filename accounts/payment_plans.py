@@ -75,5 +75,5 @@ def has_reached_podcast_limit(user_settings):
         return False
 
     pod_count = user_settings.user.podcast_set.count()
-    limit = max(PLAN_PODCAST_LIMITS[plan], plan.plan_podcast_limit_override)
+    limit = max(PLAN_PODCAST_LIMITS[plan], user_settings.plan_podcast_limit_override)
     return pod_count >= limit
