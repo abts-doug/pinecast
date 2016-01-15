@@ -136,7 +136,7 @@ try:
     assert prod_db, 'No DB config found...'
     print 'Using prod database'
     DATABASES['default'] = prod_db
-    DATABASES['default']['ENGINE'] = 'django_postgrespool'
+    # DATABASES['default']['ENGINE'] = 'django_postgrespool'
 except Exception:
     print 'Using SQLite db'
     DATABASES['default'] = {
