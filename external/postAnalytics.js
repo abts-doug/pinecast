@@ -10,7 +10,7 @@ var LOG_CF_REGEX = /^(.*?)\s+(.*?)\s+(.*?)\s+(.*?)\s+(.*?)\s+(.*?)\s+(.*?)\s+(.*
 exports.handler = function(event, context) {
     console.log('Loading function');
     console.log('Node version', process.version);
-    
+
     var record = event.Records[0];
 
     // Get the object from the event and show its content type
@@ -21,7 +21,8 @@ exports.handler = function(event, context) {
 
     var isS3Log = key.substr(0, 5) === 'logs/';
     var isCFLog = key.substr(0, 8) === 'logs-cf/';
-    if (!isS3Log && !isCFLog) {
+    var isPSLog = key.substr(0, 8) === 'pinecast-storage/';
+    if (!isS3Log && !isCFLog && !isPSLog) {
         context.succeed('Ignored non-log type: ' + key);
         return;
     }
@@ -219,7 +220,7 @@ exports.handler = function(event, context) {
         }
 
     });
-    
+
     function cleanUp() {
         if (wereInterestingLogs) {
             console.log('Interesting logs were found, so no cleanup is needed.');
