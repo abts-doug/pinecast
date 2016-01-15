@@ -49,7 +49,7 @@
 .main-header .support-link {
     color: #273650;
     flex: 0 0 auto;
-    font-size: 12px;
+    font-size: 13px;
     text-decoration: none;
     text-transform: uppercase;
     vertical-align: middle;
@@ -84,6 +84,7 @@
 .main-header .main-toolbar > li > a,
 .main-header .main-toolbar > li > span {
     color: #273650;
+    font-size: 13px;
     display: block;
     text-transform: uppercase;
 }

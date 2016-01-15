@@ -1,94 +1,117 @@
 {% extends 'dashboard/base.html' %}
+
+{% block subheader %}
+<section class="subheader">
+  <div>
+    <hgroup>
+      <h1>{{ _('Your Dashboard') }}</h1>
+    </hgroup>
+  </div>
+</section>
+<nav class="tabs dynamic">
+  <ul>
+    <li class="selected">
+      <a href="" data-tab=".tab-shows">{{ _('Podcasts') }}</a>
+    </li>
+    <li>
+      <a href="" data-tab=".tab-networks">{{ _('Networks') }}</a>
+    </li>
+  </ul>
+</nav>
+{% endblock %}
+
 {% block dashboard_body %}
 
-<header>
-  <h1>{{ _('Your Dashboard') }}</h1>
-</header>
-
-{% if networks %}
-  <ul class="dashboard-networks">
-    {% for n in networks %}
-      <li>
-        <a href="{{ url('network_dashboard', network_id=str(n.id)) }}">{{ n.name }}</a>
-        <div class="stat">
-          {% trans n=n.get_podcast_count() %}
-            {{ n }} show
-          {% pluralize %}
-            {{ n }} shows
-          {% endtrans %}
-        </div>
-        <div class="stat">
-          {% trans n=n.get_member_count() %}
-            {{ n }} member
-          {% pluralize %}
-            {{ n }} members
-          {% endtrans %}
-        </div>
-      </li>
-    {% endfor %}
-  </ul>
-{% endif %}
-
-<ul class="dashboard-podcasts">
+<div class="tab-shows dashboard">
+  <div class="{{ 'tab-buttons' if podcasts else 'buttons-empty-state' }}">
+    {% if not podcasts %}
+      <p>{{ _("You're ready to create your first podcast! Choose whether to start a new podcast or import an existing one.") }}</p>
+    {% endif %}
+    <a class="btn" href="{{ url('new_podcast') }}">
+      {% if podcasts %}
+        {{ _('New Podcast') }}
+      {% else %}
+        {{ _('Create Your First Podcast') }}
+      {% endif %}
+    </a>
+    <a class="btn" href="{{ url('importer') }}">
+      {{ _('Move Podcast to Pinecast') }}
+    </a>
+  </div>
+  <ul>
   {% for p in podcasts %}
-    <li class="ticket{{ ' owned-external' if p.owner != user else '' }}"
+    <li class="card"
       {% if p.is_still_importing() %}data-still-importing="{{ _('Import in progress...') }}"{% endif %}>
+
       <a href="{{ url('podcast_dashboard', kwargs={'podcast_slug': p.slug}) }}">
-        {{ p.name }}
-      </a>
-      <div class="ticket-details">
-        {%- if p.subtitle %}<span>{{ p.subtitle }}</span>{% endif -%}
+        <strong>{{ p.name }}</strong>
+        {%- if p.subtitle %}<span class="dashboard-item-subtitle">{{ p.subtitle }}</span>{% endif -%}
         {%- if p.get_unpublished_count() -%}
           <span class="icon-clock">
-            <a href="{{ url('podcast_dashboard', podcast_slug=p.slug) }}#tab-episodes" class="b">
-              {% trans count=p.get_unpublished_count() %}
-                {{ count }} pending episode
-              {% pluralize %}
-                {{ count }} pending episodes
-              {% endtrans %}
-            </a>
+            {% trans count=p.get_unpublished_count() %}
+              {{ count }} pending episode
+            {% pluralize %}
+              {{ count }} pending episodes
+            {% endtrans %}
           </span>
         {%- endif -%}
         {%- if p.owner != user -%}
           <span>
-            <b>
-              {% trans owner=p.owner %}
-                Owned by {{ owner }}
-              {% endtrans %}
-            </b>
+            {% trans owner=p.owner %}
+              Owned by {{ owner }}
+            {% endtrans %}
           </span>
         {%- endif -%}
         {%- if p.get_most_recent_publish_date() -%}
           <span>
-            <b>
-              {% trans timestamp=p.get_most_recent_publish_date()|pretty_date %}
-                Last published {{ timestamp }}
-              {% endtrans %}
-            </b>
+            {% trans timestamp=p.get_most_recent_publish_date()|pretty_date %}
+              Last published {{ timestamp }}
+            {% endtrans %}
           </span>
         {%- endif -%}
-      </div>
+      </a>
     </li>
   {% endfor %}
-  <li class="ticket option">
-    <a href="{{ url('new_podcast') }}">
-      {% if podcasts %}
-        {{ _('Create a new podcast') }}
-      {% else %}
-        {{ _('Create your first podcast') }}
-      {% endif %}
-    </a>
-  </li>
-  <li class="ticket option">
-    <a href="{{ url('importer') }}">
-      {{ _('Import Existing Podcast') }}
-    </a>
-  </li>
-  <li class="ticket option">
-    <a href="{{ url('new_network') }}">
+  </ul>
+</div>
+<div class="tab-networks dashboard">
+  <div class="{{ 'tab-buttons' if podcasts else 'buttons-empty-state' }}">
+    {% if not networks.count() %}
+      <p>{{ _("Start collaborating with your peers on network of podcasts. Create your first network in seconds.") }}</p>
+    {% endif %}
+    <a class="btn" href="{{ url('new_network') }}">
       {{ _('New Network') }}
     </a>
-  </li>
-</ul>
+  </div>
+  {% if networks %}
+    <ul>
+      {% for n in networks %}
+        <li class="card">
+          <a href="{{ url('network_dashboard', network_id=str(n.id)) }}">
+            <strong>{{ n.name }}</strong>
+            <span>
+              {% trans n=n.get_podcast_count() %}
+                {{ n }} show
+              {% pluralize %}
+                {{ n }} shows
+              {% endtrans %}
+            </span>
+            <span>
+              {% trans n=n.get_member_count() %}
+                {{ n }} member
+              {% pluralize %}
+                {{ n }} members
+              {% endtrans %}
+            </span>
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+</div>
 
+{% endblock %}
+
+{% block after_content %}
+<script src="/static/js/tabs.js"></script>
 {% endblock %}
