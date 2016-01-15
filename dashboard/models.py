@@ -61,10 +61,8 @@ class AssetImportRequest(models.Model):
             else:
                 self.episode.image_url = new_url
 
-            if ((settings.S3_BUCKET in self.episode.audio_url or
-                 settings.S3_PREMIUM_BUCKET in self.episode.audio_url) and
-                (settings.S3_BUCKET in self.episode.image_url or
-                 settings.S3_PREMIUM_BUCKET in self.episode.image_url)):
+            if (settings.S3_BUCKET in self.episode.audio_url and
+                settings.S3_BUCKET in self.episode.image_url):
                 self.episode.awaiting_import = False
             self.episode.save()
 
