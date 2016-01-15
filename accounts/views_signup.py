@@ -43,7 +43,7 @@ def signup(req):
 
     try:
         u = User.objects.create_user(
-            str(uuid.uuid4()),
+            str(uuid.uuid4())[:30],
             req.POST.get('email'),
             req.POST.get('password')
         )
