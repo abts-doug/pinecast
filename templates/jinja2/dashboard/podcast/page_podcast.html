@@ -112,7 +112,8 @@
       <div class="card-block card">
         <strong>{{ _('Growth Milestones') }}</strong>
         <div class="progress">
-          <i data-tooltip="{{ (analytics.total_listens / next_milestone * 100)|int }}%" style="width: {{ analytics.total_listens / next_milestone * 100 }}%"></i>
+          {% set milestone_percent = (analytics.total_listens - previous_milestone) / (next_milestone - previous_milestone) %}
+          <i data-tooltip="{{ (milestone_percent * 100)|int }}%" style="width: {{ milestone_percent * 100 }}%"></i>
         </div>
         <p>
           {% if hit_first_milestone %}

@@ -55,13 +55,6 @@
             {% endtrans %}
           </span>
         {%- endif -%}
-        {%- if p.owner != user -%}
-          <span>
-            {% trans owner=p.owner %}
-              Owned by {{ owner }}
-            {% endtrans %}
-          </span>
-        {%- endif -%}
         {%- if p.get_most_recent_publish_date() -%}
           <span>
             {% trans timestamp=p.get_most_recent_publish_date()|pretty_date %}
@@ -113,5 +106,7 @@
 {% endblock %}
 
 {% block after_content %}
+<link rel="prefetch" href="/static/js/react-0.13.3.min.js">
+<link rel="prefetch" href="/static/js/ui-chart.js">
 <script src="/static/js/tabs.js"></script>
 {% endblock %}

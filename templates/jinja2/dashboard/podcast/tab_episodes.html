@@ -8,7 +8,6 @@
     <thead>
       <tr>
         <th class="primary">{{ _('Episode Name') }}</th>
-        <th>{{ _('Subtitle') }}</th>
         <th>{{ _('Published') }}</th>
       </tr>
     </thead>
@@ -18,7 +17,6 @@
           <td class="primary">
             <a href="{{ url('podcast_episode', podcast_slug=podcast.slug, episode_id=str(ep.id)) }}">{{ ep.title }}</a>
           </td>
-          <td>{{ ep.subtitle }}</td>
           <td>
             <abbr title="{{ ep.publish + tz_delta }}">
               {{ ep.publish|pretty_date }}
@@ -42,7 +40,7 @@
     <div class="upgrade-empty-state empty-state">
       {% if user == podcast.owner and user_settings.plan == PLANS.PLAN_DEMO %}
         {% trans %}
-          Because you are using a demo account, you can only see up to ten episodes. The oldest episodes will also be removed from the podcast feed.
+          Because you are using a demo account, only the ten most recent episodes are shown. Older episodes will also be hidden from the podcast feed.
           <br>
           <b>Upgrade to a paid account to avoid this.</b>
         {% endtrans %}
