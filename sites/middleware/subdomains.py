@@ -29,7 +29,7 @@ class SubdomainMiddleware(object):
         try:
             pod = Podcast.objects.get(slug=pieces[0])
             site = Site.objects.get(podcast=pod)
-        except Site.DoesNotExist, Podcast.DoesNotExist:
+        except (Site.DoesNotExist, Podcast.DoesNotExist):
             return None
 
         path_to_resolve = path if '?' not in path else path[:path.index('?')]
