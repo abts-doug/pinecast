@@ -3,6 +3,7 @@ from django.core.urlresolvers import resolve
 
 from .. import urls_internal
 from ..models import Site
+from podcasts.models import Podcast
 
 
 SUBDOMAIN_HOSTS = ['.pinecast.co', '.pinecast.dev']
@@ -26,11 +27,12 @@ class SubdomainMiddleware(object):
             return None
 
         try:
-            site = Site.objects.get(slug=pieces[0])
-        except Site.DoesNotExist:
+            pod = Podcast.objects.get(slug=pieces[0])
+            site = Site.objects.get(podcast=pod)
+        except Site.DoesNotExist, Podcast.DoesNotExist:
             return None
 
         path_to_resolve = path if '?' not in path else path[:path.index('?')]
         func, args, kwargs = resolve(path_to_resolve, urls_internal)
         req.META['site_hostname'] = True
-        return func(req, site_slug=pieces[0], *args, **kwargs)
+        return func(req, podcast_slug=pieces[0], *args, **kwargs)

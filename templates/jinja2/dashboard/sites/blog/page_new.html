@@ -2,12 +2,12 @@
 {% block dashboard_body %}
 
 <header>
-  {{ breadcrumb(_('Manage Blog'), url('site_manage_blog', site_slug=site.slug)) }}
+  {{ breadcrumb(_('Manage Blog'), url('site_manage_blog', podcast_slug=site.podcast.slug)) }}
 
   <h1>{{ _('Write Post') }}</h1>
 </header>
 
-<form class="card card-block" action="{{ url('site_add_blog_post', site_slug=site.slug) }}" method="post">
+<form class="card card-block" action="{{ url('site_add_blog_post', podcast_slug=site.podcast.slug) }}" method="post">
   <strong>{{ _('Write Blog Post') }}</strong>
 
   <label>

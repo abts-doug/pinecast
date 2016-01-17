@@ -476,11 +476,11 @@ def delete_comment(req, podcast_slug, comment_id):
     comment.delete()
     if ep:
         return redirect(
-            reverse('podcast_episode', podcast_slug=pod.slug, episode_id=str(ep.id)) + '#tab-feedback'
+            reverse('podcast_episode', podcast_slug=podcast_slug, episode_id=str(ep.id)) + '#tab-feedback'
         )
     else:
         return redirect(
-            reverse('podcast_dashboard', podcast_slug=pod.slug) + '#tab-feedback'
+            reverse('podcast_dashboard', podcast_slug=podcast_slug) + '#tab-feedback'
         )
 
 

@@ -10,7 +10,7 @@
         {% if not podcast.site %}
           <li><a class="btn btn-plain" href="{{ url('new_site', podcast_slug=podcast.slug)}}">{{ _('Create Site') }}</a></li>
         {% else %}
-          <li><a class="btn btn-plain" href="{{ url('site_options', site_slug=podcast.site.slug)}}">{{ _('Site Options') }}</a></li>
+          <li><a class="btn btn-plain" href="{{ url('site_options', podcast_slug=podcast.slug)}}">{{ _('Site Options') }}</a></li>
         {% endif %}
       {% endif %}
       <li><a class="btn btn-danger" href="{{ url('delete_podcast', podcast_slug=podcast.slug) }}">{{ _('Delete Podcast') }}</a></li>

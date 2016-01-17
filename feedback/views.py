@@ -48,7 +48,7 @@ def podcast_comment_box(req, podcast_slug):
             'Go check the Feedback page of your podcast, %s, to see what was written.\n\n'
             'https://pinecast.com%s' %
                 (pod.name,
-                 reverse('podcast_dashboard', podcast_slug=pod.slug) + '#tab-feedback')
+                 reverse('podcast_dashboard', podcast_slug=podcast_slug) + '#tab-feedback')
         )
     except Exception:
         return _pmrender(req, 'feedback/comment_podcast.html',
@@ -95,7 +95,10 @@ def ep_comment_box(req, podcast_slug, episode_id):
             'https://pinecast.com%s' %
                 (ep.title,
                  pod.name,
-                 reverse('podcast_episode', podcast_slug=pod.slug, episode_id=str(ep.id)) + '#tab-feedback')
+                 reverse('podcast_episode',
+                         podcast_slug=podcast_slug,
+                         episode_id=str(ep.id)) +
+                    '#tab-feedback')
         )
     except Exception:
         return _pmrender(req, 'feedback/comment_episode.html',

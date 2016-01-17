@@ -11,7 +11,7 @@
 {% block body %}
   <header>
     <div style="{{ site.get_cover_style(bgcolor='#2196F3') }}">
-      <a href="{{ url('site_home', site_slug=site.slug) }}">
+      <a href="{{ url('site_home', podcast_slug=site.podcast.slug) }}">
         {% if site.logo_url %}
           <img src="{{ site.logo_url }}" alt="" class="logo" height="60" width="60">
         {% else %}

@@ -7,11 +7,11 @@
       <ol>
         {% for post in site.siteblogpost_set.all()[:2] %}
           <li>
-            <a href="{{ url('site_post', site_slug=site.slug, post_slug=post.slug) }}">{{ post.title }}</a>
+            <a href="{{ url('site_post', podcast_slug=site.podcast.slug, post_slug=post.slug) }}">{{ post.title }}</a>
           </li>
         {% endfor %}
       </ol>
-      <p>{% trans blog_link=url('site_blog', site_slug=site.slug) %}Read more on <a href="{{ blog_link }}">our blog</a>.{% endtrans %}</p>
+      <p>{% trans blog_link=url('site_blog', podcast_slug=site.podcast.slug) %}Read more on <a href="{{ blog_link }}">our blog</a>.{% endtrans %}</p>
     </section>
   {% endif %}
 
@@ -48,10 +48,10 @@
   {% if pager.has_other_pages() %}
     <div class="pagination">
       {% if pager.has_next() %}
-        <a class="btn" href="{{ url('site_home', site_slug=site.slug) }}?page={{ pager.next_page_number() }}">{{ _('Back in time') }}</a>
+        <a class="btn" href="{{ url('site_home', podcast_slug=site.podcast.slug) }}?page={{ pager.next_page_number() }}">{{ _('Back in time') }}</a>
       {% endif %}
       {% if pager.has_previous() %}
-        <a class="btn" href="{{ url('site_home', site_slug=site.slug) }}?page={{ pager.previous_page_number() }}">{{ _('Onwards to the future') }}</a>
+        <a class="btn" href="{{ url('site_home', podcast_slug=site.podcast.slug) }}?page={{ pager.previous_page_number() }}">{{ _('Onwards to the future') }}</a>
       {% endif %}
     </div>
   {% endif %}

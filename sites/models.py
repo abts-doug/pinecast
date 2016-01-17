@@ -70,7 +70,6 @@ class Site(models.Model):
     SITE_THEMES_MAP_PUBLIC = {k: v for k, v in SITE_THEMES if k not in SECRET_THEMES}
 
     podcast = models.OneToOneField(Podcast)
-    slug = models.SlugField(unique=True)
     theme = models.CharField(choices=SITE_THEMES, max_length=16)
     custom_cname = models.CharField(blank=True, null=True, max_length=64)
     cover_image_url = models.URLField(blank=True, null=True)
@@ -80,9 +79,6 @@ class Site(models.Model):
 
     analytics_id = models.CharField(blank=True, null=True, max_length=32, validators=[GA_VALIDATOR])
 
-    def clean(self):
-        if self.slug in BANNED_SLUGS:
-            raise ValidationError('Cannot choose that slug')
 
     def get_cover_style(self, bgcolor=None):
         if self.cover_image_url:
@@ -93,7 +89,7 @@ class Site(models.Model):
             return 'background-color: #666'
 
     def __unicode__(self):
-        return '%s: %s' % (self.slug, self.podcast.name)
+        return '%s: %s' % (self.podcast.slug, self.podcast.name)
 
 
 class SiteLink(models.Model):
@@ -111,7 +107,7 @@ class SiteBlogPost(models.Model):
     body = models.TextField()
 
     def __unicode__(self):
-        return '%s on %s' % (self.slug, self.site.slug)
+        return '%s on %s' % (self.slug, self.site.podcast.slug)
 
     class Meta:
         unique_together = (('site', 'slug'), )

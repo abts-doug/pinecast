@@ -191,7 +191,7 @@ class PodcastEpisode(models.Model):
         if (self.description_flair.site_link and
             FLAIR_SITE_LINK in available_flags):
             raw += '\n\nFind out more at [%s](http://%s.pinecast.co).' % (
-                self.podcast.name, self.podcast.site.slug)
+                self.podcast.name, self.podcast.slug)
 
         if (self.description_flair.feedback_link and
             FLAIR_FEEDBACK in available_flags):

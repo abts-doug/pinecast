@@ -17,20 +17,6 @@
     <strong>{{ _('Details') }}</strong>
 
     <label>
-      <span>{{ _('Site Slug') }}</span>
-      <input type="text"
-        class="slug-field"
-        name="slug"
-        placeholder="my-podcast-site"
-        required
-        maxlength="64"
-        pattern="[\w-]+"
-        value="{{ default.get('slug') }}">
-      <div class="url-availability"></div>
-      <small>{{ _('The slug will act as the subdomain for your site.') }}</small>
-    </label>
-
-    <label>
       <span>{{ _('Theme') }}</span>
       <select name="theme">
         {% for theme, name in themes %}
@@ -112,44 +98,4 @@
 <script src="/static/js/react-0.13.3.min.js"></script>
 <script src="/static/js/ui-uploader.js"></script>
 <script src="/static/js/disable-forms.js"></script>
-<script>
-(function() {
-  var slugField = document.querySelector('.slug-field');
-  var urlAvail = document.querySelector('.url-availability');
-
-  var slugDebounce;
-  var slugXHR;
-
-  slugField.addEventListener('input', function() {
-    if (slugDebounce) clearTimeout(slugDebounce);
-    if (slugXHR) slugXHR.abort();
-    if (!slugField.validity.valid) {
-      urlAvail.textContent = urlAvail.innerText = '';
-      urlAvail.className = 'url-availability';
-      return;
-    }
-    slugDebounce = setTimeout(validateSlug, 500);
-  });
-
-  function validateSlug() {
-    var xhr = new XMLHttpRequest();
-    xhr.onload = function() {
-      slugXHR = null;
-      var parsed = JSON.parse(xhr.responseText);
-      if (parsed.valid) {
-        urlAvail.textContent = urlAvail.innerText = '{% trans slug=("' + slugField.value + '"|safe) %}"{{ slug }}" is available!{% endtrans %}';
-        urlAvail.className = 'url-availability is-available';
-      } else {
-        urlAvail.textContent = urlAvail.innerText = '{% trans slug=("' + slugField.value + '"|safe) %}"{{ slug }}" is unavailable{% endtrans %}';
-        urlAvail.className = 'url-availability is-unavailable';
-      }
-    };
-    xhr.open('get', '/dashboard/services/sites/slug_available?slug=' + encodeURIComponent(slugField.value), true);
-    xhr.send();
-    slugXHR = xhr;
-  }
-
-}());
-
-</script>
 {% endblock %}

@@ -2,10 +2,10 @@
 {% block dashboard_body %}
 
 <header>
-  {{ breadcrumb(_('Manage Blog'), url('site_manage_blog', site_slug=site.slug)) }}
+  {{ breadcrumb(_('Manage Blog'), url('site_manage_blog', podcast_slug=site.podcast.slug)) }}
 
   <menu class="toolbar toolbar-right">
-    <form action="{{ url('site_remove_blog_post', site_slug=site.slug) }}" method="post">
+    <form action="{{ url('site_remove_blog_post', podcast_slug=site.podcast.slug) }}" method="post">
       <button class="btn btn-danger">{{ _('Delete') }}</button>
       <input type="hidden" name="slug" value="{{ post.slug }}">
       <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
@@ -20,7 +20,7 @@
   </div>
 {% endif %}
 
-<form class="card card-block" action="{{ url('site_blog_post', site_slug=site.slug, post_slug=post.slug) }}" method="post">
+<form class="card card-block" action="{{ url('site_blog_post', podcast_slug=site.podcast.slug, post_slug=post.slug) }}" method="post">
   <strong>{{ _('Edit Blog Post') }}</strong>
 
   <label>

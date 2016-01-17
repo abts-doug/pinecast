@@ -13,7 +13,7 @@
     {% if site.logo_url %}
       <img src="{{ site.logo_url }}" alt="" class="logo" height="100" width="100">
     {% endif %}
-    <h1><a href="{{ url('site_home', site_slug=site.slug) }}">{{ site.podcast.name }}</a></h1>
+    <h1><a href="{{ url('site_home', podcast_slug=site.podcast.slug) }}">{{ site.podcast.name }}</a></h1>
     <h2>{{ site.podcast.subtitle }}</h2>
   </header>
   <main>
@@ -22,8 +22,8 @@
   <footer>
     <div class="footer-row">
       {% if site.sitelink_set.count() %}
-        <div class="footer-col"> 
-          <strong>{{ _('Links') }}</strong> 
+        <div class="footer-col">
+          <strong>{{ _('Links') }}</strong>
           <ul>
             {% for link in site.sitelink_set.all() %}
               <li>
@@ -59,7 +59,7 @@
             <ul>
               {% for post in site.siteblogpost_set.all()[:5] %}
                 <li>
-                  <a href="{{ url('site_post', site_slug=site.slug, post_slug=post.slug) }}">
+                  <a href="{{ url('site_post', podcast_slug=site.podcast.slug, post_slug=post.slug) }}">
                     {{ post.title }}
                   </a>
                 </li>

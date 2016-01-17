@@ -2,19 +2,20 @@
 {% block dashboard_body %}
 
 <header>
-  {{ breadcrumb(_('Site Options'), url('site_options', site_slug=site.slug)) }}
+  {{ breadcrumb(_('Site Options'), url('site_options', podcast_slug=site.podcast.slug)) }}
 
   <h1>{{ _('Delete Site') }}</h1>
 </header>
 
 <div class="card card-block">
   <strong>{{ _('Are you sure?') }}</strong>
-  <p>{{ _('If you\'re sure you wish to delete this site, enter the slug in the box below.') }}</p>
-  
-  <form action="{{ url('delete_site', site_slug=site.slug) }}" method="post">
+  <p>{{ _('If you\'re sure you wish to delete this site, enter the slug of the podcast in the box below.') }}</p>
+  <p>{{ _('Note that this will only delete the site (http://%s.pinecast.co) and not the podcast itself.') % site.podcast.slug }}</p>
+
+  <form action="{{ url('delete_site', podcast_slug=site.podcast.slug) }}" method="post">
     <label class="col">
-      <span>{{ _('Site Slug') }}</span>
-      <input type="text" maxlength="512" placeholder="{{ site.slug }}" name="slug" required pattern="{{ site.slug }}">
+      <span>{{ _('Podcast Slug') }}</span>
+      <input type="text" maxlength="512" placeholder="{{ site.podcast.slug }}" name="slug" required pattern="{{ site.podcast.slug }}">
     </label>
 
     <menu class="toolbar">

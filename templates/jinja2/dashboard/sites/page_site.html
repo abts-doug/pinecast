@@ -5,11 +5,11 @@
   {{ breadcrumb(site.podcast.name, url('podcast_dashboard', podcast_slug=site.podcast.slug) + '#tab-site') }}
 
   <menu class="toolbar toolbar-right">
-    <li><a class="btn" href="http://{{ site.slug }}.pinecast.co" target="_blank">{{ _('Visit') }}</a></li>
+    <li><a class="btn" href="http://{{ site.podcast.slug }}.pinecast.co" target="_blank">{{ _('Visit') }}</a></li>
     {% if minimum_plan(site.podcast.owner, PLANS.FEATURE_MIN_BLOG) %}
-      <li><a class="btn btn-neutral" href="{{ url('site_manage_blog', site_slug=site.slug) }}">{{ _('Blog') }}</a></li>
+      <li><a class="btn btn-neutral" href="{{ url('site_manage_blog', podcast_slug=site.podcast.slug) }}">{{ _('Blog') }}</a></li>
     {% endif %}
-    <li><a class="btn btn-neutral" href="{{ url('edit_site', site_slug=site.slug) }}">{{ _('Edit') }}</a></li>
+    <li><a class="btn btn-neutral" href="{{ url('edit_site', podcast_slug=site.podcast.slug) }}">{{ _('Edit') }}</a></li>
   </menu>
 
   <h1>{{ _('Site Options') }}</h1>
@@ -19,11 +19,11 @@
   <strong>{{ _('Site URL') }}</strong>
   <input type="url"
     readonly
-    value="http://{{ site.slug }}.pinecast.co">
+    value="http://{{ site.podcast.slug }}.pinecast.co">
 </div>
 
 {% if minimum_plan(site.podcast.owner, PLANS.FEATURE_MIN_BLOG) %}
-  <form class="card card-block" action="{{ url('site_add_blog_post', site_slug=site.slug) }}" method="post">
+  <form class="card card-block" action="{{ url('site_add_blog_post', podcast_slug=site.podcast.slug) }}" method="post">
     <strong>{{ _('Write Blog Post') }}</strong>
     <div class="flex-row">
       <div class="col">
@@ -66,7 +66,7 @@
       <li class="site-link">
         <menu class="toolbar toolbar-right">
           <li>
-            <form action="{{ url('site_remove_link', site_slug=site.slug) }}" method="post">
+            <form action="{{ url('site_remove_link', podcast_slug=site.podcast.slug) }}" method="post">
               <button class="btn btn-danger">{{ _('Remove') }}</button>
               <input type="hidden" name="id" value="{{ link.id }}">
               <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
@@ -80,7 +80,7 @@
     {% endfor %}
   </ul>
 
-  <form action="{{ url('site_add_link', site_slug=site.slug) }}" method="post">
+  <form action="{{ url('site_add_link', podcast_slug=site.podcast.slug) }}" method="post">
     {% if error == 'link' %}
       <div class="error">
         {{ _('Could not create link') }}

@@ -11,7 +11,7 @@
 {% block body %}
   <header>
     <div>
-      <a href="{{ url('site_home', site_slug=site.slug) }}">
+      <a href="{{ url('site_home', podcast_slug=site.podcast.slug) }}">
         {% if site.logo_url %}
           <img src="{{ site.logo_url }}" alt="" class="logo" height="60" width="60">
         {% else %}
@@ -32,13 +32,13 @@
             <ul>
               {% for post in site.siteblogpost_set.all()[:5] %}
                 <li>
-                  <a href="{{ url('site_post', site_slug=site.slug, post_slug=post.slug) }}">
+                  <a href="{{ url('site_post', podcast_slug=site.podcast.slug, post_slug=post.slug) }}">
                     {{ post.title }}
                   </a>
                 </li>
               {% endfor %}
             </ul>
-            <p>{% trans blog_link=url('site_blog', site_slug=site.slug) %}Read more on <a href="{{ blog_link }}">our blog</a>.{% endtrans %}</p>
+            <p>{% trans blog_link=url('site_blog', podcast_slug=site.podcast.slug) %}Read more on <a href="{{ blog_link }}">our blog</a>.{% endtrans %}</p>
           </div>
         </section>
       {% endif %}
