@@ -31,7 +31,6 @@ def environment(**options):
         'len': len,
         'str': str,
         'url': helpers.reverse,
-        'plural': plural,  # DEPRECATED!
         'gravatar': gravatar,
         'getattr': getattr,
 
@@ -42,8 +41,11 @@ def environment(**options):
         'minimum_plan': minimum_plan,
         'PLAN_NAMES': payment_plans.PLANS_MAP,
         'PLANS': payment_plans.PLANS_RAW,
+
         'SUPPORT_URL': settings.SUPPORT_URL,
         'RECAPTCHA_KEY': settings.RECAPTCHA_KEY,
+        'STRIPE_PUBLISHABLE_KEY': settings.STRIPE_PUBLISHABLE_KEY,
+
         'timezones': pytz.common_timezones,
         'tz_offset': helpers.tz_offset,
     })
@@ -55,6 +57,7 @@ def environment(**options):
     env.filters['replace'] = string.replace
     return env
 
+
 def minimum_plan(user_settings, plan):
     if isinstance(user_settings, User):
         user_settings = UserSettings.get_from_user(user_settings)
@@ -65,8 +68,6 @@ def gravatar(s, size=40):
     dig = hashlib.md5(s).hexdigest()
     return 'https://www.gravatar.com/avatar/%s?s=%d' % (dig, size)
 
-def plural(sing, plur, n, **kwargs):
-    return (plur if n != 1 else sing).format(n=str(n), **kwargs)
 
 def pretty_date(time=False):
     """

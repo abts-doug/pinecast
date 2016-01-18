@@ -45,13 +45,13 @@
           <b>Upgrade to a paid account to avoid this.</b>
         {% endtrans %}
         <br>
-        <a class="btn" href="/accounts/upgrade">{{ _('Upgrade Now') }}</a>
+        <a class="btn" href="{{ url('upgrade') }}">{{ _('Upgrade Now') }}</a>
       {% elif user_settings.plan == PLANS.PLAN_DEMO %}
         {% trans %}
           Because you are using a demo account, you can only see a maximum of ten episodes. After ten episodes have been uploaded, the oldest episodes will be hidden. To see all of the episodes, upgrade to a paid plan.
         {% endtrans %}
         <br>
-        <a class="btn" href="/accounts/upgrade">{{ _('Upgrade Now') }}</a>
+        <a class="btn" href="{{ url('upgrade') }}">{{ _('Upgrade Now') }}</a>
       {% else %}
         {{ _('Because the owner of this podcast is using a demo account, only ten episodes are shown.') }}
       {% endif %}

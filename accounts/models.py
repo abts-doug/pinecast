@@ -7,6 +7,7 @@ from django.utils.translation import ugettext_lazy
 
 import payment_plans
 from pinecast.helpers import cached_method
+from payments.stripe_lib import stripe
 
 
 class BetaRequest(models.Model):
@@ -31,6 +32,14 @@ class UserSettings(models.Model):
 
     plan_podcast_limit_override = models.PositiveIntegerField(default=0)  # Podcast limit = max(pplo, plan.max)
 
+    ############################
+    # Payments-related fields
+    ############################
+
+    stripe_customer_id = models.CharField(max_length=128, blank=True, null=True)
+    stripe_payout_recipient = models.CharField(max_length=128, blank=True, null=True)
+
+
     def clean(self):
         if self.tz_offset < -12 or self.tz_offset > 14:
             raise ValidationError('Timezone offset must be between -12 and 14, inclusive')
@@ -52,6 +61,25 @@ class UserSettings(models.Model):
     @cached_method
     def get_tz_delta(self):
         return datetime.timedelta(hours=self.tz_offset)
+
+
+    def get_stripe_customer(self):
+        if self.stripe_customer_id:
+            return stripe.Customer.retrieve(self.stripe_customer_id)
+
+        return None
+
+    def create_stripe_customer(self, token):
+        if self.stripe_customer_id:
+            self.get_stripe_customer().delete()
+
+        customer = stripe.Customer.create(
+            source=token,
+            email=self.user.email,
+            description=str(self.user.id))
+
+        self.stripe_customer_id = customer.id
+        self.save()
 
 
 class Network(models.Model):

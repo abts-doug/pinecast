@@ -7,6 +7,7 @@ from django.views.i18n import javascript_catalog
 import analytics.urls
 import dashboard.urls
 import feedback.urls
+import payments.urls
 from . import views
 from accounts.urls import urlpatterns as account_urlpatterns
 from podcasts.urls import urlpatterns as podcast_urlpatterns
@@ -23,11 +24,12 @@ urlpatterns = (
     podcast_urlpatterns +
     [
         url(r'^accounts/login/$', lambda *_: redirect('home')),
-        url(r'^logout$', logout_view, name='logout'),
+        url(r'^admin/', include(admin.site.urls)),
         url(r'^analytics/', include(analytics.urls)),
         url(r'^dashboard/', include(dashboard.urls)),
         url(r'^feedback/', include(feedback.urls)),
-        url(r'^admin/', include(admin.site.urls)),
+        url(r'^logout$', logout_view, name='logout'),
+        url(r'^payments/', include(payments.urls)),
 
         url(r'^services/deploy_complete$', views.deploy_complete),
         url(r'^services/log$', views.log),
