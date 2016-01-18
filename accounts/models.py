@@ -1,6 +1,5 @@
 import datetime
 
-import stripe
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -8,6 +7,7 @@ from django.utils.translation import ugettext_lazy
 
 import payment_plans
 from pinecast.helpers import cached_method
+from payments.stripe_lib import stripe
 
 
 class BetaRequest(models.Model):
@@ -32,16 +32,12 @@ class UserSettings(models.Model):
 
     plan_podcast_limit_override = models.PositiveIntegerField(default=0)  # Podcast limit = max(pplo, plan.max)
 
-
     ############################
     # Payments-related fields
     ############################
 
-    # # All credit fields are measured in cents (USD)
-    # credit_tip = models.PositiveIntegerField(default=0)
-    # credit_tip_limit = models.PositiveIntegerField(default=0)
-
     stripe_customer_id = models.CharField(max_length=128, blank=True, null=True)
+    stripe_payout_recipient = models.CharField(max_length=128, blank=True, null=True)
 
 
     def clean(self):
@@ -74,7 +70,16 @@ class UserSettings(models.Model):
         return None
 
     def create_stripe_customer(self, token):
-        pass
+        if self.stripe_customer_id:
+            self.get_stripe_customer().delete()
+
+        customer = stripe.Customer.create(
+            source=token,
+            email=self.user.email,
+            description=str(self.user.id))
+
+        self.stripe_customer_id = customer.id
+        self.save()
 
 
 class Network(models.Model):

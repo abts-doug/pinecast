@@ -1,0 +1,43 @@
+{% extends 'dashboard/base.html' %}
+
+{% block dashboard_body %}
+
+<header>
+  {{ breadcrumb(_('Dashboard'), url('dashboard')) }}
+  <h1>{{ _('Upgrade') }}</h1>
+</header>
+
+{% if not stripe_customer %}
+  <p>Step 1 of 2</p>
+
+  <div class="card">
+    <strong>{{ _('Add a payment method') }}</strong>
+    <p>
+      {% trans %}
+        To get started, add a payment method. Card processing is handled by <a href="https://stripe.com/">Stripe</a>.
+      {% endtrans %}
+    </p>
+    {% include 'payments/paymentmethod/new.html' %}
+  </div>
+
+  <p>
+    {% trans %}
+      Adding payment information will not charge your credit card.
+    {% endtrans %}
+  </p>
+
+{% else %}
+  <p>Step 2 of 2</p>
+
+  {% include 'payments/upgrades/plans.html' %}
+
+{% endif %}
+
+{% endblock %}
+
+{% block after_content %}
+<script src="https://js.stripe.com/v2/"></script>
+<script src="/static/js/react-0.13.3.min.js"></script>
+<script src="/static/js/disable-forms.js"></script>
+<script src="/static/js/ui-cc.js"></script>
+{% endblock %}

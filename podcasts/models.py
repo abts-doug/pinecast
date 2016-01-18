@@ -51,6 +51,15 @@ class Podcast(models.Model):
 
     networks = models.ManyToManyField(Network)
 
+    tip_value = models.PositiveIntegerField(
+        default=0,
+        help_text=ugettext_lazy('Unpaid tip value in cents'))
+    tip_last_payout = models.DateTimeField(default=None, null=True)
+    tip_last_payout_amount = models.PositiveIntegerField(
+        default=0,
+        help_text=ugettext_lazy('Last tip payout value paid out in cents'))
+
+
     @cached_method
     def get_category_list(self):
         return ','.join(x.category for x in self.podcastcategory_set.all())
