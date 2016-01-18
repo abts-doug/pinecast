@@ -182,7 +182,7 @@ exports.handler = function(event, context) {
             return;
         }
 
-        if (isS3Log) {
+        if (isS3Log || isPSLog) {
             processS3Log(data.Body, callback);
         } else if (isCFLog) {
             processCFLog(data.Body, callback);
