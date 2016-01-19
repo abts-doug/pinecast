@@ -20,7 +20,7 @@ def home(req):
     if not req.user.is_anonymous():
         return redirect('dashboard')
 
-    return redirect('beta_signup')
+    return redirect('https://www.pinecast.com/')
 
 
 def login_page(req):
@@ -129,26 +129,6 @@ def forgot_password_finish(req):
     user.save()
 
     return redirect(reverse('login') + '?success=resetpassword')
-
-
-def private_beta_signup(req):
-    if not req.user.is_anonymous():
-        return redirect('dashboard')
-
-    if not req.POST:
-        return render(req, 'pb_signup.html', {'types': BetaRequest.PODCASTER_TYPE})
-
-    email = req.POST.get('email')
-    if BetaRequest.objects.filter(email=email).count():
-        return render(req, 'pb_signup_done.html')
-
-    request = BetaRequest(
-        email=email,
-        podcaster_type=req.POST.get('type')
-    )
-    request.save()
-
-    return render(req, 'pb_signup_done.html')
 
 
 @login_required
